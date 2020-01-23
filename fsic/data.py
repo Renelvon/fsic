@@ -32,13 +32,13 @@ class PairedData(object):
             raise ValueError('Data size of the paired sample must be the same.')
 
         if not np.all(np.isfinite(X)):
-            print 'X:'
-            print util.fullprint(X)
+            print('X:')
+            print(util.fullprint(X))
             raise ValueError('Not all elements in X are finite.')
 
         if not np.all(np.isfinite(Y)):
-            print 'Y:'
-            print util.fullprint(Y)
+            print('Y:')
+            print(util.fullprint(Y))
             raise ValueError('Not all elements in Y are finite.')
 
     def __str__(self):

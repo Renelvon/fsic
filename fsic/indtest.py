@@ -139,13 +139,13 @@ class NFSIC(IndTest):
         l = self.l
         s, _, _ = nfsic(X, Y, k, l, V, W, reg=self.reg)
         if not np.isfinite(s):
-            print 'k: %s'%str(k)
-            print ('l: %s'%str(l))
-            print ('reg: %s'%str(self.reg))
-            print ('V: ')
-            print (V)
-            print ('W: ')
-            print (W)
+            print('k: %s'%str(k))
+            print('l: %s'%str(l))
+            print('reg: %s'%str(self.reg))
+            print('V: ')
+            print(V)
+            print('W: ')
+            print(W)
             raise ValueError('statistic is not finite. Was %s.'%str(s))
 
         return s
