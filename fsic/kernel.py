@@ -153,6 +153,3 @@ class KTriangle(Kernel):
 
     def __str__(self):
         return "KTriangle(w=%.3f)"%self.width
-
-
-

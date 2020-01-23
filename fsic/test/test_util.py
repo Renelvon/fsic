@@ -73,6 +73,3 @@ class TestFunctions(unittest.TestCase):
         Z = util.one_of_K_code(arr)
         exp = np.array([[1, 0, 0], [0, 1, 0], [1, 0, 0], [0, 0, 1]])
         np.testing.assert_array_almost_equal(Z, exp)
-
-                
-

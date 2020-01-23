@@ -782,6 +782,3 @@ class PSGaussSign(PairedSource):
 
     def dy(self):
         return 1
-
-
-

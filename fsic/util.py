@@ -339,4 +339,3 @@ def standardize(X):
     Zx = (X-mx)/stdx
     assert np.all(np.isfinite(Zx))
     return Zx
-

@@ -140,5 +140,3 @@ def plot_runtime(ex, fname, func_xvalues, xlabel, func_title=None):
     plt.title(title)
     #plt.grid()
     return results
-
-

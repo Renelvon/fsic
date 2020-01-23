@@ -92,4 +92,3 @@ def pickle_load(fpath):
         # expect a dictionary
         result = pickle.load(f)
     return result
-

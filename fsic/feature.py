@@ -123,6 +123,3 @@ class NystromFeatureMap(FeatureMap):
 
     def num_features(self, X=None):
         return self.inducing_points.shape[1]
-
-
-
