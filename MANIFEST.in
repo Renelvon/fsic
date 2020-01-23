@@ -10,3 +10,5 @@ include Makefile
 include requirements.txt
 include setup.cfg
 include setup.py
+
+include .pylintrc
