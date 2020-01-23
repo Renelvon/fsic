@@ -3,12 +3,15 @@ PIP=pip
 PYTHON=python2
 SETUP=setup.py
 
-.PHONY: all build clean dist distclean install installcheck test uninstall
+.PHONY: all build check clean dist distclean install installcheck test uninstall
 
 all: build
 
 build:
 	$(PYTHON) $(SETUP) build
+
+check:
+	check-manifest
 
 clean:
 	git clean -xfd
