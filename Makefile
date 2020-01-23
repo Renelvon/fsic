@@ -1,0 +1,30 @@
+NAME=fsic
+PIP=pip
+PYTHON=python2
+SETUP=setup.py
+
+.PHONY: all build clean dist distclean install installcheck test uninstall
+
+all: build
+
+build:
+	$(PYTHON) $(SETUP) build
+
+clean:
+	git clean -xfd
+
+dist:
+	$(PYTHON) $(SETUP) sdist
+
+distclean: clean
+
+install: build
+	$(PYTHON) $(SETUP) install --user
+
+installcheck: test
+
+test:
+	$(PYTHON) -m unittest discover -s fsic/test 
+
+uninstall:
+	$(PIP) uninstall -y $(NAME)
