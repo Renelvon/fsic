@@ -67,7 +67,7 @@ class RFFKGauss(FeatureMap):
     def gen_features(self, X):
         rstate = np.random.get_state()
         np.random.seed(self.seed)
-        n, d = X.shape
+        _, d = X.shape
 
         D = self.n_features
         W = np.random.randn(D, d)
@@ -114,7 +114,7 @@ class NystromFeatureMap(FeatureMap):
         self._invert_half = V.dot(np.diag(pow_evals)).dot(V.T)
 
     def gen_features(self, X):
-        n, d = X.shape 
+        _, d = X.shape 
         if d != self.inducing_points.shape[1]:
             raise ValueError('dimension of the input does not match that of the inducing points')
         K = self.k.eval(X, self.inducing_points)

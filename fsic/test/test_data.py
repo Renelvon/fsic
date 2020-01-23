@@ -57,8 +57,6 @@ class TestPairedData(unittest.TestCase):
 
 class TestPSStraResample(unittest.TestCase):
     def test_sample(self):
-        import math
-
         for s in [27, 91]:
             n_ori = 200
             p_fracs = [0.1, 0.5, 0.4]
@@ -72,9 +70,9 @@ class TestPSStraResample(unittest.TestCase):
             pdata = ps.sample(m, seed=s)
             self.assertEqual(pdata.sample_size(), m)
 
-            x, y = pdata.xy()
+            _, y = pdata.xy()
             yu, counts = np.unique(y, return_counts=True)
-            for i, u in enumerate(yu):
+            for i, _ in enumerate(yu):
                 self.assertTrue( counts[i] - int(p_fracs[i]*m) <= 1 )
 
 
@@ -102,7 +100,7 @@ class TestPSGaussNoiseDim(unittest.TestCase):
         ndys = [3, 0, 4]
         ori_ps = data.PS2DUnifRotate(np.pi/3)
         n = 10
-        for i, ndx, ndy in zip(range(len(ndxs)), ndxs, ndys):
+        for _, ndx, ndy in zip(range(len(ndxs)), ndxs, ndys):
             ps = data.PSGaussNoiseDims(ori_ps, ndx, ndy)
             pdata = ps.sample(n=n, seed=83)
             X, Y = pdata.xy()

@@ -68,8 +68,8 @@ class KGauss(Kernel):
         ------
         K : a n1 x n2 Gram matrix.
         """
-        (n1, d1) = X1.shape
-        (n2, d2) = X2.shape
+        _, d1 = X1.shape
+        _, d2 = X2.shape
         assert d1==d2, 'Dimensions of the two inputs must be the same'
         D2 = np.sum(X1**2, 1)[:, np.newaxis] - 2*X1.dot(X2.T) + np.sum(X2**2, 1)
         K = np.exp(-D2/self.sigma2)
@@ -123,8 +123,8 @@ class KTriangle(Kernel):
         ------
         K : a n1 x n2 Gram matrix.
         """
-        (n1, d1) = X1.shape
-        (n2, d2) = X2.shape
+        _, d1 = X1.shape
+        _, d2 = X2.shape
         assert d1==1, 'd1 must be 1'
         assert d2==1, 'd2 must be 1'
         diff = (X1-X2.T)/self.width
@@ -143,8 +143,8 @@ class KTriangle(Kernel):
         -------
         a numpy array with length n
         """
-        (n1, d1) = X.shape
-        (n2, d2) = Y.shape
+        _, d1 = X.shape
+        _, d2 = Y.shape
         assert d1==1, 'd1 must be 1'
         assert d2==1, 'd2 must be 1'
         diff = (X-Y)/self.width

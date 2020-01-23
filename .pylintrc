@@ -85,7 +85,6 @@ disable=R,
     ungrouped-imports,
     unused-argument,
     unused-import,
-    unused-variable,
     wrong-import-order,
 
 # Enable the message, report, category or checker with the given id(s). You can

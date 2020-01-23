@@ -27,7 +27,6 @@ class TestNumpySeedContext(unittest.TestCase):
                 A1 = np.random.randn(5, 1)
                 B1 = np.random.rand(6)
 
-            C = np.random.rand(3)
             with util.NumpySeedContext(seed=s):
                 A2 = np.random.randn(5, 1)
                 B2 = np.random.rand(6)
@@ -44,10 +43,11 @@ class TestCCA(unittest.TestCase):
             with util.NumpySeedContext(seed=r*5+1):
                 X = np.random.randn(n, 2)*5 - 1
                 Y = np.random.rand(n, 3) - 0.5
-                evals, Vx, Vy = util.cca(X, Y, reg=1e-5)
+                evals, _, _ = util.cca(X, Y, reg=1e-5)
                 
                 self.assertTrue(np.all(evals) <= 1)
                 self.assertTrue(np.all(evals) >= -1)
+
 
 class TestFunctions(unittest.TestCase):
     def test_bound_by_data(self):

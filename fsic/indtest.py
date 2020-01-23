@@ -160,7 +160,6 @@ class NFSIC(IndTest):
         if V.shape[0] != W.shape[0]:
             raise ValueError('Number of locations in V, W (rows) must be the same.')
         n = X.shape[0]
-        J = V.shape[0]
 
         arr = np.zeros(n_permute)
         K = k.eval(X, V) # n x J
@@ -170,7 +169,6 @@ class NFSIC(IndTest):
         mean_l = np.mean(L, 0)
         mkml =  mean_k*mean_l
 
-        rr = reg if np.isreal(reg) else 0
         with util.NumpySeedContext(seed=seed):
             r = 0 
             while r < n_permute:
@@ -182,7 +180,7 @@ class NFSIC(IndTest):
                 Ktml = Kt*mean_l
 
                 # shift Ls n-1 times 
-                for s in range(n-1):
+                for _ in range(n-1):
                     if r >= n_permute:
                         break
                     Ls = np.roll(Ls, 1, axis=0)
@@ -283,7 +281,6 @@ class GaussNFSIC(NFSIC):
         """Gaussian kernel. Theano version.
         :return a kernel matrix of size Xth.shape[0] x Vth.shape[0]
         """
-        n, d = Xth.shape
         D2 = (Xth**2).sum(1).reshape((-1, 1)) - 2*Xth.dot(Vth.T) +\
             tensor.sum(Vth**2, 1).reshape((1, -1))
         Kth = tensor.exp(-D2/(2.0*gwidth2))
@@ -341,7 +338,7 @@ class GaussNFSIC(NFSIC):
 
         list_gwidthx = np.hstack( ( (medx2)*gwidth_factors ) )
         list_gwidthy = np.hstack( ( (medy2)*gwidth_factors ) )
-        bestij, lambs = GaussNFSIC.grid_search_gwidth(pdata, V, W,
+        bestij, _ = GaussNFSIC.grid_search_gwidth(pdata, V, W,
                 list_gwidthx, list_gwidthy)
         gwidthx0 = list_gwidthx[bestij[0]]
         gwidthy0 = list_gwidthy[bestij[1]]
@@ -510,7 +507,6 @@ class GaussNFSIC(NFSIC):
 
         XY = np.hstack((X, Y))
         dx = X.shape[1]
-        dy = Y.shape[1]
         VW = util.fit_gaussian_draw(XY, n_test_locs, seed=seed+8, eig_pow=0.9)
         V = VW[:, :dx]
         W = VW[:, dx:]
@@ -746,7 +742,6 @@ def nfsic_grid_search_kernel(pdata, V, W, list_kernelx, list_kernely):
 
     X, Y = pdata.xy()
     n = X.shape[0]
-    J = V.shape[0]
     n_cand_x = len(list_kernelx)
     n_cand_y = len(list_kernely)
     lambs = np.zeros((n_cand_x, n_cand_y))
@@ -852,7 +847,6 @@ def nfsic(X, Y, k, l, V, W, reg=0):
     assert X.shape[0] == Y.shape[0]
     assert V.shape[0] == W.shape[0]
     n = X.shape[0]
-    J = V.shape[0]
 
     K = k.eval(X, V) # n x J
     L = l.eval(Y, W) # n x J
@@ -997,7 +991,7 @@ class QuadHSIC(IndTest):
             HK = Ks - Kmean
             HKf = HK.flatten()/(n-1) 
             # shift Ys n-1 times 
-            for s in range(n-1):
+            for _ in range(n-1):
                 if r >= n_permute:
                     break
                 Ls = np.roll(Ls, 1, axis=0)
@@ -1040,7 +1034,7 @@ class QuadHSIC(IndTest):
             Xs = X[ind]
             Ys = Y[ind]
             # shift Ys n-1 times 
-            for s in range(n-1):
+            for _ in range(n-1):
                 if r >= n_permute:
                     break
                 Ys = np.roll(Ys, 1, axis=0)
@@ -1089,7 +1083,7 @@ class FiniteFeatureHSIC(IndTest):
             Zy = self.fmy.gen_features(Y)
 
             n_simulate = self.n_simulate
-            arr_nhsic, eigx, eigy = FiniteFeatureHSIC.list_permute_spectral(Zx, Zy, n_simulate, seed=self.seed)
+            arr_nhsic, _, _ = FiniteFeatureHSIC.list_permute_spectral(Zx, Zy, n_simulate, seed=self.seed)
             #arr_nhsic = FiniteFeatureHSIC.list_permute(X, Y, self.fmx, self.fmy, n_permute=n_simulate, seed=self.seed)
             # approximate p-value with the permutations 
             pvalue = np.mean(arr_nhsic > ffhsic)
@@ -1132,8 +1126,6 @@ class FiniteFeatureHSIC(IndTest):
         if features_x.shape[0] != features_y.shape[0]:
             raise ValueError('features_x, features_y must have the same number of rows n.')
         n = features_x.shape[0]
-        Dx = features_x.shape[1]
-        Dy = features_y.shape[1]
         # The spectrum of the cross covariance operator is given by the product
         # of the spectrums of H*K_x*H and H*_K_y*H.
         HZx = features_x - np.mean(features_x, 0) # n x Dx
@@ -1305,7 +1297,7 @@ class RDC(IndTest):
         Yrff = self.fmy.gen_features(Ycdf)
 
         # CCA 
-        evals, Vx, Vy = util.cca(Xrff, Yrff)
+        evals, _, _ = util.cca(Xrff, Yrff)
         minD = min(Xrff.shape[1], Yrff.shape[1])
         # Barlett approximation 
         # Refer to https://en.wikipedia.org/wiki/Canonical_correlation
@@ -1365,7 +1357,6 @@ class RDCPerm(IndTest):
 
     def compute_stat(self, pdata, return_eigvals=False):
         X, Y = pdata.xy()
-        n = pdata.sample_size()
         if self.use_copula:
             # copula transform to both X and Y
             cop_map = fea.MarginalCDFMap() 
@@ -1380,7 +1371,7 @@ class RDCPerm(IndTest):
         Yrff = self.fmy.gen_features(Ytran) # n x Dy
 
         # CCA 
-        evals, Vx, Vy = util.cca(Xrff, Yrff, reg=1e-5)
+        evals, _, _ = util.cca(Xrff, Yrff, reg=1e-5)
         minD = min(Xrff.shape[1], Yrff.shape[1])
         if return_eigvals:
             return evals[0], evals[:minD]
@@ -1437,7 +1428,7 @@ class RDCPerm(IndTest):
                 Yfs = Yf[ind, :]
 
                 # shift Yfs n-1 times 
-                for s in range(n-1):
+                for _ in range(n-1):
                     if r >= n_permute:
                         break
                     Yfs = np.roll(Yfs, 1, axis=0)
@@ -1448,7 +1439,7 @@ class RDCPerm(IndTest):
                     CyyICyx = CyyI.dot(Cxy.T)
                     
                     # problem for a
-                    avals, aV = np.linalg.eig(CxxICxy.dot(CyyICyx))
+                    avals, _ = np.linalg.eig(CxxICxy.dot(CyyICyx))
                     # problem for b
                     #bvals, bV = np.linalg.eig(CyyICyx.dot(CxxICxy))
                     st = np.max(np.real(avals))
@@ -1530,8 +1521,6 @@ def kl_kgauss_median(pdata):
     Get two Gaussian kernels constructed with the median heuristic.
     """
     xtr, ytr = pdata.xy()
-    dx = xtr.shape[1]
-    dy = ytr.shape[1]
     medx2 = util.meddistance(xtr, subsample=1000)**2
     medy2 = util.meddistance(ytr, subsample=1000)**2
     # for classification problem, Y can be 0, 1. Subsampling in the computation 

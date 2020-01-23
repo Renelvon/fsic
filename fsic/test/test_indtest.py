@@ -28,8 +28,6 @@ def kl_median(pdata):
     Randomize V, W from the standard Gaussian distribution.
     """
     xtr, ytr = pdata.xy()
-    dx = xtr.shape[1]
-    dy = ytr.shape[1]
     medx2 = util.meddistance(xtr)**2
     medy2 = util.meddistance(ytr)**2
     k = kernel.KGauss(medx2)
@@ -91,8 +89,8 @@ class TestNFSIC(unittest.TestCase):
 
                 # make sure that the relative frequency of the histogram does 
                 # not differ much.
-                freq_a, edge_a = np.histogram(arr)
-                freq_n, edge_n = np.histogram(arr_naive)
+                freq_a, _ = np.histogram(arr)
+                freq_n, _ = np.histogram(arr_naive)
                 nfreq_a = freq_a/float(np.sum(freq_a))
                 nfreq_n = freq_n/float(np.sum(freq_n))
                 arr_diff = np.abs(nfreq_a - nfreq_n)
@@ -167,19 +165,16 @@ class TestFiniteFeatureHSIC(unittest.TestCase):
                 sigmay2 = 0.8
                 fmx = fea.RFFKGauss(sigmax2, n_features=n_features, seed=s+3)
                 fmy = fea.RFFKGauss(sigmay2, n_features=n_features, seed=s+23)
-                ffhsic = it.FiniteFeatureHSIC(fmx, fmy, n_simulate=n_simulate, alpha=0.05, seed=s+89)
 
                 Zx = fmx.gen_features(X)
                 Zy = fmy.gen_features(Y)
                 list_perm = it.FiniteFeatureHSIC.list_permute(X, Y, fmx, fmy, n_permute=n_permute, seed=s+82)
-                list_spectral, eigx, eigy =\
-                    it.FiniteFeatureHSIC.list_permute_spectral(Zx, Zy,
-                            n_simulate=n_simulate, seed=s+119)
+                list_spectral, _, _ = it.FiniteFeatureHSIC.list_permute_spectral(Zx, Zy, n_simulate=n_simulate, seed=s+119)
 
                 # make sure that the relative frequency of the histogram does 
                 # not differ much.
-                freq_p, edge_p = np.histogram(list_perm)
-                freq_s, edge_s = np.histogram(list_spectral)
+                freq_p, _ = np.histogram(list_perm)
+                freq_s, _ = np.histogram(list_spectral)
                 nfreq_p = freq_p/float(np.sum(freq_p))
                 nfreq_s = freq_s/float(np.sum(freq_s))
                 arr_diff = np.abs(nfreq_p - nfreq_s)
@@ -225,7 +220,7 @@ class TestFuncs(unittest.TestCase):
         V = np.random.randn(J, dx)
         W = np.random.randn(J, dy)
 
-        nfsic, mean, cov = it.nfsic(X, Y, k, l, V, W, reg=0)
+        nfsic, _, _ = it.nfsic(X, Y, k, l, V, W, reg=0)
 
         self.assertAlmostEqual(np.imag(nfsic), 0)
         self.assertGreater(nfsic, 0)

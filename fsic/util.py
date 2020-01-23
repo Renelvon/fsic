@@ -293,7 +293,7 @@ def bound_by_data(Z, Data):
 
     Return a projected Z of size m x d.
     """
-    n, d = Z.shape
+    n, _ = Z.shape
     Low = np.min(Data, 0)
     Up = np.max(Data, 0)
     LowMat = np.repeat(Low[np.newaxis, :], n, axis=0)

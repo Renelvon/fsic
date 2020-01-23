@@ -13,7 +13,7 @@ def plot_2d_data(pdata):
     Return a figure handle
     """
     X, Y = pdata.xy()
-    n, d = X.shape 
+    _, d = X.shape 
     if d != 2:
         raise ValueError('d must be 2 to plot.') 
     # plot
@@ -72,7 +72,6 @@ def plot_prob_reject(ex, fname, h1_true, func_xvalues, xlabel,
     
     func_names = [f.__name__ for f in results['method_job_funcs'] ]
     for i in range(n_methods):    
-        te_proportion = 1.0 - results['tr_proportion']
         fmt = line_styles[func_names[i]]
         #plt.errorbar(ns*te_proportion, mean_rejs[:, i], std_pvals[:, i])
         method_label = method_labels[func_names[i]]
@@ -123,7 +122,6 @@ def plot_runtime(ex, fname, func_xvalues, xlabel, func_title=None):
     
     func_names = [f.__name__ for f in results['method_job_funcs'] ]
     for i in range(n_methods):    
-        te_proportion = 1.0 - results['tr_proportion']
         fmt = line_styles[func_names[i]]
         #plt.errorbar(ns*te_proportion, mean_rejs[:, i], std_pvals[:, i])
         method_label = method_labels[func_names[i]]

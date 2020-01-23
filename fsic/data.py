@@ -26,8 +26,8 @@ class PairedData(object):
         # short description to be used as a plot label
         self.label = label
 
-        nx, dx = X.shape
-        ny, dy = Y.shape
+        nx, _ = X.shape
+        ny, _ = Y.shape
         if nx != ny:
             raise ValueError('Data size of the paired sample must be the same.')
 
@@ -78,8 +78,8 @@ class PairedData(object):
         Return (PairedData for tr, PairedData for te)"""
         X = self.X
         Y = self.Y
-        nx, dx = X.shape
-        ny, dy = Y.shape
+        nx, _ = X.shape
+        ny, _ = Y.shape
         if nx != ny:
             raise ValueError('Require nx = ny')
         Itr, Ite = util.tr_te_indices(nx, tr_proportion, seed)
