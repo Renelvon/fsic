@@ -2,6 +2,7 @@ recursive-include fsic *.py
 recursive-include ipynb *.ipynb
 
 include AUTHORS.md
+include CHANGELOG.md
 include LICENSE
 include README.md
 
@@ -9,3 +10,5 @@ include Makefile
 include requirements.txt
 include setup.cfg
 include setup.py
+
+include .pylintrc

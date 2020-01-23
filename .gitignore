@@ -12,3 +12,7 @@ fsic/result/*
 *.aux
 .dropbox.attr
 ref/
+
+*.egg-info/
+build/
+dist/

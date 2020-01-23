@@ -3,12 +3,17 @@ PIP=pip
 PYTHON=python2
 SETUP=setup.py
 
-.PHONY: all build clean dist distclean install installcheck test uninstall
+.PHONY: all build check clean dist distclean install installcheck test uninstall
 
 all: build
 
 build:
 	$(PYTHON) $(SETUP) build
+
+check:
+	check-manifest
+	pylint setup.py $(NAME)
+	pyroma -n 10 .
 
 clean:
 	git clean -xfd
