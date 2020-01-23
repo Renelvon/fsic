@@ -53,11 +53,10 @@ class TestNFSIC(unittest.TestCase):
         self.nfsic = it.NFSIC(k, l, V, W, alpha=0.01)
         self.pdata_mean = pdata_mean
 
+    @unittest.skip("Should reject. Cannot assert this for sure.")
     def test_perform_test(self):
         test_result = self.nfsic.perform_test(self.pdata_mean)
-        # should reject. Cannot assert this for sure.
-        #self.assertTrue(test_result['h0_rejected'], 'Test should reject H0')
-        pass 
+        self.assertTrue(test_result['h0_rejected'], 'Test should reject H0')
 
     def test_compute_stat(self):
         stat = self.nfsic.compute_stat(self.pdata_mean)
@@ -100,9 +99,6 @@ class TestNFSIC(unittest.TestCase):
                 self.assertTrue(np.all(arr_diff <= 0.2))
 
 
-    def tearDown(self):
-        pass
-
 class TestGaussNFSIC(unittest.TestCase):
     def setUp(self):
         n = 300
@@ -118,19 +114,14 @@ class TestGaussNFSIC(unittest.TestCase):
         self.gnfsic = it.GaussNFSIC(gwx2, gwy2, V, W, alpha=0.01)
         self.pdata_mean = pdata_mean
 
+    @unittest.skip("Should reject. Cannot assert this for sure.")
     def test_perform_test(self):
         test_result = self.gnfsic.perform_test(self.pdata_mean)
-        # should reject. Cannot assert this for sure.
-        #self.assertTrue(test_result['h0_rejected'], 'Test should reject H0')
-        pass 
+        self.assertTrue(test_result['h0_rejected'], 'Test should reject H0')
 
     def test_compute_stat(self):
         stat = self.gnfsic.compute_stat(self.pdata_mean)
         self.assertGreater(stat, 0)
-
-
-    def tearDown(self):
-        pass
 
 
 class TestQuadHSIC(unittest.TestCase):
@@ -158,8 +149,6 @@ class TestQuadHSIC(unittest.TestCase):
         np.testing.assert_array_almost_equal(arr_hsic, arr_hsic_naive)
                 #'Permuted HSIC values are not the same as the naive implementation.')
 
-    def tearDown(self):
-        pass
 
 class TestFiniteFeatureHSIC(unittest.TestCase):
     def test_list_permute_spectral(self):
@@ -201,9 +190,6 @@ class TestFiniteFeatureHSIC(unittest.TestCase):
 
 class TestRDC(unittest.TestCase):
 
-    def setUp(self):
-        pass 
-
     def test_rdc(self):
         feature_pairs = 10
         n = 30
@@ -219,10 +205,6 @@ class TestRDC(unittest.TestCase):
             abs_evals = np.abs(evals)
             self.assertTrue(np.all(abs_evals >= 0))
             self.assertTrue(np.all(abs_evals <= 1))
-
-
-    def tearDown(self):
-        pass
 
 
 class TestFuncs(unittest.TestCase):

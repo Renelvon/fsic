@@ -35,8 +35,6 @@ class TestNumpySeedContext(unittest.TestCase):
             np.testing.assert_array_almost_equal(A1, A2)
             np.testing.assert_array_almost_equal(B1, B2)
 
-    def tearDown(self):
-        pass
 
 class TestCCA(unittest.TestCase):
     def test_bounded(self):
