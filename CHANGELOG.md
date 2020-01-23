@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [0.1.1] - 2020-24-01
+### Added
+- Linting via [pylint](https://www.pylint.org/).
+- Package layout checking via [pyroma](https://pypi.org/project/pyroma/).
+- Source distribution completeness checking via [check-manifest](https://pypi.org/project/check-manifest/).
+
+
 ## [0.1.0] - 2020-23-01
 ### Added
 - AUTHORS.md to make attribution easy; @renelvon as maintainer.
