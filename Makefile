@@ -12,6 +12,7 @@ build:
 
 check:
 	check-manifest
+	pylint setup.py $(NAME)
 	pyroma -n 10 .
 
 clean:
