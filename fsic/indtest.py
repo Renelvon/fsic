@@ -5,8 +5,6 @@ Module containing many types of independence testing methods.
 __author__ = 'wittawat'
 
 from abc import ABCMeta, abstractmethod
-from fsic.data import PairedData
-import matplotlib.pyplot as plt
 import numpy as np
 #from numba import jit
 import fsic.data as data
@@ -15,13 +13,11 @@ import fsic.feature as fea
 #from fsic.util import ContextTimer
 import fsic.kernel as kernel
 import logging
-import os
 
 import scipy.stats as stats
 import theano
 import theano.tensor as tensor
 import theano.tensor.nlinalg as nlinalg
-import theano.tensor.slinalg as slinalg
 
 class IndTest(object):
     """Abstract class for an independence test for paired sample."""

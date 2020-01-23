@@ -5,13 +5,7 @@ Module for testing data module.
 __author__ = 'wittawat'
 
 import numpy as np
-import matplotlib.pyplot as plt
 import fsic.data as data
-import fsic.util as util
-import fsic.kernel as kernel
-import fsic.indtest as it
-import fsic.glo as glo
-import scipy.stats as stats
 
 import unittest
 

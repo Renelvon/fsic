@@ -2,10 +2,8 @@ __author__ = 'wittawat'
 
 from abc import ABCMeta, abstractmethod
 import math
-import matplotlib.pyplot as plt
 import numpy as np
 import fsic.util as util
-import matplotlib.pyplot as plt
 import scipy.stats as stats
 
 class PairedData(object):
