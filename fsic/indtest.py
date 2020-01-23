@@ -750,13 +750,13 @@ def nfsic_grid_search_kernel(pdata, V, W, list_kernelx, list_kernely):
     n_cand_x = len(list_kernelx)
     n_cand_y = len(list_kernely)
     lambs = np.zeros((n_cand_x, n_cand_y))
-    for i in xrange(n_cand_x):
+    for i in range(n_cand_x):
         k = list_kernelx[i]
         K = k.eval(X, V) # n x J
         mean_k = np.mean(K, 0)
         Kt = K - mean_k
 
-        for j in xrange(n_cand_y):
+        for j in range(n_cand_y):
             l = list_kernely[j]
             L = l.eval(Y, W) # n x J
             try:
