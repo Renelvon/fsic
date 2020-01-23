@@ -2,7 +2,7 @@
 Module containing many types of independence testing methods.
 """
 
-__author__ = 'wittawat'
+from __future__ import print_function
 
 from abc import ABCMeta, abstractmethod
 import numpy as np

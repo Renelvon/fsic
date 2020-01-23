@@ -1,6 +1,6 @@
 """A module containing convenient methods for general machine learning"""
 
-__author__ = 'wittawat'
+from __future__ import print_function
 
 import numpy as np
 import time 
