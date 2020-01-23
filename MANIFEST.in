@@ -2,6 +2,7 @@ recursive-include fsic *.py
 recursive-include ipynb *.ipynb
 
 include AUTHORS.md
+include CHANGELOG.md
 include LICENSE
 include README.md
 
