@@ -561,7 +561,7 @@ class PS2DSinFreq(PairedSource):
 
 
 class PSSinFreq(PairedSource):
-    """
+    r"""
     X, Y follow the density proportional to 
         1+\prod_{i=1}^{d} [ sin(w*x_i)sin(w*y_i) ]
     w is the frequency. The higher w, the close the density is to a uniform
@@ -766,7 +766,7 @@ class PSIndSameGauss(PairedSource):
 
 
 class PSPairwiseSign(PairedSource):
-    """
+    r"""
     A toy problem given in section 5.3 of 
 
     Large-Scale Kernel Methods for Independence Testing
