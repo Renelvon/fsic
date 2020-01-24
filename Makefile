@@ -1,6 +1,6 @@
 NAME=fsic
 PIP=pip
-PYTHON=python2
+PYTHON=python3
 SETUP=setup.py
 
 .PHONY: all build check clean dist distclean install installcheck test uninstall
