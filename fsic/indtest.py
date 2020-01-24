@@ -356,15 +356,13 @@ class GaussNFSIC(NFSIC):
         - If the lb, ub bounds are None, use fraction of the median heuristics 
             to automatically set the bounds.
         
-        Return (V test_locs, W test_locs, gaussian width for x, gaussian width
-            for y, info log)
-        """
-
-        """
         Optimize the empirical version of Lambda(T) i.e., the criterion used 
         to optimize the test locations, for the test based 
         on difference of mean embeddings with Gaussian kernel. 
         Also optimize the Gaussian width.
+
+        Return (V test_locs, W test_locs, gaussian width for x, gaussian width
+            for y, info log)
         """
         J = n_test_locs
         # Use grid search to initialize the gwidths for both X, Y

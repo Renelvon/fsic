@@ -77,16 +77,14 @@ def plot_prob_reject(ex, fname, h1_true, func_xvalues, xlabel, func_title=None):
         # plt.errorbar(ns*te_proportion, mean_rejs[:, i], std_pvals[:, i])
         method_label = method_labels[func_names[i]]
         plt.plot(xvalues, mean_rejs[:, i], fmt, label=method_label)
-    """
-    else:
-        # h0 is true 
-        z = stats.norm.isf( (1-confidence)/2.0)
-        for i in range(n_methods):
-            phat = mean_rejs[:, i]
-            conf_iv = z*(phat*(1-phat)/repeats)**0.5
-            #plt.errorbar(test_sizes, phat, conf_iv, fmt=line_styles[i], label=method_labels[i])
-            plt.plot(test_sizes, mean_rejs[:, i], line_styles[i], label=method_labels[i])
-    """
+    # else:
+    #     # h0 is true 
+    #     z = stats.norm.isf( (1-confidence)/2.0)
+    #     for i in range(n_methods):
+    #         phat = mean_rejs[:, i]
+    #         conf_iv = z*(phat*(1-phat)/repeats)**0.5
+    #         #plt.errorbar(test_sizes, phat, conf_iv, fmt=line_styles[i], label=method_labels[i])
+    #         plt.plot(test_sizes, mean_rejs[:, i], line_styles[i], label=method_labels[i])
 
     ylabel = "Test power" if h1_true else "Type-I error"
     plt.ylabel(ylabel)
