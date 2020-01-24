@@ -326,7 +326,6 @@ def one_of_K_code(arr):
 def fullprint(*args, **kwargs):
     "https://gist.github.com/ZGainsforth/3a306084013633c52881"
     from pprint import pprint
-    import numpy
     opt = numpy.get_printoptions()
     numpy.set_printoptions(threshold='nan')
     pprint(*args, **kwargs)

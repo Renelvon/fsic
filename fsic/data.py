@@ -195,7 +195,6 @@ class PSStraResample(PairedSource):
             raise ValueError('Cannot subsample %d points from %d points.'%(n, n_sam))
 
         X, Y = pdata.xy()
-        import math
         # permute X, Y. Keep pairs 
         I = util.subsample_ind(n_sam, n_sam, seed=seed+3)
         X = X[I, :]
