@@ -13,6 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Package layout checking via [pyroma](https://pypi.org/project/pyroma/).
 - Source distribution completeness checking via [check-manifest](https://pypi.org/project/check-manifest/).
 
+### Changed
+- `print` statements to invocations of `print()`.
+- Format repository using black
+- Minor code refactorings.
+- Euclidean division now explicitly uses the `//` operator.
+
+### Removed
+- Traces of Python2-only features, like `xrange` and non-iterating `range`.
+
 
 ## [0.1.0] - 2020-23-01
 ### Added
