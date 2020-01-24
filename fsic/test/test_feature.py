@@ -13,9 +13,6 @@ import unittest
 
 
 class TestMarginalCDFMap(unittest.TestCase):
-    def setUp(self):
-        pass
-
     def test_general(self):
         n = 30
         d = 4
@@ -31,17 +28,8 @@ class TestMarginalCDFMap(unittest.TestCase):
         self.assertTrue(np.all(Z >= 0))
         self.assertTrue(np.all(Z <= 1))
 
-    def tearDown(self):
-        pass
-
-
-# end class TestMarginalCDFMap
-
 
 class TestRFFKGauss(unittest.TestCase):
-    def setUp(self):
-        pass
-
     def test_general(self):
         n = 31
         d = 3
@@ -78,12 +66,6 @@ class TestRFFKGauss(unittest.TestCase):
         self.assertLessEqual(diff / n ** 2, 0.5)
 
         # print 'fro diff: %.3f'%np.linalg.norm( (Krff - K)/n**2, 'fro')
-
-    def tearDown(self):
-        pass
-
-
-# end class TestMarginalCDFMap
 
 
 class TestNystromFeatureMap(unittest.TestCase):

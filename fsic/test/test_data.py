@@ -11,9 +11,6 @@ import unittest
 
 
 class TestPairedData(unittest.TestCase):
-    def setUp(self):
-        pass
-
     def test_add(self):
         n1 = 30
         n2 = 20
@@ -43,12 +40,6 @@ class TestPairedData(unittest.TestCase):
         self.assertEqual(pdata.sample_size(), n1 + n2)
         self.assertEqual(pdata1.sample_size(), n1)
         self.assertEqual(pdata2.sample_size(), n2)
-
-    def tearDown(self):
-        pass
-
-
-# end class TestPairedData
 
 
 class TestPSStraResample(unittest.TestCase):
@@ -116,9 +107,6 @@ class TestPSGaussNoiseDim(unittest.TestCase):
 
 
 class TestPS2DSinFreq(unittest.TestCase):
-    def setUp(self):
-        pass
-
     def test_sample(self):
         ps = data.PS2DSinFreq(1)
         for n in [5, 613]:
@@ -130,17 +118,8 @@ class TestPS2DSinFreq(unittest.TestCase):
             self.assertEqual(Y.shape[1], 1)
             self.assertEqual(XY.shape[0], n)
 
-    def tearDown(self):
-        pass
-
-
-# end class TestPS2DSinFreq
-
 
 class TestPSPairwiseSign(unittest.TestCase):
-    def setUp(self):
-        pass
-
     def test_dim(self):
         n = 10
         for d in [2, 4]:
@@ -152,6 +131,3 @@ class TestPSPairwiseSign(unittest.TestCase):
             self.assertEqual(Y.shape[0], n)
             self.assertEqual(X.shape[1], d)
             self.assertEqual(Y.shape[1], 1)
-
-    def tearDown(self):
-        pass

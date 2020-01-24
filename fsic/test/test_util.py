@@ -11,9 +11,6 @@ import unittest
 
 
 class TestNumpySeedContext(unittest.TestCase):
-    def setUp(self):
-        pass
-
     def test_context_deterministic(self):
         for s in [2, 98, 10]:
             with util.NumpySeedContext(seed=s):
