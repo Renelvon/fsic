@@ -6,6 +6,7 @@ import numpy as np
 import fsic.util as util
 import scipy.stats as stats
 
+
 class PairedData(object):
     """Class representing paired data for independence testing
 
@@ -27,29 +28,29 @@ class PairedData(object):
         nx, _ = X.shape
         ny, _ = Y.shape
         if nx != ny:
-            raise ValueError('Data size of the paired sample must be the same.')
+            raise ValueError("Data size of the paired sample must be the same.")
 
         if not np.all(np.isfinite(X)):
-            print('X:')
+            print("X:")
             print(util.fullprint(X))
-            raise ValueError('Not all elements in X are finite.')
+            raise ValueError("Not all elements in X are finite.")
 
         if not np.all(np.isfinite(Y)):
-            print('Y:')
+            print("Y:")
             print(util.fullprint(Y))
-            raise ValueError('Not all elements in Y are finite.')
+            raise ValueError("Not all elements in Y are finite.")
 
     def __str__(self):
         mean_x = np.mean(self.X, 0)
-        std_x = np.std(self.X, 0) 
+        std_x = np.std(self.X, 0)
         mean_y = np.mean(self.Y, 0)
-        std_y = np.std(self.Y, 0) 
+        std_y = np.std(self.Y, 0)
         prec = 4
-        desc = ''
-        desc += 'E[x] = %s \n'%(np.array_str(mean_x, precision=prec ) )
-        desc += 'E[y] = %s \n'%(np.array_str(mean_y, precision=prec ) )
-        desc += 'Std[x] = %s \n' %(np.array_str(std_x, precision=prec))
-        desc += 'Std[y] = %s \n' %(np.array_str(std_y, precision=prec))
+        desc = ""
+        desc += "E[x] = %s \n" % (np.array_str(mean_x, precision=prec))
+        desc += "E[y] = %s \n" % (np.array_str(mean_y, precision=prec))
+        desc += "Std[x] = %s \n" % (np.array_str(std_x, precision=prec))
+        desc += "Std[y] = %s \n" % (np.array_str(std_y, precision=prec))
         return desc
 
     def dx(self):
@@ -79,19 +80,19 @@ class PairedData(object):
         nx, _ = X.shape
         ny, _ = Y.shape
         if nx != ny:
-            raise ValueError('Require nx = ny')
+            raise ValueError("Require nx = ny")
         Itr, Ite = util.tr_te_indices(nx, tr_proportion, seed)
-        label = '' if self.label is None else self.label
-        tr_data = PairedData(X[Itr, :], Y[Itr, :], 'tr_' + label)
-        te_data = PairedData(X[Ite, :], Y[Ite, :], 'te_' + label)
+        label = "" if self.label is None else self.label
+        tr_data = PairedData(X[Itr, :], Y[Itr, :], "tr_" + label)
+        te_data = PairedData(X[Ite, :], Y[Ite, :], "te_" + label)
         return (tr_data, te_data)
 
     def subsample(self, n, seed=87):
         """Subsample without replacement. Return a new PairedData """
         if n > self.X.shape[0] or n > self.Y.shape[0]:
-            raise ValueError('n should not be larger than sizes of X, Y.')
-        ind_x = util.subsample_ind( self.X.shape[0], n, seed )
-        ind_y = util.subsample_ind( self.Y.shape[0], n, seed )
+            raise ValueError("n should not be larger than sizes of X, Y.")
+        ind_x = util.subsample_ind(self.X.shape[0], n, seed)
+        ind_y = util.subsample_ind(self.Y.shape[0], n, seed)
         return PairedData(self.X[ind_x, :], self.Y[ind_y, :], self.label)
 
     def clone(self):
@@ -117,8 +118,8 @@ class PairedData(object):
         return PairedData(nX, nY)
 
 
+### end PairedData class
 
-### end PairedData class        
 
 class PairedSource(object):
     """A data source where it is possible to resample. Subclasses may prefix 
@@ -142,12 +143,12 @@ class PairedSource(object):
     def dx(self):
         """Return the dimension of X"""
         raise NotImplementedError()
-    
+
     @abstractmethod
     def dy(self):
         """Return the dimension of Y"""
         raise NotImplementedError()
-        
+
 
 class PSResample(PairedSource):
     """
@@ -175,13 +176,14 @@ class PSStraResample(PairedSource):
     from the specified PairedData. 
     The implementation is only approximately correctly.
     """
+
     def __init__(self, pdata, pivot):
         """
         pivot: a one-dimensional numpy array of the same size as pdata.sample_size()
             indicating the class of each point.
         """
         if len(pivot) != pdata.sample_size():
-            raise ValueError('pivot must have the same length as the data.')
+            raise ValueError("pivot must have the same length as the data.")
         self.pdata = pdata
         self.pivot = pivot
         uniq, counts = np.unique(pivot, return_counts=True)
@@ -192,34 +194,41 @@ class PSStraResample(PairedSource):
         pdata = self.pdata
         n_sam = pdata.sample_size()
         if n > n_sam:
-            raise ValueError('Cannot subsample %d points from %d points.'%(n, n_sam))
+            raise ValueError(
+                "Cannot subsample %d points from %d points." % (n, n_sam)
+            )
 
         X, Y = pdata.xy()
-        # permute X, Y. Keep pairs 
-        I = util.subsample_ind(n_sam, n_sam, seed=seed+3)
+        # permute X, Y. Keep pairs
+        I = util.subsample_ind(n_sam, n_sam, seed=seed + 3)
         X = X[I, :]
         Y = Y[I, :]
         perm_pivot = self.pivot[I]
         list_chosenI = []
         for ui, v in enumerate(self._uniques):
-            Iv  = np.nonzero(np.abs(perm_pivot - v) <= 1e-8)
+            Iv = np.nonzero(np.abs(perm_pivot - v) <= 1e-8)
             Iv = Iv[0]
             niv = self._counts[ui]
-            # ceil guarantees that at least 1 instance will be chosen 
-            # from each class. 
-            n_class = int(math.ceil(niv/float(n_sam)*n))
+            # ceil guarantees that at least 1 instance will be chosen
+            # from each class.
+            n_class = int(math.ceil(niv / float(n_sam) * n))
             chosenI = Iv[:n_class]
-            #print chosenI
+            # print chosenI
             list_chosenI.append(chosenI)
         final_chosenI = np.hstack(list_chosenI)
-        #print final_chosenI
-        reduceI = util.subsample_ind(len(final_chosenI), min(n, len(final_chosenI)), seed+5)
+        # print final_chosenI
+        reduceI = util.subsample_ind(
+            len(final_chosenI), min(n, len(final_chosenI)), seed + 5
+        )
         final_chosenI = final_chosenI[reduceI]
-        assert len(final_chosenI) == n, 'final_chosenI has length %d which is not n=%d'%(len(final_chosenI), n)
+        assert len(final_chosenI) == n, (
+            "final_chosenI has length %d which is not n=%d"
+            % (len(final_chosenI), n)
+        )
 
         Xsam = X[final_chosenI, :]
         Ysam = Y[final_chosenI, :]
-        new_label = None if pdata.label is None else pdata.label + '_stra'
+        new_label = None if pdata.label is None else pdata.label + "_stra"
         return PairedData(Xsam, Ysam, label=new_label)
 
     def dx(self):
@@ -228,7 +237,9 @@ class PSStraResample(PairedSource):
     def dy(self):
         return self.pdata.dy()
 
+
 # end PSStraResample
+
 
 class PSNullShuffle(PairedSource):
     """
@@ -238,22 +249,23 @@ class PSNullShuffle(PairedSource):
     Essentially, PSNullResample = PSNullShuffle + PSResample.
     Decorator pattern.
     """
+
     def __init__(self, ps):
-        self.ps = ps 
+        self.ps = ps
 
     def sample(self, n, seed=7):
         if n == 1:
-            pdata = self.ps.sample(2, seed=seed+27)
+            pdata = self.ps.sample(2, seed=seed + 27)
             X, Y = pdata.xy()
             nX = X[[0], :]
             nY = Y[[1], :]
         else:
-            pdata = self.ps.sample(n, seed=seed+27)
+            pdata = self.ps.sample(n, seed=seed + 27)
             nX, Y = pdata.xy()
             ind_shift1 = np.roll(tuple(range(n)), 1)
             nY = Y[ind_shift1, :]
 
-        new_label = 'null_shuffle'
+        new_label = "null_shuffle"
         return PairedData(nX, nY, label=new_label)
 
     def dx(self):
@@ -262,8 +274,8 @@ class PSNullShuffle(PairedSource):
     def dy(self):
         return self.ps.dy()
 
-# end PSNullShuffle
 
+# end PSNullShuffle
 
 
 class PSNullResample(PairedSource):
@@ -284,18 +296,22 @@ class PSNullResample(PairedSource):
 
     def sample(self, n, seed=981):
         if n > self.pdata.sample_size():
-            raise ValueError('cannot sample more points than what the original dataset has')
-        X, Y =  self.pdata.xy()
+            raise ValueError(
+                "cannot sample more points than what the original dataset has"
+            )
+        X, Y = self.pdata.xy()
         if n == 1:
             ind = util.subsample_ind(self.pdata.sample_size(), 2, seed=seed)
-            nX = X[[ind[0]], :] 
+            nX = X[[ind[0]], :]
             nY = Y[[ind[1]], :]
         else:
             ind = util.subsample_ind(self.pdata.sample_size(), n, seed=seed)
             nX = X[ind, :]
             ind_shift1 = np.roll(ind, 1)
             nY = Y[ind_shift1, :]
-        new_label = None if self.pdata.label is None else self.pdata.label + '_shuf'
+        new_label = (
+            None if self.pdata.label is None else self.pdata.label + "_shuf"
+        )
         return PairedData(nX, nY, label=new_label)
 
     def dx(self):
@@ -304,7 +320,9 @@ class PSNullResample(PairedSource):
     def dy(self):
         return self.pdata.dy()
 
+
 # end class PSNullResample
+
 
 class PSStandardize(PairedSource):
     """
@@ -314,14 +332,15 @@ class PSStandardize(PairedSource):
 
     Decorator pattern.
     """
+
     def __init__(self, ps):
         """
         ps: a PairedSource
         """
-        self.ps = ps 
+        self.ps = ps
 
     def sample(self, n, seed=55):
-        ps = self.ps 
+        ps = self.ps
         pdata = ps.sample(n, seed=seed)
         X, Y = pdata.xy()
 
@@ -329,16 +348,18 @@ class PSStandardize(PairedSource):
         Zy = util.standardize(Y)
         assert np.all(np.isfinite(Zx))
         assert np.all(np.isfinite(Zy))
-        new_label = None if pdata.label is None else pdata.label + '_std'
+        new_label = None if pdata.label is None else pdata.label + "_std"
         return PairedData(Zx, Zy, label=new_label)
-    
+
     def dx(self):
         return self.ps.dx()
 
     def dy(self):
         return self.ps.dy()
 
+
 # end of class PSStandardize
+
 
 class PSGaussNoiseDims(PairedSource):
     """
@@ -347,6 +368,7 @@ class PSGaussNoiseDims(PairedSource):
 
     Decorator pattern.
     """
+
     def __init__(self, ps, ndx, ndy):
         """
         ndx: number of noise dimensions for X 
@@ -354,12 +376,12 @@ class PSGaussNoiseDims(PairedSource):
         """
         assert ndx >= 0
         assert ndy >= 0
-        self.ps = ps 
-        self.ndx = ndx 
+        self.ps = ps
+        self.ndx = ndx
         self.ndy = ndy
-    
+
     def sample(self, n, seed=44):
-        with util.NumpySeedContext(seed=seed+100):
+        with util.NumpySeedContext(seed=seed + 100):
             NX = np.random.randn(n, self.ndx)
             NY = np.random.randn(n, self.ndy)
 
@@ -367,8 +389,11 @@ class PSGaussNoiseDims(PairedSource):
             X, Y = pdata.xy()
             Zx = np.hstack((X, NX))
             Zy = np.hstack((Y, NY))
-            new_label = None if pdata.label is None else \
-                pdata.label + '_ndx%d'%self.ndx + '_ndy%d'%self.ndy
+            new_label = (
+                None
+                if pdata.label is None
+                else pdata.label + "_ndx%d" % self.ndx + "_ndy%d" % self.ndy
+            )
             return PairedData(Zx, Zy, label=new_label)
 
     def dx(self):
@@ -377,7 +402,9 @@ class PSGaussNoiseDims(PairedSource):
     def dy(self):
         return self.ps.dy() + self.ndy
 
+
 # end of class PSGaussNoiseDims
+
 
 class PSFunc(PairedSource):
     """
@@ -390,7 +417,7 @@ class PSFunc(PairedSource):
         f: function such that Y = f(X). (n x dx)  |-> n x dy
         px: prior on X. Used to generate X. n |-> n x dx
         """
-        self.f = f 
+        self.f = f
         self.px = px
         x = px(2)
         y = f(x)
@@ -401,19 +428,20 @@ class PSFunc(PairedSource):
         rstate = np.random.get_state()
         np.random.seed(seed)
 
-        px = self.px 
-        X = px(n )
-        f = self.f 
-        Y = f(X )
+        px = self.px
+        X = px(n)
+        f = self.f
+        Y = f(X)
 
         np.random.set_state(rstate)
-        return PairedData(X, Y, label='psfunc')
+        return PairedData(X, Y, label="psfunc")
 
     def dx(self):
         return self.dx
 
     def dy(self):
         return self.dy
+
 
 class PSUnifRotateNoise(PairedSource):
     """
@@ -445,28 +473,30 @@ class PSUnifRotateNoise(PairedSource):
             return sample2d
 
         rstate = np.random.get_state()
-        np.random.seed(seed+1)
+        np.random.seed(seed + 1)
 
         # draw n*noise_dim points from U(-1, 1)
-        Xnoise = stats.uniform.rvs(loc=-1, scale=2,
-                size=noise_dim*n).reshape(n, noise_dim)
-        Ynoise = stats.uniform.rvs(loc=-1, scale=2,
-                size=noise_dim*n).reshape(n, noise_dim)
+        Xnoise = stats.uniform.rvs(loc=-1, scale=2, size=noise_dim * n).reshape(
+            n, noise_dim
+        )
+        Ynoise = stats.uniform.rvs(loc=-1, scale=2, size=noise_dim * n).reshape(
+            n, noise_dim
+        )
 
-        # concatenate the noise dims to the 2d problem 
+        # concatenate the noise dims to the 2d problem
         X2d, Y2d = sample2d.xy()
         X = np.hstack((X2d, Xnoise))
         Y = np.hstack((Y2d, Ynoise))
 
         np.random.set_state(rstate)
 
-        return PairedData(X, Y, label='rot_unif_noisedim%d'%(noise_dim))
+        return PairedData(X, Y, label="rot_unif_noisedim%d" % (noise_dim))
 
     def dx(self):
-        return 1+ self.noise_dim
+        return 1 + self.noise_dim
 
     def dy(self):
-        return 1+ self.noise_dim
+        return 1 + self.noise_dim
 
 
 class PS2DSinFreq(PairedSource):
@@ -477,6 +507,7 @@ class PS2DSinFreq(PairedSource):
 
     This dataset was used in Arthur Gretton's lecture notes.
     """
+
     def __init__(self, freq):
         """
         freq: a nonnegative floating-point number
@@ -488,7 +519,7 @@ class PS2DSinFreq(PairedSource):
         pdata = ps.sample(n, seed=seed)
         X, Y = pdata.xy()
 
-        return PairedData(X, Y, label='sin_freq%.2f'%self.freq)
+        return PairedData(X, Y, label="sin_freq%.2f" % self.freq)
 
     def _sample_sequential(self, n, seed=81):
         """
@@ -501,28 +532,31 @@ class PS2DSinFreq(PairedSource):
         w = self.freq
         sam = np.zeros((n, 2))
         ind = 0
-        #unif_den = 1.0/(4*math.pi**2)
-        #ref_bound = 2.0/unif_den
-        while ind<n:
+        # unif_den = 1.0/(4*math.pi**2)
+        # ref_bound = 2.0/unif_den
+        while ind < n:
             # uniformly randomly draw x, y from U(-pi, pi)
-            x = stats.uniform.rvs(loc=-math.pi, scale=2*math.pi, size=1)
-            y = stats.uniform.rvs(loc=-math.pi, scale=2*math.pi, size=1)
-            if stats.uniform.rvs() < (1+np.sin(w*x)*np.sin(w*y))/2.0:
-                # accept 
+            x = stats.uniform.rvs(loc=-math.pi, scale=2 * math.pi, size=1)
+            y = stats.uniform.rvs(loc=-math.pi, scale=2 * math.pi, size=1)
+            if stats.uniform.rvs() < (1 + np.sin(w * x) * np.sin(w * y)) / 2.0:
+                # accept
                 sam[ind, :] = [x, y]
                 ind = ind + 1
 
         np.random.set_state(rstate)
-        return PairedData(sam[:, [0]], sam[:, [1]], label='sin_freq%.2f'%self.freq)
-
+        return PairedData(
+            sam[:, [0]], sam[:, [1]], label="sin_freq%.2f" % self.freq
+        )
 
     def dx(self):
         return 1
-    
+
     def dy(self):
         return 1
 
+
 # end class PS2DSinFreq
+
 
 class PSSinFreq(PairedSource):
     """
@@ -532,6 +566,7 @@ class PSSinFreq(PairedSource):
     distribution on [-pi, pi] x [-pi, pi].
     - This is a generalization of PS2DSinFreq.
     """
+
     def __init__(self, freq, d):
         """
         freq: a nonnegative floating-point number
@@ -541,10 +576,10 @@ class PSSinFreq(PairedSource):
 
     def sample(self, n, seed=81):
         d = self.d
-        Sam = PSSinFreq.sample_d_variates(self.freq, n, 2*self.d, seed)
+        Sam = PSSinFreq.sample_d_variates(self.freq, n, 2 * self.d, seed)
         X = Sam[:, :d]
         Y = Sam[:, d:]
-        return PairedData(X, Y, label='sin_freq%.2f_d%d'%(self.freq, d) )
+        return PairedData(X, Y, label="sin_freq%.2f_d%d" % (self.freq, d))
 
     def dx(self):
         return self.d
@@ -552,7 +587,7 @@ class PSSinFreq(PairedSource):
     def dy(self):
         return self.d
 
-    @staticmethod 
+    @staticmethod
     def sample_d_variates(w, n, D, seed=81):
         """
         Return an n x D sample matrix. 
@@ -565,12 +600,14 @@ class PSSinFreq(PairedSource):
             from_ind = 0
             while from_ind < n:
                 # uniformly randomly draw x, y from U(-pi, pi)
-                X = stats.uniform.rvs(loc=-math.pi, scale=2*math.pi, size=D*block_size)
+                X = stats.uniform.rvs(
+                    loc=-math.pi, scale=2 * math.pi, size=D * block_size
+                )
                 X = np.reshape(X, (block_size, D))
-                un_den = 1.0+np.prod(np.sin(w*X), 1)
-                I = stats.uniform.rvs(size=block_size) < un_den/2.0
+                un_den = 1.0 + np.prod(np.sin(w * X), 1)
+                I = stats.uniform.rvs(size=block_size) < un_den / 2.0
 
-                # accept 
+                # accept
                 accepted_count = np.sum(I)
                 to_take = min(n - from_ind, accepted_count)
                 end_ind = from_ind + to_take
@@ -582,13 +619,13 @@ class PSSinFreq(PairedSource):
         return sam
 
 
-
 class PS2DUnifRotate(PairedSource):
     """
     X, Y follow uniform distributions (default to U(-1, 1)). Rotate them by a
     rotation matrix of the specified angle. This can be used to simulate the
     setting of an ICA problem.
     """
+
     def __init__(self, angle, xlb=-1, xub=1, ylb=-1, yub=1):
         """
         angle: angle in radian
@@ -599,21 +636,25 @@ class PS2DUnifRotate(PairedSource):
         """
         self.angle = angle
         self.xlb = xlb
-        self.xub = xub 
-        self.ylb = ylb 
+        self.xub = xub
+        self.ylb = ylb
         self.yub = yub
 
     def sample(self, n, seed=389):
         t = self.angle
         rot = np.array([[np.cos(t), -np.sin(t)], [np.sin(t), np.cos(t)]])
 
-        ps_unif = PSIndUnif(xlb=[self.xlb], xub=[self.xub], ylb=[self.ylb], yub=[self.yub])
+        ps_unif = PSIndUnif(
+            xlb=[self.xlb], xub=[self.xub], ylb=[self.ylb], yub=[self.yub]
+        )
         pdata = ps_unif.sample(n, seed)
         X, Y = pdata.xy()
         XY = np.hstack((X, Y))
         rot_XY = XY.dot(rot.T)
 
-        return PairedData(rot_XY[:, [0]], rot_XY[:, [1]], label='rot_unif_a%.2f'%(t))
+        return PairedData(
+            rot_XY[:, [0]], rot_XY[:, [1]], label="rot_unif_a%.2f" % (t)
+        )
 
     def dx(self):
         return 1
@@ -635,23 +676,31 @@ class PSIndUnif(PairedSource):
         ylb: a numpy array of lower bounds of y
         yub: a numpy array of upper bounds of y
         """
-        convertif = lambda a: np.array(a) if isinstance(a, list) else a 
+        convertif = lambda a: np.array(a) if isinstance(a, list) else a
         xlb, xub, ylb, yub = map(convertif, [xlb, xub, ylb, yub])
         if xlb.shape[0] != xub.shape[0]:
-            raise ValueError('lower and upper bounds of X must be of the same length.')
+            raise ValueError(
+                "lower and upper bounds of X must be of the same length."
+            )
 
         if ylb.shape[0] != yub.shape[0]:
-            raise ValueError('lower and upper bounds of X must be of the same length.')
+            raise ValueError(
+                "lower and upper bounds of X must be of the same length."
+            )
 
         if not np.all(xub - xlb > 0):
-            raise ValueError('Require upper - lower to be positive. False for x')
+            raise ValueError(
+                "Require upper - lower to be positive. False for x"
+            )
 
         if not np.all(yub - ylb > 0):
-            raise ValueError('Require upper - lower to be positive. False for y')
+            raise ValueError(
+                "Require upper - lower to be positive. False for y"
+            )
 
         self.xlb = xlb
-        self.xub = xub 
-        self.ylb = ylb 
+        self.xub = xub
+        self.ylb = ylb
         self.yub = yub
 
     def sample(self, n, seed):
@@ -660,18 +709,22 @@ class PSIndUnif(PairedSource):
 
         dx = self.xlb.shape[0]
         dy = self.ylb.shape[0]
-        X = np.zeros((n, dx)) 
-        Y = np.zeros((n, dy)) 
+        X = np.zeros((n, dx))
+        Y = np.zeros((n, dy))
 
-        pscale = self.xub - self.xlb 
+        pscale = self.xub - self.xlb
         qscale = self.yub - self.ylb
         for i in range(dx):
-            X[:, i] = stats.uniform.rvs(loc=self.xlb[i], scale=pscale[i], size=n)
+            X[:, i] = stats.uniform.rvs(
+                loc=self.xlb[i], scale=pscale[i], size=n
+            )
         for i in range(dy):
-            Y[:, i] = stats.uniform.rvs(loc=self.ylb[i], scale=qscale[i], size=n)
+            Y[:, i] = stats.uniform.rvs(
+                loc=self.ylb[i], scale=qscale[i], size=n
+            )
 
         np.random.set_state(rstate)
-        return PairedData(X, Y, label='ind_unif_dx%d_dy%d'%(dx, dy))
+        return PairedData(X, Y, label="ind_unif_dx%d_dy%d" % (dx, dy))
 
     def dx(self):
         return self.xlb.shape[0]
@@ -682,12 +735,13 @@ class PSIndUnif(PairedSource):
 
 class PSIndSameGauss(PairedSource):
     """Two same standard Gaussians for P, Q.  """
+
     def __init__(self, dx, dy):
         """
         dx: dimension of X
         dy: dimension of Y
         """
-        self.dimx = dx 
+        self.dimx = dx
         self.dimy = dy
 
     def sample(self, n, seed):
@@ -695,15 +749,16 @@ class PSIndSameGauss(PairedSource):
         np.random.seed(seed)
 
         X = np.random.randn(n, self.dx())
-        Y = np.random.randn(n, self.dy()) 
+        Y = np.random.randn(n, self.dy())
         np.random.set_state(rstate)
-        return PairedData(X, Y, label='sg_dx%d_dy%d'%(self.dx(), self.dy()) )
+        return PairedData(X, Y, label="sg_dx%d_dy%d" % (self.dx(), self.dy()))
 
     def dx(self):
         return self.dimx
 
     def dy(self):
         return self.dimy
+
 
 # end class PSIndSameGauss
 
@@ -725,27 +780,29 @@ class PSPairwiseSign(PairedSource):
         """
         dx: the dimension of X
         """
-        if dx <= 0 or dx%2 != 0:
-            raise ValueError('dx has to be even')
+        if dx <= 0 or dx % 2 != 0:
+            raise ValueError("dx has to be even")
         self.dimx = dx
 
     def sample(self, n, seed):
-        d = self.dimx 
+        d = self.dimx
         with util.NumpySeedContext(seed=seed):
-            Z = np.random.randn(n, d/2+1)
+            Z = np.random.randn(n, d / 2 + 1)
             X = np.random.randn(n, d)
             Y = np.zeros((n, 1))
-            for j in range(d/2):
-                Y = Y + np.sign(X[:, [2*j]]*X[:, [2*j+1]])*np.abs(Z[:, [j]])
-            Y = np.sqrt(2.0/d)*Y + Z[:, [d/2]]
-        return PairedData(X, Y, label='pairwise_sign_dx%d'%self.dimx)
-
+            for j in range(d / 2):
+                Y = Y + np.sign(X[:, [2 * j]] * X[:, [2 * j + 1]]) * np.abs(
+                    Z[:, [j]]
+                )
+            Y = np.sqrt(2.0 / d) * Y + Z[:, [d / 2]]
+        return PairedData(X, Y, label="pairwise_sign_dx%d" % self.dimx)
 
     def dx(self):
         return self.dimx
 
     def dy(self):
         return 1
+
 
 # end class PSPairwiseSign
 
@@ -761,21 +818,20 @@ class PSGaussSign(PairedSource):
         dx: the dimension of X 
         """
         if dx <= 0:
-            raise ValueError('dx must be > 0')
-        self.dimx = dx 
+            raise ValueError("dx must be > 0")
+        self.dimx = dx
 
     def sample(self, n, seed):
-        d = self.dimx 
+        d = self.dimx
         with util.NumpySeedContext(seed=seed):
             Z = np.random.randn(n, 1)
             X = np.random.randn(n, d)
             Xs = np.sign(X)
-            Y = np.prod(Xs, 1)[:, np.newaxis]*np.abs(Z)
-        return PairedData(X, Y, label='gauss_sign_dx%d'%d)
-
+            Y = np.prod(Xs, 1)[:, np.newaxis] * np.abs(Z)
+        return PairedData(X, Y, label="gauss_sign_dx%d" % d)
 
     def dx(self):
-        return self.dimx 
+        return self.dimx
 
     def dy(self):
         return 1

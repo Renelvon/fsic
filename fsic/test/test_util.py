@@ -2,7 +2,7 @@
 Module for testing util module.
 """
 
-__author__ = 'wittawat'
+__author__ = "wittawat"
 
 import numpy as np
 import fsic.util as util
@@ -12,7 +12,7 @@ import unittest
 
 class TestNumpySeedContext(unittest.TestCase):
     def setUp(self):
-        pass 
+        pass
 
     def test_context_deterministic(self):
         for s in [2, 98, 10]:
@@ -30,14 +30,14 @@ class TestNumpySeedContext(unittest.TestCase):
 
 class TestCCA(unittest.TestCase):
     def test_bounded(self):
-        # between 0 and 1 
+        # between 0 and 1
         n = 100
         for r in range(5):
-            with util.NumpySeedContext(seed=r*5+1):
-                X = np.random.randn(n, 2)*5 - 1
+            with util.NumpySeedContext(seed=r * 5 + 1):
+                X = np.random.randn(n, 2) * 5 - 1
                 Y = np.random.rand(n, 3) - 0.5
                 evals, _, _ = util.cca(X, Y, reg=1e-5)
-                
+
                 self.assertTrue(np.all(evals) <= 1)
                 self.assertTrue(np.all(evals) >= -1)
 
@@ -45,11 +45,11 @@ class TestCCA(unittest.TestCase):
 class TestFunctions(unittest.TestCase):
     def test_bound_by_data(self):
         n, d = 50, 7
-        m = n +3
+        m = n + 3
         for s in [82, 22]:
             with util.NumpySeedContext(seed=s):
                 Data = np.random.rand(n, d)
-                Z = np.random.randn(m, d)*20
+                Z = np.random.randn(m, d) * 20
                 P = util.bound_by_data(Z, Data)
 
                 self.assertTrue(np.all(P.flatten() <= 1))

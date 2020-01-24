@@ -10,11 +10,9 @@ import fsic
 
 
 def main():
-    setuptools.setup(
-        version=fsic.__version__,
-    )
+    setuptools.setup(version=fsic.__version__,)
     # Rest of options are specified in `setup.cfg`
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

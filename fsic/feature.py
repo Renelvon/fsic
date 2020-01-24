@@ -1,6 +1,6 @@
 """Module containing classes for extracting/constructing features from data"""
 
-__author__ = 'wittawat'
+__author__ = "wittawat"
 
 from abc import ABCMeta, abstractmethod
 import numpy as np
@@ -9,6 +9,7 @@ import scipy.stats as stats
 
 class FeatureMap(object):
     """Abstract class for a feature map function"""
+
     __metaclass__ = ABCMeta
 
     @abstractmethod
@@ -26,7 +27,7 @@ class FeatureMap(object):
         Return the number of features that this map will generate for X.
         X is optional.
         """
-        pass 
+        pass
 
 
 class MarginalCDFMap(FeatureMap):
@@ -35,14 +36,15 @@ class MarginalCDFMap(FeatureMap):
     the empirical CDF of each variate to its corresponding variate.
     Also called, a copula transform or a probability integral transform.
     """
+
     def gen_features(self, X):
         """
         Cost O(dn*log(n)) where X in n x d.
         """
-        n, d = X.shape 
+        n, d = X.shape
         Z = np.zeros((n, d))
         for j in range(d):
-            Z[:, j] = stats.rankdata(X[:, j])/float(n)
+            Z[:, j] = stats.rankdata(X[:, j]) / float(n)
         return Z
 
     def num_features(self, X):
@@ -53,16 +55,17 @@ class RFFKGauss(FeatureMap):
     """
     A FeatureMap to construct random Fourier features for a Gaussian kernel. 
     """
+
     def __init__(self, sigma2, n_features, seed=20):
         """
         n_features: number of random Fourier features. The total number of 
             dimensions will be n_features*2.
         """
-        assert sigma2 > 0, 'sigma2 not positive. Was %s'%str(sigma2)
+        assert sigma2 > 0, "sigma2 not positive. Was %s" % str(sigma2)
         assert n_features > 0
-        self.sigma2 = sigma2 
+        self.sigma2 = sigma2
         self.n_features = n_features
-        self.seed =  seed 
+        self.seed = seed
 
     def gen_features(self, X):
         rstate = np.random.get_state()
@@ -72,16 +75,16 @@ class RFFKGauss(FeatureMap):
         D = self.n_features
         W = np.random.randn(D, d)
         # n x D
-        XWT = X.dot(W.T)/np.sqrt(self.sigma2)
+        XWT = X.dot(W.T) / np.sqrt(self.sigma2)
         Z1 = np.cos(XWT)
         Z2 = np.sin(XWT)
-        Z = np.hstack((Z1, Z2))*np.sqrt(1.0/self.n_features)
+        Z = np.hstack((Z1, Z2)) * np.sqrt(1.0 / self.n_features)
 
         np.random.set_state(rstate)
         return Z
 
     def num_features(self, X=None):
-        return 2*self.n_features
+        return 2 * self.n_features
 
 
 class NystromFeatureMap(FeatureMap):
@@ -97,6 +100,7 @@ class NystromFeatureMap(FeatureMap):
     - Form a D x D kernel matrix M of the inducing points. 
     - Features = K.dot(M**-0.5) (matrix power)
     """
+
     def __init__(self, k, inducing_points):
         """
         k: a Kernel 
@@ -110,13 +114,15 @@ class NystromFeatureMap(FeatureMap):
         # eigen decompose. Want to raise to the power of -0.5
         evals, V = np.linalg.eig(M)
         # Assume M is full rank
-        pow_evals = 1.0/np.sqrt(evals + 1e-6)
+        pow_evals = 1.0 / np.sqrt(evals + 1e-6)
         self._invert_half = V.dot(np.diag(pow_evals)).dot(V.T)
 
     def gen_features(self, X):
-        _, d = X.shape 
+        _, d = X.shape
         if d != self.inducing_points.shape[1]:
-            raise ValueError('dimension of the input does not match that of the inducing points')
+            raise ValueError(
+                "dimension of the input does not match that of the inducing points"
+            )
         K = self.k.eval(X, self.inducing_points)
         Z = K.dot(self._invert_half)
         return Z
