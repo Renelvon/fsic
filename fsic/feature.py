@@ -44,7 +44,7 @@ class MarginalCDFMap(FeatureMap):
         n, d = X.shape
         Z = np.zeros((n, d))
         for j in range(d):
-            Z[:, j] = stats.rankdata(X[:, j]) / float(n)
+            Z[:, j] = stats.rankdata(X[:, j]) / n
         return Z
 
     def num_features(self, X):

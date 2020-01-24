@@ -213,7 +213,7 @@ class PSStraResample(PairedSource):
             niv = self._counts[ui]
             # ceil guarantees that at least 1 instance will be chosen
             # from each class.
-            n_class = int(math.ceil(niv / float(n_sam) * n))
+            n_class = int(math.ceil(niv / n_sam * n))
             chosenI = Iv[:n_class]
             # print chosenI
             list_chosenI.append(chosenI)

@@ -968,7 +968,7 @@ def nfsic_from_u_sig(u, Sig, n, reg=0):
     J = len(u)
     if J == 1:
         r = reg if np.isreal(reg) else 0
-        s = float(n) * (u[0] ** 2) / (r + Sig[0, 0])
+        s = n * (u[0] ** 2) / (r + Sig[0, 0])
     else:
         if reg == "auto":
             # First compute with reg=0. If no problem, do nothing.
@@ -1022,7 +1022,7 @@ def nfsic(X, Y, k, l, V, W, reg=0):
     # mean
     mean_k = np.mean(K, 0)
     mean_l = np.mean(L, 0)
-    # u = float(n)/(n-1)*(np.mean(K*L, 0) - mean_k*mean_l)
+    # u = n/(n-1)*(np.mean(K*L, 0) - mean_k*mean_l)
 
     # biased
     u = np.mean(K * L, 0) - mean_k * mean_l
