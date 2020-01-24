@@ -404,8 +404,8 @@ class GaussNFSIC(NFSIC):
         )
         assert gwidthx0 > 0, "gwidthx0 not positive. Was %.3g" % gwidthx0
         assert gwidthy0 > 0, "gwidthy0 not positive. Was %.3g" % gwidthy0
-        logging.info("After grid search, gwidthx0=%.3g" % gwidthx0)
-        logging.info("After grid search, gwidthy0=%.3g" % gwidthy0)
+        logging.info("After grid search, gwidthx0=%.3g", gwidthx0)
+        logging.info("After grid search, gwidthy0=%.3g", gwidthy0)
 
         # set the width bounds
         fac_min = 5e-2
@@ -870,7 +870,7 @@ def generic_optimize_locs_widths(
 
     else:
         # Probably an error occurred in the first iter.
-        logging.warning("t=%d. gwx0=%.3g, gwy0=%.3g" % (t, gwidthx0, gwidthy0))
+        logging.warning("t=%d. gwx0=%.3g, gwy0=%.3g", t, gwidthx0, gwidthy0)
 
         opt_V = V0
         opt_W = W0
@@ -942,8 +942,8 @@ def nfsic_grid_search_kernel(pdata, V, W, list_kernelx, list_kernely):
 
                 lambs[i, j] = lamb
                 logging.info(
-                    "(%d, %d), lamb: %5.4g, kx: %s, ky: %s "
-                    % (i, j, lamb, str(k), str(l))
+                    "(%d, %d), lamb: %5.4g, kx: %s, ky: %s ",
+                    i, j, lamb, str(k), str(l)
                 )
             except np.linalg.LinAlgError:
                 # probably matrix inverse failed.
