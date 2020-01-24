@@ -663,7 +663,7 @@ def generic_optimize_locs_widths(pdata, V0, W0, gwidthx0, gwidthy0,
             # record objective values 
             try:
                 S[t] = functh(X[ind, :], Y[ind, :])
-            except: 
+            except Exception:
                 print('Exception occurred during gradient descent. Stop optimization.')
                 print('Return the value from previous iter. ')
                 import traceback as tb 
@@ -818,7 +818,7 @@ def nfsic_from_u_sig(u, Sig, n, reg=0):
                     Sig = eV.dot(np.diag(evals)).dot(eV.T)
                     # try again
                     s = n*np.linalg.solve(Sig, u).dot(u)        
-                except:
+                except Exception:
                     s = np.nan
         else:
             # assume reg is a number 
