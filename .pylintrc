@@ -75,7 +75,6 @@ disable=R,
     trailing-whitespace,
     undefined-loop-variable,
     undefined-variable,
-    ungrouped-imports,
     unused-argument,
 
 # Enable the message, report, category or checker with the given id(s). You can
