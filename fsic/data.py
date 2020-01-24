@@ -789,14 +789,14 @@ class PSPairwiseSign(PairedSource):
     def sample(self, n, seed):
         d = self.dimx
         with util.NumpySeedContext(seed=seed):
-            Z = np.random.randn(n, d / 2 + 1)
+            Z = np.random.randn(n, d // 2 + 1)
             X = np.random.randn(n, d)
             Y = np.zeros((n, 1))
-            for j in range(d / 2):
+            for j in range(d // 2):
                 Y = Y + np.sign(X[:, [2 * j]] * X[:, [2 * j + 1]]) * np.abs(
                     Z[:, [j]]
                 )
-            Y = np.sqrt(2.0 / d) * Y + Z[:, [d / 2]]
+            Y = np.sqrt(2.0 / d) * Y + Z[:, [d // 2]]
         return PairedData(X, Y, label="pairwise_sign_dx%d" % self.dimx)
 
     def dx(self):

@@ -77,7 +77,7 @@ class TestNystromFeatureMap(unittest.TestCase):
                 n = 50
                 d = 3
                 X = np.random.randn(n, d) * 3 + 5
-                D = n / 3
+                D = n // 3
                 induce = util.subsample_rows(X, D, seed=s + 1)
                 nymap = fea.NystromFeatureMap(k, induce)
 

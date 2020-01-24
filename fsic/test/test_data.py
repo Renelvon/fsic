@@ -77,7 +77,7 @@ class TestPSNullResample(unittest.TestCase):
             )
             null_ps = data.PSNullResample(pdata)
 
-            m = n / 2
+            m = n // 2
             shuff1 = null_ps.sample(m, seed=s + 1)
             shuff2 = null_ps.sample(m, seed=s + 1)
 
