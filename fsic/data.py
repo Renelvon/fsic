@@ -250,7 +250,7 @@ class PSNullShuffle(PairedSource):
         else:
             pdata = self.ps.sample(n, seed=seed+27)
             nX, Y = pdata.xy()
-            ind_shift1 = np.roll(range(n), 1)
+            ind_shift1 = np.roll(tuple(range(n)), 1)
             nY = Y[ind_shift1, :]
 
         new_label = 'null_shuffle'

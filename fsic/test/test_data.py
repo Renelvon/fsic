@@ -94,7 +94,7 @@ class TestPSGaussNoiseDim(unittest.TestCase):
         ndys = [3, 0, 4]
         ori_ps = data.PS2DUnifRotate(np.pi/3)
         n = 10
-        for _, ndx, ndy in zip(range(len(ndxs)), ndxs, ndys):
+        for ndx, ndy in zip(ndxs, ndys):
             ps = data.PSGaussNoiseDims(ori_ps, ndx, ndy)
             pdata = ps.sample(n=n, seed=83)
             X, Y = pdata.xy()
