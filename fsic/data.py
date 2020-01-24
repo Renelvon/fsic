@@ -678,7 +678,10 @@ class PSIndUnif(PairedSource):
         ylb: a numpy array of lower bounds of y
         yub: a numpy array of upper bounds of y
         """
-        convertif = lambda a: np.array(a) if isinstance(a, list) else a
+
+        def convertif(a):
+            return np.array(a) if isinstance(a, list) else a
+
         xlb, xub, ylb, yub = map(convertif, [xlb, xub, ylb, yub])
         if xlb.shape[0] != xub.shape[0]:
             raise ValueError(

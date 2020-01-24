@@ -106,7 +106,10 @@ def plot_prob_reject(ex, fname, h1_true, func_xvalues, xlabel, func_title=None):
 
 def plot_runtime(ex, fname, func_xvalues, xlabel, func_title=None):
     results = glo.ex_load_result(ex, fname)
-    value_accessor = lambda job_results: job_results["time_secs"]
+
+    def value_accessor(job_results):
+        return job_results["time_secs"]
+
     vf_pval = np.vectorize(value_accessor)
     # results['job_results'] is a dictionary:
     # {'test_result': (dict from running perform_test(te) '...':..., }
