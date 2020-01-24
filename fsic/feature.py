@@ -1,18 +1,15 @@
 """Module containing classes for extracting/constructing features from data"""
 
-__author__ = "wittawat"
+import abc
 
-from abc import ABCMeta, abstractmethod
 import numpy as np
 import scipy.stats as stats
 
 
-class FeatureMap(object):
+class FeatureMap(object, metaclass=abc.ABCMeta):
     """Abstract class for a feature map function"""
 
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
+    @abc.abstractmethod
     def gen_features(self, X):
         """Generate D features for each point in X.
         - X: nxd data matrix
@@ -21,7 +18,7 @@ class FeatureMap(object):
         """
         pass
 
-    @abstractmethod
+    @abc.abstractmethod
     def num_features(self, X=None):
         """
         Return the number of features that this map will generate for X.
@@ -44,7 +41,7 @@ class MarginalCDFMap(FeatureMap):
         n, d = X.shape
         Z = np.zeros((n, d))
         for j in range(d):
-            Z[:, j] = stats.rankdata(X[:, j]) / float(n)
+            Z[:, j] = stats.rankdata(X[:, j]) / n
         return Z
 
     def num_features(self, X):

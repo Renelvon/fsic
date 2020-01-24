@@ -92,8 +92,8 @@ class TestNFSIC(unittest.TestCase):
                 # not differ much.
                 freq_a, _ = np.histogram(arr)
                 freq_n, _ = np.histogram(arr_naive)
-                nfreq_a = freq_a / float(np.sum(freq_a))
-                nfreq_n = freq_n / float(np.sum(freq_n))
+                nfreq_a = freq_a / np.sum(freq_a)
+                nfreq_n = freq_n / np.sum(freq_n)
                 arr_diff = np.abs(nfreq_a - nfreq_n)
                 self.assertTrue(np.all(arr_diff <= 0.2))
 
@@ -185,8 +185,8 @@ class TestFiniteFeatureHSIC(unittest.TestCase):
                 # not differ much.
                 freq_p, _ = np.histogram(list_perm)
                 freq_s, _ = np.histogram(list_spectral)
-                nfreq_p = freq_p / float(np.sum(freq_p))
-                nfreq_s = freq_s / float(np.sum(freq_s))
+                nfreq_p = freq_p / np.sum(freq_p)
+                nfreq_s = freq_s / np.sum(freq_s)
                 arr_diff = np.abs(nfreq_p - nfreq_s)
                 self.assertTrue(np.all(arr_diff <= 0.2))
 

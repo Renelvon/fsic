@@ -1,7 +1,5 @@
 """A module containing convenient methods for general machine learning"""
 
-from __future__ import print_function
-
 import time
 
 import numpy as np

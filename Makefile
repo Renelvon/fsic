@@ -1,7 +1,8 @@
 NAME=fsic
 PIP=pip
-PYTHON=python2
+PYTHON=python3
 SETUP=setup.py
+TESTS=tests
 
 .PHONY: all build check clean dist distclean install installcheck test uninstall
 
@@ -12,7 +13,7 @@ build:
 
 check:
 	check-manifest
-	pylint setup.py $(NAME)
+	pylint setup.py $(NAME) $(TESTS)
 	pyroma -n 10 .
 
 clean:
@@ -29,7 +30,7 @@ install: build
 installcheck: test
 
 test:
-	$(PYTHON) -m unittest discover -s tests
+	$(PYTHON) -m unittest discover -s $(TESTS)
 
 uninstall:
 	$(PIP) uninstall -y $(NAME)

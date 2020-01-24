@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [0.2.0] - 2020-25-01
+### Added
+- Lint the test suite explicitly.
+
+### Changed
+- Port the repository to Python 3 (only).
+
+
 ## [0.1.1] - 2020-24-01
 ### Added
 - Linting via [pylint](https://www.pylint.org/).

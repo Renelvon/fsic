@@ -2,9 +2,7 @@
 Module containing many types of independence testing methods.
 """
 
-from __future__ import print_function
-
-from abc import ABCMeta, abstractmethod
+import abc
 import logging
 
 import numpy as np
@@ -19,10 +17,8 @@ import fsic.kernel as kernel
 import fsic.util as util
 
 
-class IndTest(object):
+class IndTest(object, metaclass=abc.ABCMeta):
     """Abstract class for an independence test for paired sample."""
-
-    __metaclass__ = ABCMeta
 
     def __init__(self, alpha):
         """
@@ -30,7 +26,7 @@ class IndTest(object):
         """
         self.alpha = alpha
 
-    @abstractmethod
+    @abc.abstractmethod
     def perform_test(self, pdata):
         """perform the two-sample test and return values computed in a dictionary:
         {alpha: 0.01, pvalue: 0.0002, test_stat: 2.3, h0_rejected: True,
@@ -39,7 +35,7 @@ class IndTest(object):
         """
         raise NotImplementedError()
 
-    @abstractmethod
+    @abc.abstractmethod
     def compute_stat(self, pdata):
         """Compute the test statistic"""
         raise NotImplementedError()
@@ -968,7 +964,7 @@ def nfsic_from_u_sig(u, Sig, n, reg=0):
     J = len(u)
     if J == 1:
         r = reg if np.isreal(reg) else 0
-        s = float(n) * (u[0] ** 2) / (r + Sig[0, 0])
+        s = n * (u[0] ** 2) / (r + Sig[0, 0])
     else:
         if reg == "auto":
             # First compute with reg=0. If no problem, do nothing.
@@ -1022,7 +1018,7 @@ def nfsic(X, Y, k, l, V, W, reg=0):
     # mean
     mean_k = np.mean(K, 0)
     mean_l = np.mean(L, 0)
-    # u = float(n)/(n-1)*(np.mean(K*L, 0) - mean_k*mean_l)
+    # u = n/(n-1)*(np.mean(K*L, 0) - mean_k*mean_l)
 
     # biased
     u = np.mean(K * L, 0) - mean_k * mean_l
