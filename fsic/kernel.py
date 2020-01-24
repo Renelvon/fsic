@@ -108,7 +108,7 @@ class KGauss(Kernel):
 
 class KTriangle(Kernel):
     """
-    A triangular kernel defined on 1D. k(x, y) = B_1((x-y)/width) where B_1 is the 
+    A triangular kernel defined on 1D. k(x, y) = B_1((x-y)/width) where B_1 is the
     B-spline function of order 1 (i.e., triangular function).
     """
 

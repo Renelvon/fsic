@@ -147,7 +147,7 @@ class TestQuadHSIC(unittest.TestCase):
             X, Y, k, l, n_permute, seed=s
         )
         np.testing.assert_array_almost_equal(arr_hsic, arr_hsic_naive)
-        #'Permuted HSIC values are not the same as the naive implementation.')
+        # 'Permuted HSIC values are not the same as the naive implementation.')
 
 
 class TestFiniteFeatureHSIC(unittest.TestCase):
@@ -214,7 +214,7 @@ class TestRDC(unittest.TestCase):
 
 class TestFuncs(unittest.TestCase):
     """
-    This is to test functions that do not belong to any class. 
+    This is to test functions that do not belong to any class.
     """
 
     def test_nfsic(self):

@@ -18,21 +18,21 @@ def get_root():
 
 
 def result_folder():
-    """Return the full path to the result/ folder containing experimental result 
+    """Return the full path to the result/ folder containing experimental result
     files"""
     return os.path.join(get_root(), "result")
 
 
 def data_folder():
     """
-    Return the full path to the data folder 
+    Return the full path to the data folder
     """
     return os.path.join(get_root(), "data")
 
 
 def data_file(*relative_path):
     """
-    Access the file under the data folder. The path is relative to the 
+    Access the file under the data folder. The path is relative to the
     data folder
     """
     dfolder = data_folder()
@@ -45,8 +45,8 @@ def load_data_file(*relative_path):
 
 
 def ex_result_folder(ex):
-    """Return the full path to the folder containing result files of the specified 
-    experiment. 
+    """Return the full path to the folder containing result files of the specified
+    experiment.
     ex: a positive integer. """
     rp = result_folder()
     fpath = os.path.join(rp, "ex%d" % ex)
@@ -56,24 +56,24 @@ def ex_result_folder(ex):
 
 
 def create_dirs(full_path):
-    """Recursively create the directories along the specified path. 
+    """Recursively create the directories along the specified path.
     Assume that the path refers to a folder. """
     if not os.path.exists(full_path):
         os.makedirs(full_path)
 
 
 def ex_result_file(ex, *relative_path):
-    """Return the full path to the file identified by the relative path as a list 
+    """Return the full path to the file identified by the relative path as a list
     of folders/files under the result folder of the experiment ex. """
     rf = ex_result_folder(ex)
     return os.path.join(rf, *relative_path)
 
 
 def ex_save_result(ex, result, *relative_path):
-    """Save a dictionary object result for the experiment ex. Serialization is 
-    done with pickle. 
-    EX: ex_save_result(1, result, 'data', 'result.p'). Save under result/ex1/data/result.p 
-    EX: ex_save_result(1, result, 'result.p'). Save under result/ex1/result.p 
+    """Save a dictionary object result for the experiment ex. Serialization is
+    done with pickle.
+    EX: ex_save_result(1, result, 'data', 'result.p'). Save under result/ex1/data/result.p
+    EX: ex_save_result(1, result, 'result.p'). Save under result/ex1/result.p
     """
     fpath = ex_result_file(ex, *relative_path)
     dir_path = os.path.dirname(fpath)

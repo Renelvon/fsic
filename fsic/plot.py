@@ -28,15 +28,15 @@ def plot_2d_data(pdata):
 def plot_prob_reject(ex, fname, h1_true, func_xvalues, xlabel, func_title=None):
     """
     plot the empirical probability that the statistic is above the threshold.
-    This can be interpreted as type-1 error (when H0 is true) or test power 
+    This can be interpreted as type-1 error (when H0 is true) or test power
     (when H1 is true). The plot is against the specified x-axis.
 
-    - ex: experiment number 
+    - ex: experiment number
     - fname: file name of the aggregated result
-    - h1_true: True if H1 is true 
-    - func_xvalues: function taking aggregated results dictionary and return the values 
-        to be used for the x-axis values.            
-    - xlabel: label of the x-axis. 
+    - h1_true: True if H1 is true
+    - func_xvalues: function taking aggregated results dictionary and return the values
+        to be used for the x-axis values.
+    - xlabel: label of the x-axis.
     - func_title: a function: results dictionary -> title of the plot
 
     Return loaded results
@@ -78,7 +78,7 @@ def plot_prob_reject(ex, fname, h1_true, func_xvalues, xlabel, func_title=None):
         method_label = method_labels[func_names[i]]
         plt.plot(xvalues, mean_rejs[:, i], fmt, label=method_label)
     # else:
-    #     # h0 is true 
+    #     # h0 is true
     #     z = stats.norm.isf( (1-confidence)/2.0)
     #     for i in range(n_methods):
     #         phat = mean_rejs[:, i]

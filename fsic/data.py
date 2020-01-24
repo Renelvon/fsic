@@ -73,9 +73,9 @@ class PairedData(object):
         return (self.X, self.Y)
 
     def split_tr_te(self, tr_proportion=0.5, seed=820):
-        """Split the dataset into training and test sets. Assume n is the same 
-        for both X, Y. 
-        
+        """Split the dataset into training and test sets. Assume n is the same
+        for both X, Y.
+
         Return (PairedData for tr, PairedData for te)"""
         X = self.X
         Y = self.Y
@@ -99,7 +99,7 @@ class PairedData(object):
 
     def clone(self):
         """
-        Return a new PairedData object with a separate copy of each internal 
+        Return a new PairedData object with a separate copy of each internal
         variable, and with the same content.
         """
         nX = np.copy(self.X)
@@ -120,24 +120,24 @@ class PairedData(object):
         return PairedData(nX, nY)
 
 
-### end PairedData class
+# end PairedData class
 
 
 class PairedSource(object):
-    """A data source where it is possible to resample. Subclasses may prefix 
-    class names with PS. 
+    """A data source where it is possible to resample. Subclasses may prefix
+    class names with PS.
 
-    - If possible, prefix with PSInd to indicate that the 
-    PairedSource contains two independent samples. 
+    - If possible, prefix with PSInd to indicate that the
+    PairedSource contains two independent samples.
     - Prefix with PSDep otherwise.
-    - Use PS if the PairedSource can be either one depending on the provided 
+    - Use PS if the PairedSource can be either one depending on the provided
     paramters."""
 
     __metaclass__ = ABCMeta
 
     @abstractmethod
     def sample(self, n, seed):
-        """Return a PairedData. Returned result should be deterministic given 
+        """Return a PairedData. Returned result should be deterministic given
         the input (n, seed)."""
         raise NotImplementedError()
 
@@ -175,7 +175,7 @@ class PSResample(PairedSource):
 class PSStraResample(PairedSource):
     """
     A PairedSource which does a stratified subsampling. without replacement
-    from the specified PairedData. 
+    from the specified PairedData.
     The implementation is only approximately correctly.
     """
 
@@ -246,8 +246,8 @@ class PSStraResample(PairedSource):
 class PSNullShuffle(PairedSource):
     """
     Randomly permute the order of one sample so that the pairs are guaranteed
-    to be broken. This is very similar to PSNullResample except it does not 
-    sample. The sampling part is delegated to another PairedSource. 
+    to be broken. This is very similar to PSNullResample except it does not
+    sample. The sampling part is delegated to another PairedSource.
     Essentially, PSNullResample = PSNullShuffle + PSResample.
     Decorator pattern.
     """
@@ -328,8 +328,8 @@ class PSNullResample(PairedSource):
 
 class PSStandardize(PairedSource):
     """
-    A PairedSource that standardizes dimensions of X, Y independently so that 
-    each has 0 mean and unit variance. Useful with PSResample or PSNullResample 
+    A PairedSource that standardizes dimensions of X, Y independently so that
+    each has 0 mean and unit variance. Useful with PSResample or PSNullResample
     when working with real data whose variables do not have the same scaling.
 
     Decorator pattern.
@@ -365,7 +365,7 @@ class PSStandardize(PairedSource):
 
 class PSGaussNoiseDims(PairedSource):
     """
-    A PairedSource that adds noise dimensions to X, Y drawn from the specified 
+    A PairedSource that adds noise dimensions to X, Y drawn from the specified
     PairedSource. The noise follows the standard normal distribution.
 
     Decorator pattern.
@@ -373,8 +373,8 @@ class PSGaussNoiseDims(PairedSource):
 
     def __init__(self, ps, ndx, ndy):
         """
-        ndx: number of noise dimensions for X 
-        ndy: number of noise dimensions for Y 
+        ndx: number of noise dimensions for X
+        ndy: number of noise dimensions for Y
         """
         assert ndx >= 0
         assert ndy >= 0
@@ -410,7 +410,7 @@ class PSGaussNoiseDims(PairedSource):
 
 class PSFunc(PairedSource):
     """
-    A PairedSource that generates data (X, Y) such that Y = f(X) for a 
+    A PairedSource that generates data (X, Y) such that Y = f(X) for a
     specified function f (possibly stochastic), and px where X ~ px.
     """
 
@@ -447,10 +447,10 @@ class PSFunc(PairedSource):
 
 class PSUnifRotateNoise(PairedSource):
     """
-    X, Y are dependent in the same way as in PS2DUnifRotate. However, this 
+    X, Y are dependent in the same way as in PS2DUnifRotate. However, this
     problem adds more extra noise dimensions.
     - The total number of dimensions is 2+2*noise_dim.
-    - Only the first dimensions of X and Y are dependent. Dependency strength 
+    - Only the first dimensions of X and Y are dependent. Dependency strength
         depends on the specified angle.
     """
 
@@ -503,7 +503,7 @@ class PSUnifRotateNoise(PairedSource):
 
 class PS2DSinFreq(PairedSource):
     """
-    X, Y follow the density proportional to 1+sin(w*x)sin(w*y) where 
+    X, Y follow the density proportional to 1+sin(w*x)sin(w*y) where
     w is the frequency. The higher w, the close the density is to a uniform
     distribution on [-pi, pi] x [-pi, pi].
 
@@ -562,7 +562,7 @@ class PS2DSinFreq(PairedSource):
 
 class PSSinFreq(PairedSource):
     r"""
-    X, Y follow the density proportional to 
+    X, Y follow the density proportional to
         1+\prod_{i=1}^{d} [ sin(w*x_i)sin(w*y_i) ]
     w is the frequency. The higher w, the close the density is to a uniform
     distribution on [-pi, pi] x [-pi, pi].
@@ -592,7 +592,7 @@ class PSSinFreq(PairedSource):
     @staticmethod
     def sample_d_variates(w, n, D, seed=81):
         """
-        Return an n x D sample matrix. 
+        Return an n x D sample matrix.
         """
         with util.NumpySeedContext(seed=seed):
             # rejection sampling
@@ -767,7 +767,7 @@ class PSIndSameGauss(PairedSource):
 
 class PSPairwiseSign(PairedSource):
     r"""
-    A toy problem given in section 5.3 of 
+    A toy problem given in section 5.3 of
 
     Large-Scale Kernel Methods for Independence Testing
     Qinyi Zhang, Sarah Filippi,  Arthur Gretton, Dino Sejdinovic
@@ -811,13 +811,13 @@ class PSPairwiseSign(PairedSource):
 
 class PSGaussSign(PairedSource):
     """
-    A toy problem where X follows the standard multivariate Gaussian, 
-    and Y = sign(product(X))*|Z| where Z ~ N(0, 1). 
+    A toy problem where X follows the standard multivariate Gaussian,
+    and Y = sign(product(X))*|Z| where Z ~ N(0, 1).
     """
 
     def __init__(self, dx):
         """
-        dx: the dimension of X 
+        dx: the dimension of X
         """
         if dx <= 0:
             raise ValueError("dx must be > 0")

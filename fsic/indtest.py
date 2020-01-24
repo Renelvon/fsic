@@ -33,7 +33,7 @@ class IndTest(object):
     @abstractmethod
     def perform_test(self, pdata):
         """perform the two-sample test and return values computed in a dictionary:
-        {alpha: 0.01, pvalue: 0.0002, test_stat: 2.3, h0_rejected: True, 
+        {alpha: 0.01, pvalue: 0.0002, test_stat: 2.3, h0_rejected: True,
         time_secs: ...}
         pdata: an instance of PairedData
         """
@@ -50,10 +50,10 @@ class IndTest(object):
 
 class NFSIC(IndTest):
     """
-    Normalized Finite Set Independence Criterion test using the specified kernels 
+    Normalized Finite Set Independence Criterion test using the specified kernels
     and a set of paired test locations.
 
-    H0: X and Y are independent 
+    H0: X and Y are independent
     H1: X and Y are dependent.
     """
 
@@ -67,10 +67,10 @@ class NFSIC(IndTest):
         :param l: a Kernel on Y
         :param V: J x dx numpy array of J locations to test the difference
         :param W: J x dy numpy array of J locations to test the difference
-        :param n_permute: The number of times to permute the samples to simulate 
+        :param n_permute: The number of times to permute the samples to simulate
             the null distribution. Set to None or 0 to use the asymptotic chi-squared
             distribution. Set to a positive integer to use permutations.
-        :param reg: a non-negative regularizer. Can be set to 'auto' to use reg=0 first. 
+        :param reg: a non-negative regularizer. Can be set to 'auto' to use reg=0 first.
             If failed, automatically set reg to a low value.
         """
         super(NFSIC, self).__init__(alpha)
@@ -124,7 +124,7 @@ class NFSIC(IndTest):
             "pvalue": pvalue,
             "test_stat": nfsic_stat,
             "h0_rejected": pvalue < alpha,
-            #'arr_nfsic': arr_nfsic,
+            # 'arr_nfsic': arr_nfsic,
             "time_secs": t.secs,
             "n_permute": n_permute,
         }
@@ -195,7 +195,8 @@ class NFSIC(IndTest):
         with util.NumpySeedContext(seed=seed):
             r = 0
             while r < n_permute:
-                # shuffle the order of X, Y while still keeping the original pairs
+                # shuffle the order of X, Y while still keeping the original
+                # pairs
                 ind = np.random.choice(n, n, replace=False)
                 Ks = K[ind, :]
                 Ls = L[ind, :]
@@ -232,15 +233,15 @@ class NFSIC(IndTest):
         return arr_nfsic
 
 
-## end class NFSIC
+# end class NFSIC
 
 
 class GaussNFSIC(NFSIC):
     """
-    Normalized Finite Set Independence Criterion test using 
+    Normalized Finite Set Independence Criterion test using
     an isotropic Gaussian kernel for each input X and Y.
 
-    H0: X and Y are independent 
+    H0: X and Y are independent
     H1: X and Y are dependent.
     """
 
@@ -262,7 +263,7 @@ class GaussNFSIC(NFSIC):
         :param gwidthy: Gaussian width^2 for Y
         :param V: J x dx numpy array of J locations to test the difference
         :param W: J x dy numpy array of J locations to test the difference
-        :param n_permute: The number of times to permute the samples to simulate 
+        :param n_permute: The number of times to permute the samples to simulate
             the null distribution. Set to None or 0 to use the asymptotic chi-squared
             distribution. Set to a positive integer to use permutations.
         """
@@ -278,7 +279,7 @@ class GaussNFSIC(NFSIC):
     def func_obj(Xth, Yth, Vth, Wth, gwidthx_th, gwidthy_th, regth, n, J):
         """Return a real-valued
         objective function that works on Theano variables to compute the
-        objective to be used for the optimization.    
+        objective to be used for the optimization.
         - Intended to be used with optimize_locs_widths(..).
         - The returned value is a Theano variable.
         - J is not a Theano variable.
@@ -345,20 +346,20 @@ class GaussNFSIC(NFSIC):
         gwidthy_lb=None,
         gwidthy_ub=None,
     ):
-        """Optimize the test locations V, W and the Gaussian kernel width by 
+        """Optimize the test locations V, W and the Gaussian kernel width by
         maximizing a test power criterion. X, Y should not be the same data as
-        used in the actual test (i.e., should be a held-out set). 
+        used in the actual test (i.e., should be a held-out set).
 
         - max_iter: #gradient descent iterations
-        - batch_proportion: (0,1] value to be multipled with n giving the batch 
+        - batch_proportion: (0,1] value to be multipled with n giving the batch
             size in stochastic gradient. 1 = full gradient ascent.
         - tol_fun: termination tolerance of the objective value
-        - If the lb, ub bounds are None, use fraction of the median heuristics 
+        - If the lb, ub bounds are None, use fraction of the median heuristics
             to automatically set the bounds.
-        
-        Optimize the empirical version of Lambda(T) i.e., the criterion used 
-        to optimize the test locations, for the test based 
-        on difference of mean embeddings with Gaussian kernel. 
+
+        Optimize the empirical version of Lambda(T) i.e., the criterion used
+        to optimize the test locations, for the test based
+        on difference of mean embeddings with Gaussian kernel.
         Also optimize the Gaussian width.
 
         Return (V test_locs, W test_locs, gaussian width for x, gaussian width
@@ -454,8 +455,8 @@ class GaussNFSIC(NFSIC):
     @staticmethod
     def grid_search_gwidth(pdata, V, W, list_gwidthx, list_gwidthy):
         """
-        Linear search for the best Gaussian width in the list that maximizes 
-        the test power criterion, fixing the test locations. 
+        Linear search for the best Gaussian width in the list that maximizes
+        the test power criterion, fixing the test locations.
 
         - V: a J x dx np-array for J test locations for X.
         - W: a J x dy np-array for J test locations for Y.
@@ -488,11 +489,11 @@ class GaussNFSIC(NFSIC):
         pdata, n_test_locs, k, l, n_cand=50, subsample=2000, seed=3
     ):
         """
-        Evaluate a set of locations to find the best locations to initialize. 
-        The location candidates are drawn from the joint and the product of 
+        Evaluate a set of locations to find the best locations to initialize.
+        The location candidates are drawn from the joint and the product of
         the marginals.
-        - subsample the data when computing the objective 
-        - n_cand: number of times to draw from the joint and the product 
+        - subsample the data when computing the objective
+        - n_cand: number of times to draw from the joint and the product
             of the marginals.
         Return V, W
         """
@@ -562,9 +563,9 @@ class GaussNFSIC(NFSIC):
         Choose n_test_locs points randomly from the joint sample.
         Pairs are maintained.
 
-        There are a few advantages of this approach over fitting a Gaussian 
+        There are a few advantages of this approach over fitting a Gaussian
         and drawing from it.
-        - Faster and simpler 
+        - Faster and simpler
         - Guarantee that V, W will not leave the boundary of the sample.
             This can make NFSIC covariance singular.
         """
@@ -579,7 +580,7 @@ class GaussNFSIC(NFSIC):
     def init_locs_joint_randn(pdata, n_test_locs, subsample=2000, seed=1):
         """
         Fit a joint Gaussian to (X, Y) and draw n_test_locs.
-        return (V, W) each containing n_test_locs vectors. 
+        return (V, W) each containing n_test_locs vectors.
         """
         # import pdb; pdb.set_trace()
 
@@ -604,8 +605,8 @@ class GaussNFSIC(NFSIC):
     @staticmethod
     def init_locs_2randn(pdata, n_test_locs, subsample=2000, seed=1):
         """
-        Fit a Gaussian to each dataset of X and Y, and draw 
-        n_test_locs from each. 
+        Fit a Gaussian to each dataset of X and Y, and draw
+        n_test_locs from each.
 
         return (V, W) each containing n_test_locs vectors drawn from their
         respective Gaussian fit.
@@ -655,25 +656,25 @@ def generic_optimize_locs_widths(
     gwidthy_lb=1e-3,
     gwidthy_ub=1e6,
 ):
-    """Optimize the test locations V, W and the Gaussian kernel width by 
-    maximizing a test power criterion. X, Y should not be the same data as used 
-    in the actual test (i.e., should be a held-out set). 
+    """Optimize the test locations V, W and the Gaussian kernel width by
+    maximizing a test power criterion. X, Y should not be the same data as used
+    in the actual test (i.e., should be a held-out set).
     Optimize the empirical version of the test statistic Lambda(T).
 
     - V0, W0: Jxdx and Jxdy numpy arrays. Initial values of V, W test locations.
       J = the number of test locations/frequencies
-    - gwidthx0, gwidthy0: initial Gaussian widths 
+    - gwidthx0, gwidthy0: initial Gaussian widths
     - func_obj: (X, Y, V, W, gwidthx, gwidthy, reg, J) |-> a real-valued objective
     function that works on Theano variables to compute the objective to be used
-    for the optimization.    
+    for the optimization.
     - max_iter: #gradient descent iterations
-    - batch_proportion: (0,1] value to be multipled with n giving the batch 
+    - batch_proportion: (0,1] value to be multipled with n giving the batch
         size in stochastic gradient. 1 = full gradient ascent.
     - tol_fun: termination tolerance of the objective value
     - step_pow: in var <- var + step_size*gradient/iteration**step_pow
     - gwidthx_lb: lower bound for gwidthx to maintain at all time during the
       gradient ascent.
-    
+
     Return optimized (V, W, gwidthx, gwidthy, info log)
     """
     # Running theano with multiple processes trying to access the same
@@ -682,7 +683,7 @@ def generic_optimize_locs_widths(
 
     def gwidth_constrain(var, lb, ub):
         """
-        Make sure that the Theano variable var is inside the interval defined 
+        Make sure that the Theano variable var is inside the interval defined
         by lower bound lb, and upper bound ub. Perform a project if it does
         not.
         """
@@ -879,18 +880,18 @@ def generic_optimize_locs_widths(
 
 def nfsic_grid_search_kernel(pdata, V, W, list_kernelx, list_kernely):
     """
-    Linear search for the best Gaussian width in the list that maximizes 
+    Linear search for the best Gaussian width in the list that maximizes
     the test power criterion, fixing the test locations to (V, W)
 
-    - list_kernelx: list of kernel candidates for X 
+    - list_kernelx: list of kernel candidates for X
     - list_kernely: list of kernel candidates for Y
 
     Perform a mesh grid on the two lists.
 
-    TODO: Can be made faster by computing variables depending on k only once 
+    TODO: Can be made faster by computing variables depending on k only once
         for each k candidate.
 
-    return: (best kernel index pair (i,j), 2d-array of test power criteria of size 
+    return: (best kernel index pair (i,j), 2d-array of test power criteria of size
       len(list_kernelx) x len(list_kernely) )
     """
     # number of test locations
@@ -931,7 +932,8 @@ def nfsic_grid_search_kernel(pdata, V, W, list_kernelx, list_kernely):
                 # from IPython.core.debugger import Tracer
                 # Tracer()()
                 if np.iscomplex(lamb):
-                    # complex value can happen if the covariance is ill-conditioned?
+                    # complex value can happen if the covariance is
+                    # ill-conditioned?
                     print(
                         "Lambda is complex. Truncate the imag part. lamb: %s"
                         % (str(lamb))
@@ -941,7 +943,11 @@ def nfsic_grid_search_kernel(pdata, V, W, list_kernelx, list_kernely):
                 lambs[i, j] = lamb
                 logging.info(
                     "(%d, %d), lamb: %5.4g, kx: %s, ky: %s ",
-                    i, j, lamb, str(k), str(l)
+                    i,
+                    j,
+                    lamb,
+                    str(k),
+                    str(l),
                 )
             except np.linalg.LinAlgError:
                 # probably matrix inverse failed.
@@ -955,7 +961,7 @@ def nfsic_grid_search_kernel(pdata, V, W, list_kernelx, list_kernely):
 
 def nfsic_from_u_sig(u, Sig, n, reg=0):
     """
-    Compute the NFSIC statistic from the u vector, and the covariance matrix 
+    Compute the NFSIC statistic from the u vector, and the covariance matrix
     Sig. reg can be 'auto'. See nfsic().
     Return the statistic.
     """
@@ -997,13 +1003,13 @@ def nfsic_from_u_sig(u, Sig, n, reg=0):
 
 def nfsic(X, Y, k, l, V, W, reg=0):
     """
-    X: n x dx data matrix 
+    X: n x dx data matrix
     Y: n x dy data matrix
     k: kernel for X
     l : kernel for Y
     V: J x dx test locations for X
-    W: J x dy test locations for Y 
-    reg: a non-negative regularizer. Can be set to 'auto' to use reg=0 first. 
+    W: J x dy test locations for Y
+    reg: a non-negative regularizer. Can be set to 'auto' to use reg=0 first.
         If failed, automatically set reg to a low value.
     :return (stat, mean, cov)
     """
@@ -1040,7 +1046,7 @@ class QuadHSIC(IndTest):
     2005 "Measuring Statistical Dependence with Hilbert-Schmidt Norms"
     Use the biased estimator for HSIC.
 
-    H0: X and Y are independent 
+    H0: X and Y are independent
     H1: X and Y are dependent.
     """
 
@@ -1075,7 +1081,7 @@ class QuadHSIC(IndTest):
             "pvalue": pvalue,
             "test_stat": bhsic_stat,
             "h0_rejected": pvalue < alpha,
-            #'arr_bhsic': arr_hsic,
+            # 'arr_bhsic': arr_hsic,
             "time_secs": t.secs,
             "n_permute": n_permute,
         }
@@ -1188,7 +1194,7 @@ class QuadHSIC(IndTest):
         """
         Return a numpy array of HSIC's for each permutation.
 
-        This is a naive generic implementation where kernel matrices are 
+        This is a naive generic implementation where kernel matrices are
         not pre-computed.
         """
         if X.shape[0] != Y.shape[0]:
@@ -1226,23 +1232,23 @@ class QuadHSIC(IndTest):
 
 class FiniteFeatureHSIC(IndTest):
     """
-    An independence test with Hilbert Schmidt Independence Criterion (HSIC) using 
-    finite dimensional kernels. Explicit feature maps are used to generate 
-    features. 
+    An independence test with Hilbert Schmidt Independence Criterion (HSIC) using
+    finite dimensional kernels. Explicit feature maps are used to generate
+    features.
     - The statistic is n*HSIC_biased^2
 
-    Reference: 
+    Reference:
     Large-Scale Kernel Methods for Independence Testing
     Qinyi Zhang, Sarah Filippi,  Arthur Gretton, Dino Sejdinovic
 
-    H0: X and Y are independent 
+    H0: X and Y are independent
     H1: X and Y are dependent.
     """
 
     def __init__(self, fmx, fmy, alpha=0.01, n_simulate=5000, seed=90):
         """
-        fmx: a FeatureMap for X 
-        fmy: a FeatureMap for Y 
+        fmx: a FeatureMap for X
+        fmy: a FeatureMap for Y
         """
         super(FiniteFeatureHSIC, self).__init__(alpha)
         self.fmx = fmx
@@ -1271,7 +1277,7 @@ class FiniteFeatureHSIC(IndTest):
             "pvalue": pvalue,
             "test_stat": ffhsic,
             "h0_rejected": pvalue < alpha,
-            #'arr_nhsic': arr_nhsic,
+            # 'arr_nhsic': arr_nhsic,
             "time_secs": t.secs,
             "n_simulate": n_simulate,
         }
@@ -1299,11 +1305,11 @@ class FiniteFeatureHSIC(IndTest):
         features_x, features_y, n_simulate=5000, seed=8274
     ):
         """
-        Simulate the null distribution using the spectrums of the cross covariance 
+        Simulate the null distribution using the spectrums of the cross covariance
         operator. See theorems in the reference.
         This is intended to be used to approximate the null distribution.
 
-        - features_x: n x Dx where Dx is the number of features for x 
+        - features_x: n x Dx where Dx is the number of features for x
         - features_y: n x Dy
 
         Return (a numpy array of simulated HSIC values, eigenvalues of X, eigenvalues of Y)
@@ -1345,17 +1351,17 @@ class FiniteFeatureHSIC(IndTest):
         eigx, eigy, biased_hsic=True, n_simulate=5000, seed=7
     ):
         """
-        Simulate the null distribution using the spectrums of the cross covariance 
-        operator. These are determined by the spectrum of the covariance operator 
+        Simulate the null distribution using the spectrums of the cross covariance
+        operator. These are determined by the spectrum of the covariance operator
         of X (eigx), and of Y (eigy). The simulated statistic is
         n*HSIC^2 where HSIC can be biased or unbiased (depending on
         the input argument).
 
-        Reference: Theorem 1 of 
+        Reference: Theorem 1 of
             Large-Scale Kernel Methods for Independence Testing
             Qinyi Zhang, Sarah Filippi,  Arthur Gretton, Dino Sejdinovic
 
-        - eigx: a numpy array of estimated eigenvalues of the covariance operator of X. 
+        - eigx: a numpy array of estimated eigenvalues of the covariance operator of X.
             These are the eigenvalues of H*K*H divided by n.
         - eigy: a numpy array of eigenvalues of the covariance operator of Y
 
@@ -1410,16 +1416,16 @@ class FiniteFeatureHSIC(IndTest):
 
 class NystromHSIC(FiniteFeatureHSIC):
     """
-    An independence test with Hilbert Schmidt Independence Criterion (HSIC) using 
+    An independence test with Hilbert Schmidt Independence Criterion (HSIC) using
     Nystrom approximation.
-    features. 
+    features.
     - The statistic is n*HSIC_biased^2
 
-    Reference: 
+    Reference:
     Large-Scale Kernel Methods for Independence Testing
     Qinyi Zhang, Sarah Filippi,  Arthur Gretton, Dino Sejdinovic
 
-    H0: X and Y are independent 
+    H0: X and Y are independent
     H1: X and Y are dependent.
     """
 
@@ -1444,19 +1450,19 @@ class NystromHSIC(FiniteFeatureHSIC):
 class RDC(IndTest):
     """
     An independece test with the Randomized Dependence Coefficient (Lopez-Paz et
-    al., 2013). Use Bartlett's approximation to approximate the null distribution. 
+    al., 2013). Use Bartlett's approximation to approximate the null distribution.
     No permutation.
     - The Bartlett's approximation does not seem to be accurate. See RDCPerm
       instead (use permutations to simulate from the null distribution).
 
-    H0: X and Y are independent 
+    H0: X and Y are independent
     H1: X and Y are dependent.
     """
 
     def __init__(self, fmx, fmy, alpha=0.01):
         """
-        fmx: a FeatureMap for X 
-        fmy: a FeatureMap for Y 
+        fmx: a FeatureMap for X
+        fmy: a FeatureMap for Y
         """
         super(RDC, self).__init__(alpha)
         self.fmx = fmx
@@ -1521,7 +1527,7 @@ class RDCPerm(IndTest):
     """
     An independece test with the Randomized Dependence Coefficient (Lopez-Paz et
     al., 2013). Use permutation to approximate the null distribution.
-    The statistic is the canonical correlation of the random-feature transformed 
+    The statistic is the canonical correlation of the random-feature transformed
     data.
     """
 
@@ -1529,8 +1535,8 @@ class RDCPerm(IndTest):
         self, fmx, fmy, n_permute=400, alpha=0.01, seed=27, use_copula=True
     ):
         """
-        fmx: a FeatureMap for the copula transform of X 
-        fmy: a FeatureMap for the coputa transform of Y 
+        fmx: a FeatureMap for the copula transform of X
+        fmy: a FeatureMap for the coputa transform of Y
         use_copula: If False, do not use copula transform on the data.
         """
         super(RDCPerm, self).__init__(alpha)
@@ -1564,7 +1570,7 @@ class RDCPerm(IndTest):
             "pvalue": pvalue,
             "test_stat": rdc_stat,
             "h0_rejected": pvalue < alpha,
-            #'arr_rdc': arr_rdc,
+            # 'arr_rdc': arr_rdc,
             "arr_eigvals": evals,
             "time_secs": t.secs,
             "n_permute": n_permute,
@@ -1641,7 +1647,8 @@ class RDCPerm(IndTest):
         with util.NumpySeedContext(seed=seed):
             r = 0
             while r < n_permute:
-                # shuffle the order of X, Y while still keeping the original pairs
+                # shuffle the order of X, Y while still keeping the original
+                # pairs
                 ind = np.random.choice(n, n, replace=False)
                 Xfs = Xf[ind, :]
                 Yfs = Yf[ind, :]
@@ -1651,7 +1658,7 @@ class RDCPerm(IndTest):
                     if r >= n_permute:
                         break
                     Yfs = np.roll(Yfs, 1, axis=0)
-                    ### perform CCA
+                    # perform CCA
                     # Dx x Dy
                     Cxy = Xfs.T.dot(Yfs) / n - mxmy
                     CxxICxy = CxxI.dot(Cxy)
@@ -1673,7 +1680,7 @@ class RDCPerm(IndTest):
         """
         Repeatedly mix, permute X, Y so that pairs are broken, and compute RDC.
         This is intended to be used to approximate the null distribution.
-        A naive implementation. 
+        A naive implementation.
 
         Return a numpy array of RDC values
         """
@@ -1694,9 +1701,9 @@ class RDCPerm(IndTest):
 class GaussRDC(RDC):
     """
     An independence test with the Randomized Dependence Coefficient (Lopez-Paz et
-    al., 2013) using Gaussian kernels for both X, Y. 
+    al., 2013) using Gaussian kernels for both X, Y.
 
-    H0: X and Y are independent 
+    H0: X and Y are independent
     H1: X and Y are dependent.
     """
 
@@ -1725,10 +1732,10 @@ class GaussRDC(RDC):
 
 def permute_null_dist(pdata, indtest, n_permute=400, seed=27):
     """
-    Simulate from the null distribution by permuting the sample in the 
-    PairedData pdata such that (x,y) pairs are broken. 
+    Simulate from the null distribution by permuting the sample in the
+    PairedData pdata such that (x,y) pairs are broken.
     indtest is an object with a method compute_stat(pdata).
-    Making use of the structure of the independence test will likely result 
+    Making use of the structure of the independence test will likely result
     in a more efficient permutations. This generic function is provided for
     convenience.
 
