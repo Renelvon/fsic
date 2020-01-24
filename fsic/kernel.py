@@ -1,23 +1,20 @@
 """Module containing kernel related classes"""
 
-__author__ = "wittawat"
+import abc
 
-from abc import ABCMeta, abstractmethod
 import numpy as np
 import scipy.signal as sig
 
 
-class Kernel(object):
+class Kernel(object, metaclass=abc.ABCMeta):
     """Abstract class for kernels"""
 
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
+    @abc.abstractmethod
     def eval(self, X1, X2):
         """Evalute the kernel on data X1 and X2 """
         pass
 
-    @abstractmethod
+    @abc.abstractmethod
     def pair_eval(self, X, Y):
         """Evaluate k(x1, y1), k(x2, y2), ..."""
         pass

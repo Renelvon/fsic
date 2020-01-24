@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from abc import ABCMeta, abstractmethod
+import abc
 import math
 
 import numpy as np
@@ -123,7 +123,7 @@ class PairedData(object):
 # end PairedData class
 
 
-class PairedSource(object):
+class PairedSource(object, metaclass=abc.ABCMeta):
     """A data source where it is possible to resample. Subclasses may prefix
     class names with PS.
 
@@ -133,20 +133,18 @@ class PairedSource(object):
     - Use PS if the PairedSource can be either one depending on the provided
     paramters."""
 
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
+    @abc.abstractmethod
     def sample(self, n, seed):
         """Return a PairedData. Returned result should be deterministic given
         the input (n, seed)."""
         raise NotImplementedError()
 
-    @abstractmethod
+    @abc.abstractmethod
     def dx(self):
         """Return the dimension of X"""
         raise NotImplementedError()
 
-    @abstractmethod
+    @abc.abstractmethod
     def dy(self):
         """Return the dimension of Y"""
         raise NotImplementedError()

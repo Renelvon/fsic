@@ -4,7 +4,7 @@ Module containing many types of independence testing methods.
 
 from __future__ import print_function
 
-from abc import ABCMeta, abstractmethod
+import abc
 import logging
 
 import numpy as np
@@ -19,10 +19,8 @@ import fsic.kernel as kernel
 import fsic.util as util
 
 
-class IndTest(object):
+class IndTest(object, metaclass=abc.ABCMeta):
     """Abstract class for an independence test for paired sample."""
-
-    __metaclass__ = ABCMeta
 
     def __init__(self, alpha):
         """
@@ -30,7 +28,7 @@ class IndTest(object):
         """
         self.alpha = alpha
 
-    @abstractmethod
+    @abc.abstractmethod
     def perform_test(self, pdata):
         """perform the two-sample test and return values computed in a dictionary:
         {alpha: 0.01, pvalue: 0.0002, test_stat: 2.3, h0_rejected: True,
@@ -39,7 +37,7 @@ class IndTest(object):
         """
         raise NotImplementedError()
 
-    @abstractmethod
+    @abc.abstractmethod
     def compute_stat(self, pdata):
         """Compute the test statistic"""
         raise NotImplementedError()
