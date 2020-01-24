@@ -5,21 +5,18 @@ Module containing many types of independence testing methods.
 from __future__ import print_function
 
 from abc import ABCMeta, abstractmethod
-import numpy as np
-
-# from numba import jit
-import fsic.data as data
-import fsic.util as util
-import fsic.feature as fea
-
-# from fsic.util import ContextTimer
-import fsic.kernel as kernel
 import logging
 
+import numpy as np
 import scipy.stats as stats
 import theano
 import theano.tensor as tensor
 import theano.tensor.nlinalg as nlinalg
+
+import fsic.data as data
+import fsic.feature as fea
+import fsic.kernel as kernel
+import fsic.util as util
 
 
 class IndTest(object):

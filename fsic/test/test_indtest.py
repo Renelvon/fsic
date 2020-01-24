@@ -4,14 +4,15 @@ Module for testing indtest module.
 
 __author__ = "wittawat"
 
+import unittest
+
 import numpy as np
+
 import fsic.data as data
 import fsic.feature as fea
-import fsic.util as util
 import fsic.kernel as kernel
 import fsic.indtest as it
-
-import unittest
+import fsic.util as util
 
 
 def get_pdata_mean(n, dx=2):

@@ -4,10 +4,11 @@ Module for testing data module.
 
 __author__ = "wittawat"
 
-import numpy as np
-import fsic.data as data
-
 import unittest
+
+import numpy as np
+
+import fsic.data as data
 
 
 class TestPairedData(unittest.TestCase):

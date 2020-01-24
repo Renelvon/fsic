@@ -4,12 +4,13 @@ Module for testing feature module.
 
 __author__ = "wittawat"
 
+import unittest
+
 import numpy as np
+
 import fsic.feature as fea
 import fsic.kernel as kernel
 import fsic.util as util
-
-import unittest
 
 
 class TestMarginalCDFMap(unittest.TestCase):

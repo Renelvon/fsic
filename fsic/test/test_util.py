@@ -4,10 +4,11 @@ Module for testing util module.
 
 __author__ = "wittawat"
 
-import numpy as np
-import fsic.util as util
-
 import unittest
+
+import numpy as np
+
+import fsic.util as util
 
 
 class TestNumpySeedContext(unittest.TestCase):

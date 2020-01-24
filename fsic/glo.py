@@ -2,13 +2,14 @@
 
 __author__ = "wittawat"
 
-import fsic
 import os
 
 try:
     import cPickle as pickle
 except ImportError:
     import pickle
+
+import fsic
 
 
 def get_root():

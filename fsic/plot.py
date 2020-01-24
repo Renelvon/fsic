@@ -2,10 +2,11 @@
 
 __author__ = "wittawat"
 
-import fsic.ex.exglobal as exglo
-import fsic.glo as glo
 import matplotlib.pyplot as plt
 import numpy as np
+
+import fsic.ex.exglobal as exglo
+import fsic.glo as glo
 
 
 def plot_2d_data(pdata):

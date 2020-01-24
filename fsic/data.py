@@ -2,9 +2,11 @@ from __future__ import print_function
 
 from abc import ABCMeta, abstractmethod
 import math
+
 import numpy as np
-import fsic.util as util
 import scipy.stats as stats
+
+import fsic.util as util
 
 
 class PairedData(object):
