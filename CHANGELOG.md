@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Format repository using black
 - Minor code refactorings.
 - Euclidean division now explicitly uses the `//` operator.
+- Moved `tests` to toplevel.
 
 ### Removed
 - Traces of Python2-only features, like `xrange` and non-iterating `range`.
