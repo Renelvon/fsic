@@ -29,7 +29,7 @@ install: build
 installcheck: test
 
 test:
-	$(PYTHON) -m unittest discover -s fsic/test 
+	$(PYTHON) -m unittest discover -s tests
 
 uninstall:
 	$(PIP) uninstall -y $(NAME)
