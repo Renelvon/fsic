@@ -87,7 +87,6 @@ disable=
     too-many-statements,
     undefined-loop-variable,
     undefined-variable,
-    unnecessary-pass,
     unused-argument,
     unsubscriptable-object,
     useless-object-inheritance,

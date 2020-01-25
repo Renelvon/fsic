@@ -12,12 +12,10 @@ class Kernel(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def eval(self, X1, X2):
         """Evalute the kernel on data X1 and X2 """
-        pass
 
     @abc.abstractmethod
     def pair_eval(self, X, Y):
         """Evaluate k(x1, y1), k(x2, y2), ..."""
-        pass
 
 
 class KHoPoly(Kernel):
