@@ -19,6 +19,9 @@ class ContextTimer:
     """
 
     def __init__(self, verbose=False):
+        self.start = None
+        self.end = None
+        self.secs = None
         self.verbose = verbose
 
     def __enter__(self):
@@ -43,6 +46,7 @@ class NumpySeedContext:
 
     def __init__(self, seed):
         self.seed = seed
+        self.cur_state = None
 
     def __enter__(self):
         rstate = np.random.get_state()
