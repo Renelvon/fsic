@@ -499,31 +499,6 @@ class PS2DSinFreq(PairedSource):
 
         return PairedData(X, Y, label="sin_freq%.2f" % self.freq)
 
-    def _sample_sequential(self, n, seed=81):
-        """
-        With a loop, slow.
-        """
-        rstate = np.random.get_state()
-        np.random.seed(seed)
-
-        # rejection sampling
-        w = self.freq
-        sam = np.zeros((n, 2))
-        ind = 0
-        while ind < n:
-            # uniformly randomly draw x, y from U(-pi, pi)
-            x = stats.uniform.rvs(loc=-math.pi, scale=2 * math.pi, size=1)
-            y = stats.uniform.rvs(loc=-math.pi, scale=2 * math.pi, size=1)
-            if stats.uniform.rvs() < (1 + np.sin(w * x) * np.sin(w * y)) / 2.0:
-                # accept
-                sam[ind, :] = [x, y]
-                ind = ind + 1
-
-        np.random.set_state(rstate)
-        return PairedData(
-            sam[:, [0]], sam[:, [1]], label="sin_freq%.2f" % self.freq
-        )
-
     def dx(self):
         return 1
 
