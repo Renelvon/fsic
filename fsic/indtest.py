@@ -227,9 +227,6 @@ class NFSIC(IndTest):
         return arr_nfsic
 
 
-# end class NFSIC
-
-
 class GaussNFSIC(NFSIC):
     """
     Normalized Finite Set Independence Criterion test using
@@ -616,9 +613,6 @@ class GaussNFSIC(NFSIC):
         W = util.bound_by_data(W, Y)
 
         return V, W
-
-
-# end of class GaussNFSIC
 
 
 def generic_optimize_locs_widths(
@@ -1199,9 +1193,6 @@ class QuadHSIC(IndTest):
         return arr_hsic
 
 
-# end class QuadHSIC
-
-
 class FiniteFeatureHSIC(IndTest):
     """
     An independence test with Hilbert Schmidt Independence Criterion (HSIC) using
@@ -1381,9 +1372,6 @@ class FiniteFeatureHSIC(IndTest):
         return arr_hsic
 
 
-# end class FiniteFeatureHSIC
-
-
 class NystromHSIC(FiniteFeatureHSIC):
     """
     An independence test with Hilbert Schmidt Independence Criterion (HSIC) using
@@ -1488,9 +1476,6 @@ class RDC(IndTest):
             return bartlett_stat, evals
         else:
             return bartlett_stat
-
-
-# end class RDC
 
 
 class RDCPerm(IndTest):

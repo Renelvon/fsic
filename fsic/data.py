@@ -118,9 +118,6 @@ class PairedData:
         return PairedData(nX, nY)
 
 
-# end PairedData class
-
-
 class PairedSource(metaclass=abc.ABCMeta):
     """A data source where it is possible to resample. Subclasses may prefix
     class names with PS.
@@ -234,9 +231,6 @@ class PSStraResample(PairedSource):
         return self.pdata.dy()
 
 
-# end PSStraResample
-
-
 class PSNullShuffle(PairedSource):
     """
     Randomly permute the order of one sample so that the pairs are guaranteed
@@ -269,9 +263,6 @@ class PSNullShuffle(PairedSource):
 
     def dy(self):
         return self.ps.dy()
-
-
-# end PSNullShuffle
 
 
 class PSNullResample(PairedSource):
@@ -317,9 +308,6 @@ class PSNullResample(PairedSource):
         return self.pdata.dy()
 
 
-# end class PSNullResample
-
-
 class PSStandardize(PairedSource):
     """
     A PairedSource that standardizes dimensions of X, Y independently so that
@@ -352,9 +340,6 @@ class PSStandardize(PairedSource):
 
     def dy(self):
         return self.ps.dy()
-
-
-# end of class PSStandardize
 
 
 class PSGaussNoiseDims(PairedSource):
@@ -397,9 +382,6 @@ class PSGaussNoiseDims(PairedSource):
 
     def dy(self):
         return self.ps.dy() + self.ndy
-
-
-# end of class PSGaussNoiseDims
 
 
 class PSFunc(PairedSource):
@@ -547,9 +529,6 @@ class PS2DSinFreq(PairedSource):
 
     def dy(self):
         return 1
-
-
-# end class PS2DSinFreq
 
 
 class PSSinFreq(PairedSource):
@@ -757,9 +736,6 @@ class PSIndSameGauss(PairedSource):
         return self.dimy
 
 
-# end class PSIndSameGauss
-
-
 class PSPairwiseSign(PairedSource):
     r"""
     A toy problem given in section 5.3 of
@@ -799,9 +775,6 @@ class PSPairwiseSign(PairedSource):
 
     def dy(self):
         return 1
-
-
-# end class PSPairwiseSign
 
 
 class PSGaussSign(PairedSource):

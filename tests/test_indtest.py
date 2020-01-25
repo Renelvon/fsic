@@ -191,9 +191,6 @@ class TestFiniteFeatureHSIC(unittest.TestCase):
                 self.assertTrue(np.all(arr_diff <= 0.2))
 
 
-# end class TestFiniteFeatureHSIC
-
-
 class TestRDC(unittest.TestCase):
     def test_rdc(self):
         feature_pairs = 10
@@ -236,8 +233,6 @@ class TestFuncs(unittest.TestCase):
         self.assertAlmostEqual(np.imag(nfsic), 0)
         self.assertGreater(nfsic, 0)
 
-
-# end TestQuadHSIC
 
 if __name__ == "__main__":
     unittest.main()

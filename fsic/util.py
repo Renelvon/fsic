@@ -35,9 +35,6 @@ class ContextTimer:
             print("elapsed time: %f ms" % (self.secs * 1000))
 
 
-# end class ContextTimer
-
-
 class NumpySeedContext:
     """
     A context manager to reset the random seed by numpy.random.seed(..).
