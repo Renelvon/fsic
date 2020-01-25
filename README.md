@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/Renelvon/fsic.svg?branch=master)](https://travis-ci.org/Renelvon/fsic)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/wittawatj/fsic-test/blob/master/LICENSE)
 
-This repository contains a Python 2.7 implementation of the normalized FSIC (NFSIC)
+This repository contains a Python 3.5 implementation of the normalized FSIC (NFSIC)
 test as described in [our paper](https://arxiv.org/abs/1610.04782)
 
     An Adaptive Test of Independence with Analytic Kernel Embeddings
@@ -15,8 +15,8 @@ test as described in [our paper](https://arxiv.org/abs/1610.04782)
    stack](https://www.scipy.org/stackspec.html) installed. One way to guarantee
 this is to install it using [Anaconda with Python
 2.7](https://www.continuum.io/downloads), which is also the environment we used
-to develop this package. Make sure to use Python 2.7.
-2. Clone or download this repository. You will get a folder with name `fsic-test`.
+to develop this package. Make sure to use Python 3.5 or later.
+2. Clone or download this repository. You will get a folder with name `fsic`.
 3. Add the path to the folder to Python's search path i.e., to `PYTHONPATH`
    global variable. See, for instance, [this page on
 stackoverflow](http://stackoverflow.com/questions/11960602/how-to-add-something-to-pythonpath)
@@ -27,15 +27,15 @@ for Windows.
    shell, and issuing `import fsic` (`fsic` is the name of our
 Python package). If there is no import error, the installation is completed.  
 
-### Dependency
+### Dependencies
 We rely on the following Python packages during development. 
 Please make sure that you use the packages with the specified version numbers
 or newer.
 
-    numpy==1.11.0
-    matplotlib==1.5.1
-    scipy==0.18.0
-    theano==0.8.
+    matplotlib>=1.5.2
+    numpy>=1.16
+    scipy>=0.18
+    theano>=0.8.2
 
 Note that `theano` is not enabled in Anaconda by default. See [this
 page](http://deeplearning.net/software/theano/install.html#basic-user-install-instructions)
@@ -53,4 +53,3 @@ notebooks in `ipynb` folder. Be sure to check them if you would like to explore 
 
 If you have questions or comments about anything regarding this work or code,
 please do not hesitate to contact [Wittawat Jitkrittum](http://wittawat.com).
-
