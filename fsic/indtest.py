@@ -1430,7 +1430,7 @@ class RDC(IndTest):
         with util.ContextTimer() as t:
             alpha = self.alpha
 
-            rdf_stat, evals = self.compute_stat(pdata, return_eigvals=True)
+            rdf_stat, evals = self.compute_stat_with_eigvals(pdata)
             # the stat asymptotically follows a Chi^2
             Dx = self.fmx.num_features()
             Dy = self.fmy.num_features()
@@ -1446,7 +1446,7 @@ class RDC(IndTest):
         }
         return results
 
-    def compute_stat(self, pdata, return_eigvals=False):
+    def compute_stat_with_eigvals(self, pdata):
         X, Y = pdata.xy()
         n = pdata.sample_size()
         # copula transform to both X and Y
@@ -1472,10 +1472,10 @@ class RDC(IndTest):
         #  raise ValueError('Cannot use this Bartlett approximation when numbers of features of X and Y are different.')
         # bartlett_stat = ((self.fmx.num_features() + 3)/2.0 - n)*np.sum(np.log(1-evals**2))
 
-        if return_eigvals:
-            return bartlett_stat, evals
-        else:
-            return bartlett_stat
+        return bartlett_stat, evals
+
+    def compute_stat(self, pdata):
+        return self.compute_stat_with_eigvals(pdata)[0]
 
 
 class RDCPerm(IndTest):
@@ -1504,7 +1504,7 @@ class RDCPerm(IndTest):
     def perform_test(self, pdata):
         with util.ContextTimer() as t:
             alpha = self.alpha
-            rdc_stat, evals = self.compute_stat(pdata, return_eigvals=True)
+            rdc_stat, evals = self.compute_stat_with_eigvals(pdata)
 
             X, Y = pdata.xy()
             n_permute = self.n_permute
@@ -1531,7 +1531,7 @@ class RDCPerm(IndTest):
         }
         return results
 
-    def compute_stat(self, pdata, return_eigvals=False):
+    def compute_stat_with_eigvals(self, pdata):
         X, Y = pdata.xy()
         if self.use_copula:
             # copula transform to both X and Y
@@ -1549,10 +1549,10 @@ class RDCPerm(IndTest):
         # CCA
         evals, _, _ = util.cca(Xrff, Yrff, reg=1e-5)
         minD = min(Xrff.shape[1], Yrff.shape[1])
-        if return_eigvals:
-            return evals[0], evals[:minD]
-        else:
-            return evals[0]
+        return evals[0], evals[:minD]
+
+    def compute_stat(self, pdata):
+        return self.compute_stat_with_eigvals(pdata)[0]
 
     @staticmethod
     def list_permute(
