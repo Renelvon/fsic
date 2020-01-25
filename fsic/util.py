@@ -279,10 +279,10 @@ def one_of_K_code(arr):
 
 def fullprint(*args, **kwargs):
     "https://gist.github.com/ZGainsforth/3a306084013633c52881"
-    opt = numpy.get_printoptions()
-    numpy.set_printoptions(threshold="nan")
+    opt = np.get_printoptions()
+    np.set_printoptions(threshold="nan")
     pprint.pprint(*args, **kwargs)
-    numpy.set_printoptions(**opt)
+    np.set_printoptions(**opt)
 
 
 def standardize(X):
