@@ -120,7 +120,6 @@ class NFSIC(IndTest):
             "pvalue": pvalue,
             "test_stat": nfsic_stat,
             "h0_rejected": pvalue < alpha,
-            # 'arr_nfsic': arr_nfsic,
             "time_secs": t.secs,
             "n_permute": n_permute,
         }
@@ -133,7 +132,6 @@ class NFSIC(IndTest):
         """
         with util.ContextTimer() as t:
             stat = self.compute_stat(pdata)
-            # print('stat: %.3g'%stat)
             J = self.V.shape[0]
             pvalue = stats.chi2.sf(stat, df=J)
             alpha = self.alpha
@@ -291,9 +289,6 @@ class GaussNFSIC(NFSIC):
         mean_l = Lth.mean(0)
         KLth = Kth * Lth
         # u is a Theano array
-        # from IPython.core.debugger import Tracer
-        # Tracer()()
-        # u = (KLth.mean(0) - mean_k*mean_l)*n/(n-1)
         # biased
         u = KLth.mean(0) - mean_k * mean_l
 
@@ -578,7 +573,6 @@ class GaussNFSIC(NFSIC):
         Fit a joint Gaussian to (X, Y) and draw n_test_locs.
         return (V, W) each containing n_test_locs vectors.
         """
-        # import pdb; pdb.set_trace()
 
         X, Y = pdata.xy()
         n = pdata.sample_size()
@@ -621,9 +615,6 @@ class GaussNFSIC(NFSIC):
         V = util.bound_by_data(V, X)
         W = util.bound_by_data(W, Y)
 
-        # from IPython.core.debugger import Tracer
-        # t = Tracer()
-        # t()
         return V, W
 
 
@@ -824,10 +815,6 @@ def generic_optimize_locs_widths(
                 gwidthxs[t],
                 gwidthys[t],
             )
-            # logging.info('V')
-            # logging.info(Vs[t])
-            # logging.info('W')
-            # logging.info(Ws[t])
 
             # check the change of the objective values
             if t >= 4 and abs(S[t] - S[t - 1]) <= tol_fun:
@@ -925,8 +912,6 @@ def nfsic_grid_search_kernel(pdata, V, W, list_kernelx, list_kernely):
                     # This can happen when Z, Sig are ill-conditioned.
                     # print('negative lamb: %.3g'%lamb)
                     raise np.linalg.LinAlgError
-                # from IPython.core.debugger import Tracer
-                # Tracer()()
                 if np.iscomplex(lamb):
                     # complex value can happen if the covariance is
                     # ill-conditioned?
@@ -991,8 +976,6 @@ def nfsic_from_u_sig(u, Sig, n, reg=0):
                     s = np.nan
         else:
             # assume reg is a number
-            # evals, _ = np.linalg.eig(Sig)
-            # print np.min(evals)
             s = n * np.linalg.solve(Sig + reg * np.eye(Sig.shape[0]), u).dot(u)
     return s
 
@@ -1018,7 +1001,6 @@ def nfsic(X, Y, k, l, V, W, reg=0):
     # mean
     mean_k = np.mean(K, 0)
     mean_l = np.mean(L, 0)
-    # u = n/(n-1)*(np.mean(K*L, 0) - mean_k*mean_l)
 
     # biased
     u = np.mean(K * L, 0) - mean_k * mean_l
@@ -1077,7 +1059,6 @@ class QuadHSIC(IndTest):
             "pvalue": pvalue,
             "test_stat": bhsic_stat,
             "h0_rejected": pvalue < alpha,
-            # 'arr_bhsic': arr_hsic,
             "time_secs": t.secs,
             "n_permute": n_permute,
         }
@@ -1110,12 +1091,9 @@ class QuadHSIC(IndTest):
         Lmean = np.mean(L, 0)
         HK = K - Kmean
         HL = L - Lmean
-        # t = trace(KHLH)
         HKf = HK.flatten() / (n - 1)
         HLf = HL.T.flatten() / (n - 1)
         hsic = HKf.dot(HLf)
-        # t = HK.flatten().dot(HL.T.flatten())
-        # hsic = t/(n-1)**2.0
         return hsic
 
     @staticmethod
@@ -1126,7 +1104,6 @@ class QuadHSIC(IndTest):
 
         Return a numpy array of HSIC's for each permutation.
         """
-        # return QuadHSIC._list_permute_generic(X, Y, k, l, n_permute, seed)
         return QuadHSIC._list_permute_preKL(X, Y, k, l, n_permute, seed)
 
     @staticmethod
@@ -1175,7 +1152,6 @@ class QuadHSIC(IndTest):
                 # compute HSIC
                 Lmean = np.mean(Ls, 0)
                 HL = Ls - Lmean
-                # t = trace(KHLH)
                 HLf = HL.T.flatten() / (n - 1)
                 bhsic = HKf.dot(HLf)
 
@@ -1273,7 +1249,6 @@ class FiniteFeatureHSIC(IndTest):
             "pvalue": pvalue,
             "test_stat": ffhsic,
             "h0_rejected": pvalue < alpha,
-            # 'arr_nhsic': arr_nhsic,
             "time_secs": t.secs,
             "n_simulate": n_simulate,
         }
@@ -1287,7 +1262,6 @@ class FiniteFeatureHSIC(IndTest):
         Zx = self.fmx.gen_features(X)
         Zy = self.fmy.gen_features(Y)
         HZy = Zy - np.mean(Zy, 0)
-        # HZx = Zx - np.mean(Zx, 0)
         M = Zx.T.dot(HZy) / n
         stat = np.sum(M ** 2) * n
         if np.abs(np.imag(stat)) < 1e-8:
@@ -1566,7 +1540,6 @@ class RDCPerm(IndTest):
             "pvalue": pvalue,
             "test_stat": rdc_stat,
             "h0_rejected": pvalue < alpha,
-            # 'arr_rdc': arr_rdc,
             "arr_eigvals": evals,
             "time_secs": t.secs,
             "n_permute": n_permute,

@@ -162,7 +162,6 @@ def cca(X, Y, reg=1e-5):
         Vx is a square matrixk whose columns are eigenvectors for X corresponding to vals.
         Vy is a square matrixk whose columns are eigenvectors for Y corresponding to vals.
     """
-    # return _cca_one_eig(X, Y, reg)
     return _cca_two_eig(X, Y, reg)
 
 
@@ -179,7 +178,6 @@ def _cca_two_eig(X, Y, reg=1e-5):
     # dx x dy
     Cxy = X.T.dot(Y) / n - np.outer(mx, my)
     Cxx = np.cov(X.T)
-    # print Cxx
     Cyy = np.cov(Y.T)
     # Cxx, Cyy have to be invertible
 
@@ -195,17 +193,8 @@ def _cca_two_eig(X, Y, reg=1e-5):
 
     # problem for a
     avals, aV = np.linalg.eig(CxxICxy.dot(CyyICyx))
-    # print avals
-    # print 'aV'
-    # print aV
     # problem for b
     bvals, bV = np.linalg.eig(CyyICyx.dot(CxxICxy))
-    # print bvals
-    # print 'bV'
-    # print bV
-
-    # from IPython.core.debugger import Tracer
-    # Tracer()()
 
     dim = min(dx, dy)
     # sort descendingly
@@ -235,7 +224,6 @@ def _cca_one_eig(X, Y, reg=1e-5):
     # dx x dy
     Cxy = X.T.dot(Y) / n - np.outer(mx, my)
     Cxx = np.cov(X.T)
-    # print Cxx
     Cyy = np.cov(Y.T)
     # Cxx, Cyy have to be invertible
     if dx == 1:
@@ -248,7 +236,6 @@ def _cca_one_eig(X, Y, reg=1e-5):
     else:
         CyyICyx = np.linalg.solve(Cyy + reg * np.eye(dy), Cxy.T)
     # CCA block matrix
-    # print CyyICyx
     R1 = np.hstack((np.zeros((dx, dx)), CxxICxy))
     R2 = np.hstack((CyyICyx, np.zeros((dy, dy))))
     B = np.vstack((R1, R2))
@@ -328,7 +315,6 @@ def one_of_K_code(arr):
     X = np.zeros((n, nu))
     for i, u in enumerate(U):
         Ii = np.where(np.abs(arr - u) < 1e-8)
-        # ni = len(Ii)
         X[Ii[0], i] = 1
     return X
 

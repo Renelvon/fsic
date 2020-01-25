@@ -211,10 +211,8 @@ class PSStraResample(PairedSource):
             # from each class.
             n_class = int(math.ceil(niv / n_sam * n))
             chosenI = Iv[:n_class]
-            # print chosenI
             list_chosenI.append(chosenI)
         final_chosenI = np.hstack(list_chosenI)
-        # print final_chosenI
         reduceI = util.subsample_ind(
             len(final_chosenI), min(n, len(final_chosenI)), seed + 5
         )
@@ -530,8 +528,6 @@ class PS2DSinFreq(PairedSource):
         w = self.freq
         sam = np.zeros((n, 2))
         ind = 0
-        # unif_den = 1.0/(4*math.pi**2)
-        # ref_bound = 2.0/unif_den
         while ind < n:
             # uniformly randomly draw x, y from U(-pi, pi)
             x = stats.uniform.rvs(loc=-math.pi, scale=2 * math.pi, size=1)
