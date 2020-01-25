@@ -211,50 +211,6 @@ def _cca_two_eig(X, Y, reg=1e-5):
     return np.real(avals), np.real(aV), np.real(bV)
 
 
-def _cca_one_eig(X, Y, reg=1e-5):
-    """
-    CCA formulation with one big block diagonal eigenvalue problem.
-    """
-    # raise RuntimeError('There is a bug in this one. Eigenvalues can be outside [-1, 1]. See _cca_one_eig() instead')
-
-    dx = X.shape[1]
-    dy = Y.shape[1]
-    assert X.shape[0] == Y.shape[0]
-    n = X.shape[0]
-    mx = np.mean(X, 0)
-    my = np.mean(Y, 0)
-    # dx x dy
-    Cxy = X.T.dot(Y) / n - np.outer(mx, my)
-    Cxx = np.cov(X.T)
-    Cyy = np.cov(Y.T)
-    # Cxx, Cyy have to be invertible
-    if dx == 1:
-        CxxICxy = Cxy / Cxx
-    else:
-        CxxICxy = np.linalg.solve(Cxx + reg * np.eye(dx), Cxy)
-
-    if dy == 1:
-        CyyICyx = Cxy.T / Cyy
-    else:
-        CyyICyx = np.linalg.solve(Cyy + reg * np.eye(dy), Cxy.T)
-    # CCA block matrix
-    R1 = np.hstack((np.zeros((dx, dx)), CxxICxy))
-    R2 = np.hstack((CyyICyx, np.zeros((dy, dy))))
-    B = np.vstack((R1, R2))
-    assert B.shape[0] == B.shape[1]
-
-    # eigen problem
-    vals, V = np.linalg.eig(B)
-    dim = min(dx, dy)
-    # sort descendingly
-    I = np.argsort(-vals)
-    vals = vals[I[:dim]]
-    V = V[:, I]
-    Vx = V[:dx, :dim]
-    Vy = V[dx:, :dim]
-    return np.real(vals), np.real(Vx), np.real(Vy)
-
-
 def fit_gaussian_draw(X, J, seed=28, reg=1e-7, eig_pow=1.0):
     """
     Fit a multivariate normal to the data X (n x d) and draw J points
