@@ -64,7 +64,6 @@ disable=
     bad-continuation,
     broad-except,
     duplicate-code,
-    import-error,
     invalid-name,
     line-too-long,
     method-hidden,
