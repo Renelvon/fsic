@@ -33,12 +33,12 @@ class IndTest(metaclass=abc.ABCMeta):
         time_secs: ...}
         pdata: an instance of PairedData
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abc.abstractmethod
     def compute_stat(self, pdata):
         """Compute the test statistic"""
-        raise NotImplementedError()
+        raise NotImplementedError
 
 
 # ------------------------------------------------------

@@ -135,17 +135,17 @@ class PairedSource(metaclass=abc.ABCMeta):
     def sample(self, n, seed):
         """Return a PairedData. Returned result should be deterministic given
         the input (n, seed)."""
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abc.abstractmethod
     def dx(self):
         """Return the dimension of X"""
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abc.abstractmethod
     def dy(self):
         """Return the dimension of Y"""
-        raise NotImplementedError()
+        raise NotImplementedError
 
 
 class PSResample(PairedSource):
