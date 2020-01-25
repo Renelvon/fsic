@@ -7,7 +7,7 @@ import scipy.stats as stats
 import fsic.util as util
 
 
-class PairedData(object):
+class PairedData:
     """Class representing paired data for independence testing
 
     properties:
@@ -118,10 +118,7 @@ class PairedData(object):
         return PairedData(nX, nY)
 
 
-# end PairedData class
-
-
-class PairedSource(object, metaclass=abc.ABCMeta):
+class PairedSource(metaclass=abc.ABCMeta):
     """A data source where it is possible to resample. Subclasses may prefix
     class names with PS.
 
@@ -135,17 +132,17 @@ class PairedSource(object, metaclass=abc.ABCMeta):
     def sample(self, n, seed):
         """Return a PairedData. Returned result should be deterministic given
         the input (n, seed)."""
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abc.abstractmethod
     def dx(self):
         """Return the dimension of X"""
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abc.abstractmethod
     def dy(self):
         """Return the dimension of Y"""
-        raise NotImplementedError()
+        raise NotImplementedError
 
 
 class PSResample(PairedSource):
@@ -211,10 +208,8 @@ class PSStraResample(PairedSource):
             # from each class.
             n_class = int(math.ceil(niv / n_sam * n))
             chosenI = Iv[:n_class]
-            # print chosenI
             list_chosenI.append(chosenI)
         final_chosenI = np.hstack(list_chosenI)
-        # print final_chosenI
         reduceI = util.subsample_ind(
             len(final_chosenI), min(n, len(final_chosenI)), seed + 5
         )
@@ -234,9 +229,6 @@ class PSStraResample(PairedSource):
 
     def dy(self):
         return self.pdata.dy()
-
-
-# end PSStraResample
 
 
 class PSNullShuffle(PairedSource):
@@ -271,9 +263,6 @@ class PSNullShuffle(PairedSource):
 
     def dy(self):
         return self.ps.dy()
-
-
-# end PSNullShuffle
 
 
 class PSNullResample(PairedSource):
@@ -319,9 +308,6 @@ class PSNullResample(PairedSource):
         return self.pdata.dy()
 
 
-# end class PSNullResample
-
-
 class PSStandardize(PairedSource):
     """
     A PairedSource that standardizes dimensions of X, Y independently so that
@@ -354,9 +340,6 @@ class PSStandardize(PairedSource):
 
     def dy(self):
         return self.ps.dy()
-
-
-# end of class PSStandardize
 
 
 class PSGaussNoiseDims(PairedSource):
@@ -399,9 +382,6 @@ class PSGaussNoiseDims(PairedSource):
 
     def dy(self):
         return self.ps.dy() + self.ndy
-
-
-# end of class PSGaussNoiseDims
 
 
 class PSFunc(PairedSource):
@@ -530,8 +510,6 @@ class PS2DSinFreq(PairedSource):
         w = self.freq
         sam = np.zeros((n, 2))
         ind = 0
-        # unif_den = 1.0/(4*math.pi**2)
-        # ref_bound = 2.0/unif_den
         while ind < n:
             # uniformly randomly draw x, y from U(-pi, pi)
             x = stats.uniform.rvs(loc=-math.pi, scale=2 * math.pi, size=1)
@@ -551,9 +529,6 @@ class PS2DSinFreq(PairedSource):
 
     def dy(self):
         return 1
-
-
-# end class PS2DSinFreq
 
 
 class PSSinFreq(PairedSource):
@@ -761,9 +736,6 @@ class PSIndSameGauss(PairedSource):
         return self.dimy
 
 
-# end class PSIndSameGauss
-
-
 class PSPairwiseSign(PairedSource):
     r"""
     A toy problem given in section 5.3 of
@@ -803,9 +775,6 @@ class PSPairwiseSign(PairedSource):
 
     def dy(self):
         return 1
-
-
-# end class PSPairwiseSign
 
 
 class PSGaussSign(PairedSource):

@@ -41,8 +41,6 @@ def plot_prob_reject(ex, fname, h1_true, func_xvalues, xlabel, func_title=None):
 
     Return loaded results
     """
-    # from IPython.core.debugger import Tracer
-    # Tracer()()
 
     results = glo.ex_load_result(ex, fname)
 
@@ -59,22 +57,15 @@ def plot_prob_reject(ex, fname, h1_true, func_xvalues, xlabel, func_title=None):
     rejs = vf_pval(results["job_results"])
     repeats, _, n_methods = results["job_results"].shape
     mean_rejs = np.mean(rejs, axis=0)
-    # print mean_rejs
-    # std_pvals = np.std(rejs, axis=0)
-    # std_pvals = np.sqrt(mean_rejs*(1.0-mean_rejs))
 
     xvalues = func_xvalues(results)
 
-    # ns = np.array(results[xkey])
-    # te_proportion = 1.0 - results['tr_proportion']
-    # test_sizes = ns*te_proportion
     line_styles = exglo.func_plot_fmt_map()
     method_labels = exglo.get_func2label_map()
 
     func_names = [f.__name__ for f in results["method_job_funcs"]]
     for i in range(n_methods):
         fmt = line_styles[func_names[i]]
-        # plt.errorbar(ns*te_proportion, mean_rejs[:, i], std_pvals[:, i])
         method_label = method_labels[func_names[i]]
         plt.plot(xvalues, mean_rejs[:, i], fmt, label=method_label)
     # else:
@@ -120,16 +111,12 @@ def plot_runtime(ex, fname, func_xvalues, xlabel, func_title=None):
 
     xvalues = func_xvalues(results)
 
-    # ns = np.array(results[xkey])
-    # te_proportion = 1.0 - results['tr_proportion']
-    # test_sizes = ns*te_proportion
     line_styles = exglo.func_plot_fmt_map()
     method_labels = exglo.get_func2label_map()
 
     func_names = [f.__name__ for f in results["method_job_funcs"]]
     for i in range(n_methods):
         fmt = line_styles[func_names[i]]
-        # plt.errorbar(ns*te_proportion, mean_rejs[:, i], std_pvals[:, i])
         method_label = method_labels[func_names[i]]
         plt.errorbar(
             xvalues,

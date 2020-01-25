@@ -6,7 +6,7 @@ import numpy as np
 import scipy.stats as stats
 
 
-class FeatureMap(object, metaclass=abc.ABCMeta):
+class FeatureMap(metaclass=abc.ABCMeta):
     """Abstract class for a feature map function"""
 
     @abc.abstractmethod
@@ -16,7 +16,6 @@ class FeatureMap(object, metaclass=abc.ABCMeta):
 
         Return a n x D numpy array.
         """
-        pass
 
     @abc.abstractmethod
     def num_features(self, X=None):
@@ -24,7 +23,6 @@ class FeatureMap(object, metaclass=abc.ABCMeta):
         Return the number of features that this map will generate for X.
         X is optional.
         """
-        pass
 
 
 class MarginalCDFMap(FeatureMap):

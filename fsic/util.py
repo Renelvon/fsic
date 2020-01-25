@@ -1,11 +1,12 @@
 """A module containing convenient methods for general machine learning"""
 
+import pprint
 import time
 
 import numpy as np
 
 
-class ContextTimer(object):
+class ContextTimer:
     """
     A class used to time an executation of a code snippet.
     Use it with with .... as ...
@@ -19,6 +20,9 @@ class ContextTimer(object):
     """
 
     def __init__(self, verbose=False):
+        self.start = None
+        self.end = None
+        self.secs = None
         self.verbose = verbose
 
     def __enter__(self):
@@ -32,10 +36,7 @@ class ContextTimer(object):
             print("elapsed time: %f ms" % (self.secs * 1000))
 
 
-# end class ContextTimer
-
-
-class NumpySeedContext(object):
+class NumpySeedContext:
     """
     A context manager to reset the random seed by numpy.random.seed(..).
     Set the seed back at the end of the block.
@@ -43,6 +44,7 @@ class NumpySeedContext(object):
 
     def __init__(self, seed):
         self.seed = seed
+        self.cur_state = None
 
     def __enter__(self):
         rstate = np.random.get_state()
@@ -162,7 +164,6 @@ def cca(X, Y, reg=1e-5):
         Vx is a square matrixk whose columns are eigenvectors for X corresponding to vals.
         Vy is a square matrixk whose columns are eigenvectors for Y corresponding to vals.
     """
-    # return _cca_one_eig(X, Y, reg)
     return _cca_two_eig(X, Y, reg)
 
 
@@ -179,7 +180,6 @@ def _cca_two_eig(X, Y, reg=1e-5):
     # dx x dy
     Cxy = X.T.dot(Y) / n - np.outer(mx, my)
     Cxx = np.cov(X.T)
-    # print Cxx
     Cyy = np.cov(Y.T)
     # Cxx, Cyy have to be invertible
 
@@ -195,17 +195,8 @@ def _cca_two_eig(X, Y, reg=1e-5):
 
     # problem for a
     avals, aV = np.linalg.eig(CxxICxy.dot(CyyICyx))
-    # print avals
-    # print 'aV'
-    # print aV
     # problem for b
     bvals, bV = np.linalg.eig(CyyICyx.dot(CxxICxy))
-    # print bvals
-    # print 'bV'
-    # print bV
-
-    # from IPython.core.debugger import Tracer
-    # Tracer()()
 
     dim = min(dx, dy)
     # sort descendingly
@@ -235,7 +226,6 @@ def _cca_one_eig(X, Y, reg=1e-5):
     # dx x dy
     Cxy = X.T.dot(Y) / n - np.outer(mx, my)
     Cxx = np.cov(X.T)
-    # print Cxx
     Cyy = np.cov(Y.T)
     # Cxx, Cyy have to be invertible
     if dx == 1:
@@ -248,7 +238,6 @@ def _cca_one_eig(X, Y, reg=1e-5):
     else:
         CyyICyx = np.linalg.solve(Cyy + reg * np.eye(dy), Cxy.T)
     # CCA block matrix
-    # print CyyICyx
     R1 = np.hstack((np.zeros((dx, dx)), CxxICxy))
     R2 = np.hstack((CyyICyx, np.zeros((dy, dy))))
     B = np.vstack((R1, R2))
@@ -328,18 +317,15 @@ def one_of_K_code(arr):
     X = np.zeros((n, nu))
     for i, u in enumerate(U):
         Ii = np.where(np.abs(arr - u) < 1e-8)
-        # ni = len(Ii)
         X[Ii[0], i] = 1
     return X
 
 
 def fullprint(*args, **kwargs):
     "https://gist.github.com/ZGainsforth/3a306084013633c52881"
-    from pprint import pprint
-
     opt = numpy.get_printoptions()
     numpy.set_printoptions(threshold="nan")
-    pprint(*args, **kwargs)
+    pprint.pprint(*args, **kwargs)
     numpy.set_printoptions(**opt)
 
 

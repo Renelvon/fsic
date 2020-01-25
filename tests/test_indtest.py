@@ -191,9 +191,6 @@ class TestFiniteFeatureHSIC(unittest.TestCase):
                 self.assertTrue(np.all(arr_diff <= 0.2))
 
 
-# end class TestFiniteFeatureHSIC
-
-
 class TestRDC(unittest.TestCase):
     def test_rdc(self):
         feature_pairs = 10
@@ -204,7 +201,7 @@ class TestRDC(unittest.TestCase):
             fmx = fea.RFFKGauss(1, feature_pairs, seed=f + 10)
             fmy = fea.RFFKGauss(2.0, feature_pairs + 1, seed=f + 9)
             rdc = it.RDC(fmx, fmy, alpha=0.01)
-            stat, evals = rdc.compute_stat(pdata, return_eigvals=True)
+            stat, evals = rdc.compute_stat_with_eigvals(pdata)
 
             self.assertGreaterEqual(stat, 0)
             abs_evals = np.abs(evals)
@@ -236,8 +233,6 @@ class TestFuncs(unittest.TestCase):
         self.assertAlmostEqual(np.imag(nfsic), 0)
         self.assertGreater(nfsic, 0)
 
-
-# end TestQuadHSIC
 
 if __name__ == "__main__":
     unittest.main()
