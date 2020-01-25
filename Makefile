@@ -12,6 +12,7 @@ build:
 	$(PYTHON) $(SETUP) build
 
 check:
+	black $(SETUP) $(NAME) $(TESTS)
 	check-manifest
 	pylint setup.py $(NAME) $(TESTS)
 	pyroma -n 10 .

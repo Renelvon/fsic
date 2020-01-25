@@ -1,3 +1,4 @@
+black
 check-manifest>=0.38
 numpy>=1.16
 matplotlib>=1.5.2

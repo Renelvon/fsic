@@ -13,3 +13,4 @@ include setup.cfg
 include setup.py
 
 include .pylintrc
+include pyproject.toml
