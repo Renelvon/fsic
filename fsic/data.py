@@ -7,7 +7,7 @@ import scipy.stats as stats
 import fsic.util as util
 
 
-class PairedData(object):
+class PairedData:
     """Class representing paired data for independence testing
 
     properties:
@@ -121,7 +121,7 @@ class PairedData(object):
 # end PairedData class
 
 
-class PairedSource(object, metaclass=abc.ABCMeta):
+class PairedSource(metaclass=abc.ABCMeta):
     """A data source where it is possible to resample. Subclasses may prefix
     class names with PS.
 

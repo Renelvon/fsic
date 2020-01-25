@@ -6,7 +6,7 @@ import numpy as np
 import scipy.signal as sig
 
 
-class Kernel(object, metaclass=abc.ABCMeta):
+class Kernel(metaclass=abc.ABCMeta):
     """Abstract class for kernels"""
 
     @abc.abstractmethod

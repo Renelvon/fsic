@@ -17,7 +17,7 @@ import fsic.kernel as kernel
 import fsic.util as util
 
 
-class IndTest(object, metaclass=abc.ABCMeta):
+class IndTest(metaclass=abc.ABCMeta):
     """Abstract class for an independence test for paired sample."""
 
     def __init__(self, alpha):

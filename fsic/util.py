@@ -5,7 +5,7 @@ import time
 import numpy as np
 
 
-class ContextTimer(object):
+class ContextTimer:
     """
     A class used to time an executation of a code snippet.
     Use it with with .... as ...
@@ -35,7 +35,7 @@ class ContextTimer(object):
 # end class ContextTimer
 
 
-class NumpySeedContext(object):
+class NumpySeedContext:
     """
     A context manager to reset the random seed by numpy.random.seed(..).
     Set the seed back at the end of the block.

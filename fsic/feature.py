@@ -6,7 +6,7 @@ import numpy as np
 import scipy.stats as stats
 
 
-class FeatureMap(object, metaclass=abc.ABCMeta):
+class FeatureMap(metaclass=abc.ABCMeta):
     """Abstract class for a feature map function"""
 
     @abc.abstractmethod
