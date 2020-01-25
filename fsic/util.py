@@ -1,5 +1,6 @@
 """A module containing convenient methods for general machine learning"""
 
+import pprint
 import time
 
 import numpy as np
@@ -322,11 +323,9 @@ def one_of_K_code(arr):
 
 def fullprint(*args, **kwargs):
     "https://gist.github.com/ZGainsforth/3a306084013633c52881"
-    from pprint import pprint
-
     opt = numpy.get_printoptions()
     numpy.set_printoptions(threshold="nan")
-    pprint(*args, **kwargs)
+    pprint.pprint(*args, **kwargs)
     numpy.set_printoptions(**opt)
 
 

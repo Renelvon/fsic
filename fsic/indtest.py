@@ -4,6 +4,7 @@ Module containing many types of independence testing methods.
 
 import abc
 import logging
+import traceback as tb
 
 import numpy as np
 import scipy.stats as stats
@@ -791,7 +792,6 @@ def generic_optimize_locs_widths(
                     "Exception occurred during gradient descent. Stop optimization."
                 )
                 print("Return the value from previous iter. ")
-                import traceback as tb
 
                 tb.print_exc()
                 t = t - 1

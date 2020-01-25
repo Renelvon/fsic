@@ -65,7 +65,6 @@ disable=
     broad-except,
     duplicate-code,
     import-error,
-    import-outside-toplevel,
     invalid-name,
     line-too-long,
     method-hidden,
