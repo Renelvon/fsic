@@ -42,7 +42,9 @@ class MarginalCDFMap(FeatureMap):
             Z[:, j] = stats.rankdata(X[:, j]) / n
         return Z
 
-    def num_features(self, X):
+    def num_features(self, X=None):
+        if X is None:
+            raise ValueError("Cannot compute features without an X")
         return X.shape[1]
 
 
