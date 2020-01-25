@@ -13,10 +13,6 @@ class Kernel(metaclass=abc.ABCMeta):
     def eval(self, X1, X2):
         """Evalute the kernel on data X1 and X2 """
 
-    @abc.abstractmethod
-    def pair_eval(self, X, Y):
-        """Evaluate k(x1, y1), k(x2, y2), ..."""
-
 
 class KHoPoly(Kernel):
     """Homogeneous polynomial kernel of the form
@@ -30,9 +26,6 @@ class KHoPoly(Kernel):
     def eval(self, X1, X2):
         return X1.dot(X2.T) ** self.degree
 
-    def pair_eval(self, X, Y):
-        return np.sum(X1 * X2, 1) ** self.degree
-
     def __str__(self):
         return "KHoPoly(d=%d)" % self.degree
 
@@ -40,9 +33,6 @@ class KHoPoly(Kernel):
 class KLinear(Kernel):
     def eval(self, X1, X2):
         return X1.dot(X2.T)
-
-    def pair_eval(self, X, Y):
-        return np.sum(X * Y, 1)
 
     def __str__(self):
         return "KLinear()"
@@ -76,26 +66,6 @@ class KGauss(Kernel):
         )
         K = np.exp(-D2 / self.sigma2)
         return K
-
-    def pair_eval(self, X, Y):
-        """
-        Evaluate k(x1, y1), k(x2, y2), ...
-
-        Parameters
-        ----------
-        X, Y : n x d numpy array
-
-        Return
-        -------
-        a numpy array with length n
-        """
-        (n1, d1) = X.shape
-        (n2, d2) = Y.shape
-        assert n1 == n2, "Two inputs must have the same number of instances"
-        assert d1 == d2, "Two inputs must have the same dimension"
-        D2 = np.sum((X - Y) ** 2, 1)
-        Kvec = np.exp(-D2 / self.sigma2)
-        return Kvec
 
     def __str__(self):
         return "KGauss(%.3f)" % self.sigma2
@@ -131,26 +101,6 @@ class KTriangle(Kernel):
         diff = (X1 - X2.T) / self.width
         K = sig.bspline(diff, 1)
         return K
-
-    def pair_eval(self, X, Y):
-        """
-        Evaluate k(x1, y1), k(x2, y2), ...
-
-        Parameters
-        ----------
-        X, Y : n x 1 numpy array
-
-        Return
-        -------
-        a numpy array with length n
-        """
-        _, d1 = X.shape
-        _, d2 = Y.shape
-        assert d1 == 1, "d1 must be 1"
-        assert d2 == 1, "d2 must be 1"
-        diff = (X - Y) / self.width
-        Kvec = sig.bspline(diff, 1)
-        return Kvec
 
     def __str__(self):
         return "KTriangle(w=%.3f)" % self.width
