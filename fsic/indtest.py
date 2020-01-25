@@ -85,9 +85,9 @@ class NFSIC(IndTest):
         if self.n_permute is None or self.n_permute == 0:
             # use asymptotics
             return self._perform_test_asymptotics(pdata)
-        else:
-            # assume n_permute > 0
-            return self._perform_test_permute(pdata)
+
+        # assume n_permute > 0
+        return self._perform_test_permute(pdata)
 
     def _perform_test_permute(self, pdata):
         """

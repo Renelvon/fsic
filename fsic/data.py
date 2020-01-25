@@ -399,8 +399,9 @@ class PSFunc(PairedSource):
         self.px = px
         x = px(2)
         y = f(x)
-        self.dx = x.shape[1]
-        self.dy = y.shape[1]
+
+        self._dx = x.shape[1]
+        self._dy = y.shape[1]
 
     def sample(self, n, seed):
         rstate = np.random.get_state()
@@ -415,10 +416,10 @@ class PSFunc(PairedSource):
         return PairedData(X, Y, label="psfunc")
 
     def dx(self):
-        return self.dx
+        return self._dx
 
     def dy(self):
-        return self.dy
+        return self._dy
 
 
 class PSUnifRotateNoise(PairedSource):

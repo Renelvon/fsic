@@ -95,15 +95,14 @@ def meddistance(X, subsample=None, mean_on_fail=True):
             return np.mean(Tri)
         return med
 
-    else:
-        assert subsample > 0
-        rand_state = np.random.get_state()
-        np.random.seed(9827)
-        n = X.shape[0]
-        ind = np.random.choice(n, min(subsample, n), replace=False)
-        np.random.set_state(rand_state)
-        # recursion just one
-        return meddistance(X[ind, :], None, mean_on_fail)
+    assert subsample > 0
+    rand_state = np.random.get_state()
+    np.random.seed(9827)
+    n = X.shape[0]
+    ind = np.random.choice(n, min(subsample, n), replace=False)
+    np.random.set_state(rand_state)
+    # recursion just one
+    return meddistance(X[ind, :], None, mean_on_fail)
 
 
 def is_real_num(x):
@@ -279,10 +278,10 @@ def one_of_K_code(arr):
 
 def fullprint(*args, **kwargs):
     "https://gist.github.com/ZGainsforth/3a306084013633c52881"
-    opt = numpy.get_printoptions()
-    numpy.set_printoptions(threshold="nan")
+    opt = np.get_printoptions()
+    np.set_printoptions(threshold="nan")
     pprint.pprint(*args, **kwargs)
-    numpy.set_printoptions(**opt)
+    np.set_printoptions(**opt)
 
 
 def standardize(X):
