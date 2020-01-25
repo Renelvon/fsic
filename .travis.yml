@@ -1,20 +1,18 @@
-language: python
-python:
-    - 2.7
+os: linux
 
-#virtualenv:
-#    system_site_packages: true
+dist: bionic
+
+language: python
+
+python:
+    - 3.6
 
 before_install:
-    #- sudo apt-get update
-    - sudo apt-get install  python-numpy python-scipy python-matplotlib
+    - pip3 install --upgrade -r requirements.txt
+    - make check
 
-# command to install dependencies
 install:
-    - pip install setuptools
-    - pip install -r requirements.txt
+    - python3 setup.py install
 
-# command to run tests
 script:
-    - if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then python -m unittest discover; fi
-
+    - make installcheck
