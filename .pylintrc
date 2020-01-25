@@ -76,6 +76,7 @@ disable=
     protected-access,
     redefined-outer-name,
     signature-differs,
+    too-few-public-methods,
     too-many-arguments,
     too-many-lines,
     too-many-locals,
