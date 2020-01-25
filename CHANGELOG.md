@@ -10,9 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.0] - 2020-25-01
 ### Added
 - Lint the test suite explicitly.
+- `black` as code formatter.
+- `pyproject.toml` to store tool configuration (except `pylint`).
 
 ### Changed
 - Port the repository to Python 3 (only).
+- Lint package more.
+
+### Removed
+- Various pieces of commented-out code.
 
 
 ## [0.1.1] - 2020-24-01
