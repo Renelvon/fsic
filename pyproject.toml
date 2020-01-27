@@ -1,3 +1,9 @@
+[build-system]
+# Minimum requirements for the build system to execute.
+requires = [
+    'setuptools>=38.6.0',
+] # PEP 508 specifications.
+
 [tool.black]
 line-length = 80
 target-version = ['py35']
