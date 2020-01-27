@@ -1,7 +1,7 @@
 # The Finite Set Independence Criterion (FSIC)
 
 [![Build Status](https://travis-ci.org/Renelvon/fsic.svg?branch=master)](https://travis-ci.org/Renelvon/fsic)
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/wittawatj/fsic-test/blob/master/LICENSE)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/Renelvon/fsic-test/blob/master/LICENSE)
 
 This repository contains a Python 3.5 implementation of the normalized FSIC (NFSIC)
 test as described in [our paper](https://arxiv.org/abs/1610.04782)
@@ -44,12 +44,12 @@ for how to install it.
 ## Demo scripts
 
 To get started, check
-[demo_nfsic.ipynb](https://github.com/wittawatj/fsic-test/blob/master/ipynb/demo_nfsic.ipynb)
+[demo_nfsic.ipynb](https://github.com/Renelvon/fsic/blob/master/tutorial/demo_nfsic.ipynb)
 which will guide you through from the beginning. There are many Jupyter
-notebooks in `ipynb` folder. Be sure to check them if you would like to explore more.
+notebooks in `tutorial` folder. Be sure to check them if you would like to explore more.
 
 ## License
-[MIT license](https://github.com/wittawatj/fsic-test/blob/master/LICENSE).
+[MIT license](https://github.com/Renelvon/fsic-test/blob/master/LICENSE).
 
 If you have questions or comments about anything regarding this work or code,
 please do not hesitate to contact [Wittawat Jitkrittum](http://wittawat.com).
