@@ -6,3 +6,4 @@ pylint
 pyroma>=2.4
 scipy>=0.18
 theano>=0.8.2
+wheel
