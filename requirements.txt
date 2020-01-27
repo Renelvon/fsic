@@ -1,8 +1,11 @@
 black
 check-manifest>=0.38
+ipython
 numpy>=1.16
-matplotlib>=1.5.2
+matplotlib
 pylint
 pyroma>=2.4
 scipy>=0.18
+setuptools>=38.6.0
 theano>=0.8.2
+wheel
