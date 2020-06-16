@@ -112,16 +112,18 @@ def tr_te_indices(n, tr_proportion, seed=9282):
 
     Return (tr_ind, te_ind)
     """
+    if not 0.0 <= tr_proportion <= 1.0:
+        raise ValueError("tr_proportion must be in [0, 1]; found {}".format(tr_proportion))
+
     rand_state = np.random.get_state()
     np.random.seed(seed)
 
-    Itr = np.zeros(n, dtype=bool)
+    Itr = np.full(n, False)
     tr_ind = np.random.choice(n, int(tr_proportion * n), replace=False)
     Itr[tr_ind] = True
-    Ite = np.logical_not(Itr)
 
     np.random.set_state(rand_state)
-    return (Itr, Ite)
+    return Itr, ~Itr
 
 
 def subsample_ind(n, k, seed=32):
