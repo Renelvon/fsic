@@ -3,7 +3,7 @@
 import abc
 
 import numpy as np
-import scipy.signal as sig
+from scipy import signal
 
 
 class Kernel(metaclass=abc.ABCMeta):
@@ -109,7 +109,7 @@ class KTriangle(Kernel):
         if d2 != 1:
             raise ValueError("The X2 dimension (_, {}) must be 1".format(d2))
         diff = (X1 - X2.T) / self.width
-        K = sig.bspline(diff, 1)
+        K = signal.bspline(diff, 1)
         return K
 
     def __repr__(self):
