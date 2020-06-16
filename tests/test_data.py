@@ -2,13 +2,11 @@
 Module for testing data module.
 """
 
-__author__ = "wittawat"
-
 import unittest
 
 import numpy as np
 
-import fsic.data as data
+from fsic import data
 
 
 class TestPairedData(unittest.TestCase):

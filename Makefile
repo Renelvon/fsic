@@ -4,15 +4,12 @@ PYTHON=python3
 SETUP=setup.py
 TESTS=tests
 
-.PHONY: all build build_wheel check clean dist distclean install installcheck test uninstall
+.PHONY: all build check clean dist distclean install installcheck test uninstall wheel
 
 all: build
 
 build:
 	$(PYTHON) $(SETUP) bdist
-
-build_wheel:
-	$(PYTHON) $(SETUP) bdist_wheel
 
 check:
 	black $(SETUP) $(NAME) $(TESTS)
@@ -38,3 +35,6 @@ test:
 
 uninstall:
 	$(PIP) uninstall -y $(NAME)
+
+wheel:
+	$(PYTHON) $(SETUP) bdist_wheel

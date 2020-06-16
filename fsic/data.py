@@ -2,9 +2,9 @@ import abc
 import math
 
 import numpy as np
-import scipy.stats as stats
+from scipy import stats
 
-import fsic.util as util
+from fsic import util
 
 
 class PairedData:

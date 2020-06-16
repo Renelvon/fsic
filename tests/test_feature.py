@@ -2,15 +2,11 @@
 Module for testing feature module.
 """
 
-__author__ = "wittawat"
-
 import unittest
 
 import numpy as np
 
-import fsic.feature as fea
-import fsic.kernel as kernel
-import fsic.util as util
+from fsic import feature, kernel, util
 
 
 class TestMarginalCDFMap(unittest.TestCase):
@@ -19,7 +15,7 @@ class TestMarginalCDFMap(unittest.TestCase):
         d = 4
         X = np.random.randn(n, d) * 3 + 4
 
-        M = fea.MarginalCDFMap()
+        M = feature.MarginalCDFMap()
         Z = M.gen_features(X)
 
         # assert
@@ -38,7 +34,7 @@ class TestRFFKGauss(unittest.TestCase):
 
         sigma2 = 3.7
         feature_pairs = 51
-        rff = fea.RFFKGauss(sigma2, feature_pairs, seed=2)
+        rff = feature.RFFKGauss(sigma2, feature_pairs, seed=2)
         Z = rff.gen_features(X)
         Z2 = rff.gen_features(X)
 
@@ -56,7 +52,7 @@ class TestRFFKGauss(unittest.TestCase):
 
         sigma2 = 2.7
         feature_pairs = 50
-        rff = fea.RFFKGauss(sigma2, feature_pairs, seed=2)
+        rff = feature.RFFKGauss(sigma2, feature_pairs, seed=2)
         Z = rff.gen_features(X)
         Krff = Z.dot(Z.T)
 
@@ -79,7 +75,7 @@ class TestNystromFeatureMap(unittest.TestCase):
                 X = np.random.randn(n, d) * 3 + 5
                 D = n // 3
                 induce = util.subsample_rows(X, D, seed=s + 1)
-                nymap = fea.NystromFeatureMap(k, induce)
+                nymap = feature.NystromFeatureMap(k, induce)
 
                 K = k.eval(X, X)
                 Z = nymap.gen_features(X)
