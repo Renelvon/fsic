@@ -7,15 +7,12 @@ import logging
 import traceback as tb
 
 import numpy as np
-import scipy.stats as stats
+from scipy import stats
 import theano
-import theano.tensor as tensor
-import theano.tensor.nlinalg as nlinalg
+from theano import tensor
+from theano.tensor import nlinalg
 
-import fsic.data as data
-import fsic.feature as fea
-import fsic.kernel as kernel
-import fsic.util as util
+from fsic import data, feature, kernel, util
 
 
 class IndTest(metaclass=abc.ABCMeta):
@@ -1396,8 +1393,8 @@ class NystromHSIC(FiniteFeatureHSIC):
         induce_x: Dx x dx inducing points for X. Dx = #inducing points.
         induce_y: Dy x dy incuding points for Y.
         """
-        fmx = fea.NystromFeatureMap(k, induce_x)
-        fmy = fea.NystromFeatureMap(l, induce_y)
+        fmx = feature.NystromFeatureMap(k, induce_x)
+        fmy = feature.NystromFeatureMap(l, induce_y)
         super(NystromHSIC, self).__init__(
             fmx, fmy, alpha=alpha, n_simulate=n_simulate, seed=seed
         )
@@ -1450,7 +1447,7 @@ class RDC(IndTest):
         X, Y = pdata.xy()
         n = pdata.sample_size()
         # copula transform to both X and Y
-        cop_map = fea.MarginalCDFMap()
+        cop_map = feature.MarginalCDFMap()
         Xcdf = cop_map.gen_features(X)
         Ycdf = cop_map.gen_features(Y)
 
@@ -1535,7 +1532,7 @@ class RDCPerm(IndTest):
         X, Y = pdata.xy()
         if self.use_copula:
             # copula transform to both X and Y
-            cop_map = fea.MarginalCDFMap()
+            cop_map = feature.MarginalCDFMap()
             Xtran = cop_map.gen_features(X)
             Ytran = cop_map.gen_features(Y)
         else:
@@ -1572,7 +1569,7 @@ class RDCPerm(IndTest):
         arr = np.zeros(n_permute)
         if use_copula:
             # copula transform to both X and Y
-            cop_map = fea.MarginalCDFMap()
+            cop_map = feature.MarginalCDFMap()
             Xtran = cop_map.gen_features(X)
             Ytran = cop_map.gen_features(Y)
         else:
@@ -1676,8 +1673,8 @@ class GaussRDC(RDC):
         :param n_features_x: The total number of features for x will be
             n_features_x*2.
         """
-        fmx = fea.RFFKGauss(gwidthx, n_features_x, seed=seed)
-        fmy = fea.RFFKGauss(gwidthy, n_features_y, seed=seed + 2987)
+        fmx = feature.RFFKGauss(gwidthx, n_features_x, seed=seed)
+        fmy = feature.RFFKGauss(gwidthy, n_features_y, seed=seed + 2987)
         super(GaussRDC, self).__init__(fmx, fmy, n_permute, alpha)
 
 

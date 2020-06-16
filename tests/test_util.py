@@ -8,7 +8,7 @@ import unittest
 
 import numpy as np
 
-import fsic.util as util
+from fsic import util
 
 
 class TestNumpySeedContext(unittest.TestCase):

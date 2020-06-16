@@ -8,11 +8,7 @@ import unittest
 
 import numpy as np
 
-import fsic.data as data
-import fsic.feature as fea
-import fsic.kernel as kernel
-import fsic.indtest as it
-import fsic.util as util
+from fsic import data, feature, indtest, kernel, util
 
 
 def get_pdata_mean(n, dx=2):
@@ -48,7 +44,7 @@ class TestNFSIC(unittest.TestCase):
         V = np.random.randn(J, dx)
         W = np.random.randn(J, 1)
 
-        self.nfsic = it.NFSIC(k, l, V, W, alpha=0.01)
+        self.nfsic = indtest.NFSIC(k, l, V, W, alpha=0.01)
         self.pdata_mean = pdata_mean
 
     @unittest.skip("Should reject. Cannot assert this for sure.")
@@ -77,14 +73,14 @@ class TestNFSIC(unittest.TestCase):
                 l = kernel.KGauss(3)
                 V = np.random.randn(J, dx)
                 W = np.random.randn(J, dy)
-                # nfsic = it.NFSIC(k, l, V, W, alpha=0.01, reg=0, n_permute=n_permute,
+                # nfsic = indtest.NFSIC(k, l, V, W, alpha=0.01, reg=0, n_permute=n_permute,
                 #        seed=s+3):
 
                 # nfsic_result = nfsic.perform_test(pdata)
-                arr = it.NFSIC.list_permute(
+                arr = indtest.NFSIC.list_permute(
                     X, Y, k, l, V, W, n_permute=n_permute, seed=s + 34, reg=0
                 )
-                arr_naive = it.NFSIC._list_permute_naive(
+                arr_naive = indtest.NFSIC._list_permute_naive(
                     X, Y, k, l, V, W, n_permute=n_permute, seed=s + 389, reg=0
                 )
 
@@ -110,7 +106,7 @@ class TestGaussNFSIC(unittest.TestCase):
         V = np.random.randn(J, dx)
         W = np.random.randn(J, 1)
 
-        self.gnfsic = it.GaussNFSIC(gwx2, gwy2, V, W, alpha=0.01)
+        self.gnfsic = indtest.GaussNFSIC(gwx2, gwy2, V, W, alpha=0.01)
         self.pdata_mean = pdata_mean
 
     @unittest.skip("Should reject. Cannot assert this for sure.")
@@ -130,7 +126,7 @@ class TestQuadHSIC(unittest.TestCase):
         pdata_mean = get_pdata_mean(n, dx)
         k, l = kl_median(pdata_mean)
 
-        self.qhsic = it.QuadHSIC(k, l, n_permute=60, alpha=0.01)
+        self.qhsic = indtest.QuadHSIC(k, l, n_permute=60, alpha=0.01)
         self.pdata_mean = pdata_mean
 
     def test_list_permute(self):
@@ -142,8 +138,8 @@ class TestQuadHSIC(unittest.TestCase):
         l = self.qhsic.l
         n_permute = self.qhsic.n_permute
         s = 113
-        arr_hsic = it.QuadHSIC.list_permute(X, Y, k, l, n_permute, seed=s)
-        arr_hsic_naive = it.QuadHSIC._list_permute_generic(
+        arr_hsic = indtest.QuadHSIC.list_permute(X, Y, k, l, n_permute, seed=s)
+        arr_hsic_naive = indtest.QuadHSIC._list_permute_generic(
             X, Y, k, l, n_permute, seed=s
         )
         np.testing.assert_array_almost_equal(arr_hsic, arr_hsic_naive)
@@ -165,19 +161,23 @@ class TestFiniteFeatureHSIC(unittest.TestCase):
 
                 sigmax2 = 1
                 sigmay2 = 0.8
-                fmx = fea.RFFKGauss(sigmax2, n_features=n_features, seed=s + 3)
-                fmy = fea.RFFKGauss(sigmay2, n_features=n_features, seed=s + 23)
+                fmx = feature.RFFKGauss(
+                    sigmax2, n_features=n_features, seed=s + 3
+                )
+                fmy = feature.RFFKGauss(
+                    sigmay2, n_features=n_features, seed=s + 23
+                )
 
                 Zx = fmx.gen_features(X)
                 Zy = fmy.gen_features(Y)
-                list_perm = it.FiniteFeatureHSIC.list_permute(
+                list_perm = indtest.FiniteFeatureHSIC.list_permute(
                     X, Y, fmx, fmy, n_permute=n_permute, seed=s + 82
                 )
                 (
                     list_spectral,
                     _,
                     _,
-                ) = it.FiniteFeatureHSIC.list_permute_spectral(
+                ) = indtest.FiniteFeatureHSIC.list_permute_spectral(
                     Zx, Zy, n_simulate=n_simulate, seed=s + 119
                 )
 
@@ -198,9 +198,9 @@ class TestRDC(unittest.TestCase):
         for f in range(1, 7):
             ps = data.PS2DSinFreq(freq=1)
             pdata = ps.sample(n, seed=f + 4)
-            fmx = fea.RFFKGauss(1, feature_pairs, seed=f + 10)
-            fmy = fea.RFFKGauss(2.0, feature_pairs + 1, seed=f + 9)
-            rdc = it.RDC(fmx, fmy, alpha=0.01)
+            fmx = feature.RFFKGauss(1, feature_pairs, seed=f + 10)
+            fmy = feature.RFFKGauss(2.0, feature_pairs + 1, seed=f + 9)
+            rdc = indtest.RDC(fmx, fmy, alpha=0.01)
             stat, evals = rdc.compute_stat_with_eigvals(pdata)
 
             self.assertGreaterEqual(stat, 0)
@@ -228,7 +228,7 @@ class TestFuncs(unittest.TestCase):
         V = np.random.randn(J, dx)
         W = np.random.randn(J, dy)
 
-        nfsic, _, _ = it.nfsic(X, Y, k, l, V, W, reg=0)
+        nfsic, _, _ = indtest.nfsic(X, Y, k, l, V, W, reg=0)
 
         self.assertAlmostEqual(np.imag(nfsic), 0)
         self.assertGreater(nfsic, 0)
