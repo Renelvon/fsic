@@ -1,7 +1,5 @@
 """Convenient methods for general machine learning"""
 
-import pprint
-
 import numpy as np
 
 
@@ -250,14 +248,6 @@ def one_of_K_code(arr):
         Ii = np.where(np.abs(arr - u) < 1e-8)
         X[Ii[0], i] = 1
     return X
-
-
-def fullprint(*args, **kwargs):
-    "https://gist.github.com/ZGainsforth/3a306084013633c52881"
-    opt = np.get_printoptions()
-    np.set_printoptions(threshold="nan")
-    pprint.pprint(*args, **kwargs)
-    np.set_printoptions(**opt)
 
 
 def standardize(X):
