@@ -71,18 +71,23 @@ class RFFKGauss(FeatureMap):
 
     def gen_features(self, X):
         rstate = np.random.get_state()
-        np.random.seed(self.seed)
-        _, d = X.shape
 
-        D = self.n_features
-        W = np.random.randn(D, d)
-        # n x D
-        XWT = X.dot(W.T) / np.sqrt(self.sigma2)
-        Z1 = np.cos(XWT)
-        Z2 = np.sin(XWT)
-        Z = np.hstack((Z1, Z2)) * np.sqrt(1.0 / self.n_features)
+        np.random.seed(self.seed)
+        W = np.random.randn(X.shape[1], self.n_features)
 
         np.random.set_state(rstate)
+
+        XWT = X.dot(W)
+        XWT *= np.sqrt(1.0 / self.sigma2)
+
+        xwt_r, xwt_c = XWT.shape
+
+        Z = np.empty((xwt_r, 2 * xwt_c), float)
+        np.cos(XWT, out=Z[:, :xwt_c])
+        np.sin(XWT, out=Z[:, xwt_c:])
+
+        Z *= np.sqrt(1.0 / self.n_features)
+
         return Z
 
     def num_features(self, X=None):
