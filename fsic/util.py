@@ -270,21 +270,18 @@ def bound_by_data(Z, Data):
 
 def one_of_K_code(arr):
     """
-    Make a one-of-K coding out of the numpy array.
-    For example, if arr = ([0, 1, 0, 2]), then return a 2d array of the form
+    One-hot-encode the numpy array.
+
+    For example, if arr = ([0, 1, 0, 2]), then return
+
      [[1, 0, 0],
       [0, 1, 0],
       [1, 0, 0],
-      [0, 0, 2]]
+      [0, 0, 1]]
+
+    Code based on https://stackoverflow.com/questions/29831489/convert-array-of-indices-to-1-hot-encoded-numpy-array#comment101948320_49790223
     """
-    U = np.unique(arr)
-    n = len(arr)
-    nu = len(U)
-    X = np.zeros((n, nu))
-    for i, u in enumerate(U):
-        Ii = np.where(np.abs(arr - u) < 1e-8)
-        X[Ii[0], i] = 1
-    return X
+    return np.identity(np.max(arr) + 1)[arr]
 
 
 def standardize(X):
