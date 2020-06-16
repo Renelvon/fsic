@@ -351,8 +351,8 @@ class GaussNFSIC(NFSIC):
         X, Y = pdata.xy()
         n_gwidth_cand = 5
         gwidth_factors = 2.0 ** np.linspace(-3, 3, n_gwidth_cand)
-        medx2 = util.meddistance(X, 1000) ** 2
-        medy2 = util.meddistance(Y, 1000) ** 2
+        medx2 = util.sampled_median_distance(X, 1000) ** 2
+        medy2 = util.sampled_median_distance(Y, 1000) ** 2
 
         # V, W = GaussNFSIC.init_locs_2randn(pdata, n_test_locs, seed=seed)
         # draw from a joint Gaussian
@@ -1698,8 +1698,8 @@ def kl_kgauss_median(pdata):
     Get two Gaussian kernels constructed with the median heuristic.
     """
     xtr, ytr = pdata.xy()
-    medx2 = util.meddistance(xtr, subsample=1000) ** 2
-    medy2 = util.meddistance(ytr, subsample=1000) ** 2
+    medx2 = util.sampled_median_distance(xtr, 1000) ** 2
+    medy2 = util.sampled_median_distance(ytr, 1000) ** 2
     # for classification problem, Y can be 0, 1. Subsampling in the computation
     # of the median heuristic can yield 0.
     gwx2 = max(medx2, 1e-3)

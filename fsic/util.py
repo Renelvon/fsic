@@ -47,40 +47,59 @@ def dist_matrix(X, Y):
     return np.sqrt(D, out=D)
 
 
-def meddistance(X, subsample=None, mean_on_fail=True):
+def median_distance(X):
     """
-    Compute the median of pairwise distances (not distance squared) of points
-    in the matrix.  Useful as a heuristic for setting Gaussian kernel's width.
+    Compute the median of pairwise distances of points in the matrix.
+
+    Useful as a heuristic for setting Gaussian kernel's width.
 
     Parameters
     ----------
     X : n x d numpy array
-    mean_on_fail: True/False. If True, use the mean when the median distance is 0.
-        This can happen especially, when the data are discrete e.g., 0/1, and
-        there are more slightly more 0 than 1. In this case, the m
 
     Return
     ------
-    median distance
+    The median distance. If it is nonpositive, return the mean. This can happen
+    e.g. when the data are 0s and 1s and there are more 0s than 1s.
     """
-    if subsample is None:
-        D = dist_matrix(X, X)
-        Itri = np.tril_indices(D.shape[0], -1)
-        Tri = D[Itri]
-        med = np.median(Tri)
-        if med <= 0:
-            # use the mean
-            return np.mean(Tri)
-        return med
+    D = dist_matrix(X, X)
+    Itri = np.tril_indices(D.shape[0], -1)
+    Tri = D[Itri]
+    med = np.median(Tri)
+    return med if med > 0 else np.mean(Tri)
 
-    assert subsample > 0
-    rand_state = np.random.get_state()
-    np.random.seed(9827)
+
+def sampled_median_distance(X, subsample, seed=9827):
+    """
+    Compute the subsampled median of pairwise distances of points in the matrix.
+
+    Useful as a heuristic for setting Gaussian kernel's width.
+
+    Parameters
+    ----------
+    X : n x d numpy array
+    subsample: number of points to sample from X to determine median
+
+    Return
+    ------
+    The subsampled median distance.
+    """
+    if subsample <= 0:
+        raise ValueError(
+            "subsample must be positive; found {}".format(subsample)
+        )
+
     n = X.shape[0]
-    ind = np.random.choice(n, min(subsample, n), replace=False)
+    if subsample > n:
+        subsample = n
+
+    rand_state = np.random.get_state()
+    np.random.seed(seed)
+
+    ind = np.random.choice(n, subsample, replace=False)
+
     np.random.set_state(rand_state)
-    # recursion just one
-    return meddistance(X[ind, :], None, mean_on_fail)
+    return median_distance(X[ind, :])
 
 
 def is_real_num(x):
