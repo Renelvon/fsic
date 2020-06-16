@@ -86,12 +86,8 @@ def meddistance(X, subsample=None, mean_on_fail=True):
 
 
 def is_real_num(x):
-    """return true if x is a real number"""
-    try:
-        float(x)
-        return not (np.isnan(x) or np.isinf(x))
-    except ValueError:
-        return False
+    """Return true iff x is a real number."""
+    return np.isscalar(x) and np.isfinite(x) and np.isrealobj(x)
 
 
 def tr_te_indices(n, tr_proportion, seed=9282):
