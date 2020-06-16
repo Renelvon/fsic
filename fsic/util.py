@@ -255,23 +255,17 @@ def fit_gaussian_draw(X, J, seed=28, reg=1e-7, eig_pow=1.0):
 
 def bound_by_data(Z, Data):
     """
-    Determine lower and upper bound for each dimension from the Data, and project
-    Z so that all points in Z live in the bounds.
+    Determine min/max bounds for each dimension of Data; project Z so that all
+    points are within the bounds.
 
     Z: m x d
     Data: n x d
 
     Return a projected Z of size m x d.
     """
-    n, _ = Z.shape
     Low = np.min(Data, 0)
-    Up = np.max(Data, 0)
-    LowMat = np.repeat(Low[np.newaxis, :], n, axis=0)
-    UpMat = np.repeat(Up[np.newaxis, :], n, axis=0)
-
-    Z = np.maximum(LowMat, Z)
-    Z = np.minimum(UpMat, Z)
-    return Z
+    High = np.max(Data, 0)
+    return np.clip(Z, Low, High)
 
 
 def one_of_K_code(arr):
