@@ -47,6 +47,47 @@ def dist_matrix(X, Y):
     return np.sqrt(D, out=D)
 
 
+def subsample_ind(n, k, seed=32):
+    """
+    Return a list of indices to choose k out of n without replacement
+    """
+    rand_state = np.random.get_state()
+    np.random.seed(seed)
+
+    ind = np.random.choice(n, k, replace=False)
+    np.random.set_state(rand_state)
+    return ind
+
+
+def subsample_rows(X, k, seed=29):
+    """
+    Subsample k rows from the matrix X.
+    """
+    n = X.shape[0]
+    if k > n:
+        raise ValueError(
+            "Cannot select {} rows from matrix X; it has only {}".format(k, n)
+        )
+    ind = subsample_ind(n, k, seed)
+    return X[ind, :]
+
+
+def tr_te_indices(n, tr_proportion, seed=9282):
+    """Get two logical vectors for indexing train/test points.
+
+    Return (tr_ind, te_ind)
+    """
+    if not 0.0 <= tr_proportion <= 1.0:
+        raise ValueError(
+            "tr_proportion must be in [0, 1]; found {}".format(tr_proportion)
+        )
+
+    Itr = np.full(n, False)
+    tr_ind = subsample_ind(n, int(tr_proportion * n), seed)
+    Itr[tr_ind] = True
+    return Itr, ~Itr
+
+
 def median_distance(X):
     """
     Compute the median of pairwise distances of points in the matrix.
@@ -93,60 +134,13 @@ def sampled_median_distance(X, subsample, seed=9827):
     if subsample > n:
         subsample = n
 
-    rand_state = np.random.get_state()
-    np.random.seed(seed)
-
-    ind = np.random.choice(n, subsample, replace=False)
-
-    np.random.set_state(rand_state)
-    return median_distance(X[ind, :])
+    Xi = subsample_rows(X, subsample, seed)
+    return median_distance(Xi)
 
 
 def is_real_num(x):
     """Return true iff x is a real number."""
     return np.isscalar(x) and np.isfinite(x) and np.isrealobj(x)
-
-
-def tr_te_indices(n, tr_proportion, seed=9282):
-    """Get two logical vectors for indexing train/test points.
-
-    Return (tr_ind, te_ind)
-    """
-    if not 0.0 <= tr_proportion <= 1.0:
-        raise ValueError("tr_proportion must be in [0, 1]; found {}".format(tr_proportion))
-
-    rand_state = np.random.get_state()
-    np.random.seed(seed)
-
-    Itr = np.full(n, False)
-    tr_ind = np.random.choice(n, int(tr_proportion * n), replace=False)
-    Itr[tr_ind] = True
-
-    np.random.set_state(rand_state)
-    return Itr, ~Itr
-
-
-def subsample_ind(n, k, seed=32):
-    """
-    Return a list of indices to choose k out of n without replacement
-    """
-    rand_state = np.random.get_state()
-    np.random.seed(seed)
-
-    ind = np.random.choice(n, k, replace=False)
-    np.random.set_state(rand_state)
-    return ind
-
-
-def subsample_rows(X, k, seed=29):
-    """
-    Subsample k rows from the matrix X.
-    """
-    n = X.shape[0]
-    if k > n:
-        raise ValueError("k exceeds the number of rows.")
-    ind = subsample_ind(n, k, seed=seed)
-    return X[ind, :]
 
 
 def cca(X, Y, reg=1e-5):
