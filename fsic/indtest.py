@@ -1675,7 +1675,11 @@ class GaussRDC(RDC):
         """
         fmx = feature.RFFKGauss(gwidthx, n_features_x, seed=seed)
         fmy = feature.RFFKGauss(gwidthy, n_features_y, seed=seed + 2987)
-        super(GaussRDC, self).__init__(fmx, fmy, n_permute, alpha)
+        super(GaussRDC, self).__init__(fmx, fmy, alpha=alpha)
+        # NOTE: The following call appears in the original code, but is
+        # incompatible with `RDC`. Maybe this class was meant to derive
+        # from `RDCPerm` ?
+        # super(GaussRDC, self).__init__(fmx, fmy, n_permute, alpha)
 
 
 ####----- functions -------------####
