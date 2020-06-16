@@ -1,4 +1,4 @@
-"""Module containing kernel related classes"""
+"""Various kernels"""
 
 import abc
 
@@ -15,12 +15,12 @@ class Kernel(metaclass=abc.ABCMeta):
 
 
 class KHoPoly(Kernel):
-    """Homogeneous polynomial kernel of the form
-    (x.dot(y))**d
-    """
+    """Homogeneous polynomial kernel of the form (x.dot(y))**d"""
 
     def __init__(self, degree):
-        assert degree > 0
+        if degree <= 0:
+            raise ValueError("degree must be positive; found {}".format(degree))
+
         self.degree = degree
 
     def eval(self, X1, X2):
@@ -40,7 +40,9 @@ class KLinear(Kernel):
 
 class KGauss(Kernel):
     def __init__(self, sigma2):
-        assert sigma2 > 0, "sigma2 must be > 0. Was %s" % str(sigma2)
+        if sigma2 <= 0:
+            raise ValueError("sigma2 must be positive; found {}".format(sigma2))
+
         self.sigma2 = sigma2
 
     def eval(self, X1, X2):
@@ -58,7 +60,10 @@ class KGauss(Kernel):
         """
         _, d1 = X1.shape
         _, d2 = X2.shape
-        assert d1 == d2, "Dimensions of the two inputs must be the same"
+        if d1 != d2:
+            raise ValueError(
+                "The X1 dimensions (_, {}) do not match the X2 dimensions (_, {})".format(d1, d2)
+            )
         D2 = (
             np.sum(X1 ** 2, 1)[:, np.newaxis]
             - 2 * X1.dot(X2.T)
@@ -78,7 +83,9 @@ class KTriangle(Kernel):
     """
 
     def __init__(self, width):
-        assert width > 0, "width must be > 0"
+        if width <= 0:
+            raise ValueError("width must be positive; found {}".format(width))
+
         self.width = width
 
     def eval(self, X1, X2):
@@ -95,9 +102,12 @@ class KTriangle(Kernel):
         K : a n1 x n2 Gram matrix.
         """
         _, d1 = X1.shape
+        if d1 != 1:
+            raise ValueError("The X1 dimension (_, {}) must be 1".format(d1))
+
         _, d2 = X2.shape
-        assert d1 == 1, "d1 must be 1"
-        assert d2 == 1, "d2 must be 1"
+        if d2 != 1:
+            raise ValueError("The X2 dimension (_, {}) must be 1".format(d2))
         diff = (X1 - X2.T) / self.width
         K = sig.bspline(diff, 1)
         return K
