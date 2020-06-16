@@ -229,28 +229,28 @@ def sym_to_power(X, power, fix=0):
 
 def fit_gaussian_draw(X, J, seed=28, reg=1e-7, eig_pow=1.0):
     """
-    Fit a multivariate normal to the data X (n x d) and draw J points
-    from the fit.
+    Fit a multivariate normal to X (n x d) and draw J points from the fit.
+
     - reg: regularizer to use with the covariance matrix
-    - eig_pow: raise eigenvalues of the covariance matrix to this power to construct
-        a new covariance matrix before drawing samples. Useful to shrink the spread
-        of the variance.
+    - eig_pow: raise eigenvalues of the covariance matrix to this power to
+        construct a new covariance matrix before drawing samples. Useful to
+        shrink the spread of the variance.
     """
     with NumpySeedContext(seed=seed):
         d = X.shape[1]
-        mean_x = np.mean(X, 0)
-        cov_x = np.cov(X.T)
+        cov_x = np.cov(X, rowvar=True)  # construct the d x d covariance matrix
         if d == 1:
+            # TODO: Write a unittest for this case!
             cov_x = np.array([[cov_x]])
-        [evals, evecs] = np.linalg.eig(cov_x)
-        evals = np.maximum(0, np.real(evals))
-        assert np.all(np.isfinite(evals))
-        evecs = np.real(evecs)
-        shrunk_cov = evecs.dot(np.diag(evals ** eig_pow)).dot(
-            evecs.T
-        ) + reg * np.eye(d)
-        V = np.random.multivariate_normal(mean_x, shrunk_cov, J)
-    return V
+
+        shrunk_cov = sym_to_power(cov_x, eig_pow)
+
+        # Add regularizer to shrunken covariance matrix.
+        regmat = np.identity(d)
+        np.multiply(regmat, reg, out=regmat)
+        np.add(shrunk_cov, regmat, out=shrunk_cov)
+
+        return np.random.multivariate_normal(np.mean(X, 0), shrunk_cov, J)
 
 
 def bound_by_data(Z, Data):
