@@ -5,7 +5,7 @@
 [![Code style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 This repository contains a Python 3.5 implementation of the normalized FSIC (NFSIC)
-test as described in [our paper](https://arxiv.org/abs/1610.04782):
+test as described in [the paper](https://arxiv.org/abs/1610.04782):
 
 - Wittawat Jitkrittum, Zoltán Szabó and Arthur Gretton. **An Adaptive Test of Independence with Analytic Kernel Embeddings**. arXiv, 2016. 
 
