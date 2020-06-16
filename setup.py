@@ -11,10 +11,9 @@ import fsic
 
 def main():
     setuptools.setup(
-        extras_require={
-            "tutorial": ["ipython", "matplotlib"],
-        },
-        version=fsic.__version__,)
+        extras_require={"tutorial": ["ipython", "matplotlib"],},
+        version=fsic.__version__,
+    )
     # Rest of options are specified in `setup.cfg`
 
 
