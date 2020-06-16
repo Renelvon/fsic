@@ -59,8 +59,12 @@ class RFFKGauss(FeatureMap):
         n_features: number of random Fourier features. The total number of
             dimensions will be n_features*2.
         """
-        assert sigma2 > 0, "sigma2 not positive. Was %s" % str(sigma2)
-        assert n_features > 0
+        if sigma2 <= 0:
+            raise ValueError("sigma2 must be positive; found {}".format(sigma2))
+
+        if n_features <= 0:
+            raise ValueError("n_features must be positive; found {}".format(n_features))
+
         self.sigma2 = sigma2
         self.n_features = n_features
         self.seed = seed
