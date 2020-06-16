@@ -63,7 +63,9 @@ class RFFKGauss(FeatureMap):
             raise ValueError("sigma2 must be positive; found {}".format(sigma2))
 
         if n_features <= 0:
-            raise ValueError("n_features must be positive; found {}".format(n_features))
+            raise ValueError(
+                "n_features must be positive; found {}".format(n_features)
+            )
 
         self.sigma2 = sigma2
         self.n_features = n_features
@@ -116,13 +118,22 @@ class NystromFeatureMap(FeatureMap):
         """
         self.k = k
         self.inducing_points = inducing_points
-        # a cache to make it faster
+
+        # Cache evaluation
         M = k.eval(inducing_points, inducing_points)
-        # eigen decompose. Want to raise to the power of -0.5
-        evals, V = np.linalg.eig(M)
-        # Assume M is full rank
-        pow_evals = 1.0 / np.sqrt(evals + 1e-6)
-        self._invert_half = V.dot(np.diag(pow_evals)).dot(V.T)
+
+        # Make an eigenvalue decomposition, to raise to the power of -0.5.
+        # Since M is a kernel matrix, it is symmetrical, thus `eigh` is used.
+        evals, V = np.linalg.eigh(M)
+
+        # If M is full rank, all eigenvalues are positive...
+        evals += 1e-6  # ... but let's be safe
+        np.divide(1.0, evals, out=evals)
+        np.sqrt(evals, out=evals)
+
+        # Reusing allocated memory of M since it is of right shape
+        np.multiply(V, evals, out=M)
+        self._invert_half = np.dot(M, V.T, out=M)
 
     def gen_features(self, X):
         _, d = X.shape
