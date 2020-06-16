@@ -3,7 +3,7 @@
 import abc
 
 import numpy as np
-import scipy.stats as stats
+from scipy import stats
 
 
 class FeatureMap(metaclass=abc.ABCMeta):
@@ -34,12 +34,13 @@ class MarginalCDFMap(FeatureMap):
 
     def gen_features(self, X):
         """
-        Cost O(dn*log(n)) where X in n x d.
+        Cost O(d * n * log(n)) where X is n x d.
         """
         n, d = X.shape
-        Z = np.zeros((n, d))
+        Z = np.empty_like(X)
         for j in range(d):
-            Z[:, j] = stats.rankdata(X[:, j]) / n
+            Z[:, j] = stats.rankdata(X[:, j])
+        Z /= n
         return Z
 
     def num_features(self, X=None):
