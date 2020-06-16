@@ -26,15 +26,15 @@ class KHoPoly(Kernel):
     def eval(self, X1, X2):
         return X1.dot(X2.T) ** self.degree
 
-    def __str__(self):
-        return "KHoPoly(d=%d)" % self.degree
+    def __repr__(self):
+        return "KHoPoly(degree={})".format(self.degree)
 
 
 class KLinear(Kernel):
     def eval(self, X1, X2):
         return X1.dot(X2.T)
 
-    def __str__(self):
+    def __repr__(self):
         return "KLinear()"
 
 
@@ -67,8 +67,8 @@ class KGauss(Kernel):
         K = np.exp(-D2 / self.sigma2)
         return K
 
-    def __str__(self):
-        return "KGauss(%.3f)" % self.sigma2
+    def __repr__(self):
+        return "KGauss(sigma2={})".format(self.sigma2)
 
 
 class KTriangle(Kernel):
@@ -102,5 +102,5 @@ class KTriangle(Kernel):
         K = sig.bspline(diff, 1)
         return K
 
-    def __str__(self):
-        return "KTriangle(w=%.3f)" % self.width
+    def __repr__(self):
+        return "KTriangle(width={})".format(self.width)
