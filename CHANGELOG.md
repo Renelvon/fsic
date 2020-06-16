@@ -5,6 +5,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+
+## [0.3.2] - 2020-06-16
+### Added
+- Support for Python 3.9.
+- Code style shield.
+
+### Changed
+- Improve installation instructions and paper atribution in `README.md`.
+- Invoke superclass constructor with appropriate arguments.
+- Format for Python 3.6.
+- Clarify imports.
+- Rename `wheel` target.
+
+### Removed
+- Remove superfluous author annotations.
+
 ## [0.3.1] - 2020-27-01
 ### Added
 * Distribute using [wheels](https://pythonwheels.com/).
@@ -19,7 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated and re-enabled Travis CI.
 - Updated `README.md` and other parts of the repo to use and mention Python 3.
-* Fixed some issues detected by Pylint.
+- Fixed some issues detected by Pylint.
 
 ### Removed
 - Various unused functions and methods.
