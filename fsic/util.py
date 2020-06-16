@@ -25,17 +25,28 @@ class NumpySeedContext:
         np.random.set_state(self.cur_state)
 
 
+def dist_matrix2(X, Y):
+    """
+    Construct a pairwise squared Euclidean distance matrix of
+    size X.shape[0] x Y.shape[0]
+    """
+    D = X.dot(Y.T)
+    np.multiply(D, -2, out=D)
+    np.add(D, np.sum(X ** 2, 1, keepdims=True), out=D)
+    return np.add(D, np.sum(Y ** 2, 1), out=D)
+
+
 def dist_matrix(X, Y):
     """
-    Construct a pairwise Euclidean distance matrix of size X.shape[0] x Y.shape[0]
+    Construct a pairwise Euclidean distance matrix of
+    size X.shape[0] x Y.shape[0]
     """
-    sx = np.sum(X ** 2, 1)
-    sy = np.sum(Y ** 2, 1)
-    D2 = sx[:, np.newaxis] - 2.0 * X.dot(Y.T) + sy[np.newaxis, :]
-    # to prevent numerical errors from taking sqrt of negative numbers
-    D2[D2 < 0] = 0
-    D = np.sqrt(D2)
-    return D
+    D = dist_matrix2(X, Y)
+
+    # Clamp negative numbers to 0, to avoid errors from taking sqrt.
+    np.maximum(D, 0, out=D)
+
+    return np.sqrt(D, out=D)
 
 
 def meddistance(X, subsample=None, mean_on_fail=True):

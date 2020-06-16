@@ -5,6 +5,8 @@ import abc
 import numpy as np
 from scipy import signal
 
+from fsic import util
+
 
 class Kernel(metaclass=abc.ABCMeta):
     """Abstract class for kernels"""
@@ -67,12 +69,8 @@ class KGauss(Kernel):
                 )
             )
 
-        D2 = X1.dot(X2.T)
-        np.multiply(D2, -2, out=D2)
-        np.add(D2, np.sum(X1 ** 2, 1, keepdims=True), out=D2)
-        np.add(D2, np.sum(X2 ** 2, 1), out=D2)
+        D2 = util.dist_matrix2(X1, X2)
         np.divide(D2, -self.sigma2, out=D2)
-
         return np.exp(D2)
 
     def __repr__(self):
