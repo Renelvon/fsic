@@ -205,6 +205,28 @@ def cca(X, Y, reg=1e-5):
     return np.real(avals), np.real(aV), np.real(bV)
 
 
+def sym_to_power(X, power, fix=0):
+    """
+    Raise symmetric matrix to given power through eigenvalue decomposition.
+    """
+    # Since X is symmetric, use `eigh` decomposition.
+    evals, evecs = np.linalg.eigh(X)
+
+    # If X is full rank, all eigenvalues are positive, but we can optionally
+    # ensure the eigenvalues are non-zero. This is usefull in case `power` < 0.
+    np.maximum(0, evals, out=evals)
+    if fix != 0:
+        np.add(evals, fix, out=evals)
+
+    # Since the matrix is symemtric, the eigenvectors should be real.
+    evecs = np.real(evecs)
+
+    np.power(evals, power, out=evals)
+
+    Y = evecs * evals
+    return np.dot(Y, evecs.T, out=Y)
+
+
 def fit_gaussian_draw(X, J, seed=28, reg=1e-7, eig_pow=1.0):
     """
     Fit a multivariate normal to the data X (n x d) and draw J points

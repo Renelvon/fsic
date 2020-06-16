@@ -5,6 +5,8 @@ import abc
 import numpy as np
 from scipy import stats
 
+from fsic import util
+
 
 class FeatureMap(metaclass=abc.ABCMeta):
     """Abstract class for a feature map function"""
@@ -119,21 +121,11 @@ class NystromFeatureMap(FeatureMap):
         self.k = k
         self.inducing_points = inducing_points
 
-        # Cache evaluation
+        # Evaluate kernel
         M = k.eval(inducing_points, inducing_points)
 
-        # Make an eigenvalue decomposition, to raise to the power of -0.5.
-        # Since M is a kernel matrix, it is symmetrical, thus `eigh` is used.
-        evals, V = np.linalg.eigh(M)
-
-        # If M is full rank, all eigenvalues are positive...
-        evals += 1e-6  # ... but let's be safe
-        np.divide(1.0, evals, out=evals)
-        np.sqrt(evals, out=evals)
-
-        # Reusing allocated memory of M since it is of right shape
-        np.multiply(V, evals, out=M)
-        self._invert_half = np.dot(M, V.T, out=M)
+        # Raise (symmetric) result to (-1/2)
+        self._invert_half = util.sym_to_power(M, -0.5, fix=1e-6)
 
     def gen_features(self, X):
         dx = X.shape[1]
