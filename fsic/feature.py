@@ -136,14 +136,16 @@ class NystromFeatureMap(FeatureMap):
         self._invert_half = np.dot(M, V.T, out=M)
 
     def gen_features(self, X):
-        _, d = X.shape
-        if d != self.inducing_points.shape[1]:
+        _, dx = X.shape
+        di = self.inducing_points.shape[1]
+        if dx != di:
             raise ValueError(
-                "dimension of the input does not match that of the inducing points"
+                "The input dimensions (_, {}) do not match the dimensions of the inducing points (_, {})".format(
+                    dx, di
+                )
             )
         K = self.k.eval(X, self.inducing_points)
-        Z = K.dot(self._invert_half)
-        return Z
+        return K.dot(self._invert_half)
 
     def num_features(self, X=None):
         return self.inducing_points.shape[1]
