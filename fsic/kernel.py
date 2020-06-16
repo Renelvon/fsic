@@ -60,8 +60,8 @@ class KGauss(Kernel):
         ------
         K : a n1 x n2 Gram matrix.
         """
-        _, d1 = X1.shape
-        _, d2 = X2.shape
+        d1 = X1.shape[1]
+        d2 = X2.shape[1]
         if d1 != d2:
             raise ValueError(
                 "The X1 dimensions (_, {}) do not match the X2 dimensions (_, {})".format(
@@ -102,11 +102,11 @@ class KTriangle(Kernel):
         ------
         K : a n1 x n2 Gram matrix.
         """
-        _, d1 = X1.shape
+        d1 = X1.shape[1]
         if d1 != 1:
             raise ValueError("The X1 dimension (_, {}) must be 1".format(d1))
 
-        _, d2 = X2.shape
+        d2 = X2.shape[1]
         if d2 != 1:
             raise ValueError("The X2 dimension (_, {}) must be 1".format(d2))
 

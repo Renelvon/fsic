@@ -136,7 +136,7 @@ class NystromFeatureMap(FeatureMap):
         self._invert_half = np.dot(M, V.T, out=M)
 
     def gen_features(self, X):
-        _, dx = X.shape
+        dx = X.shape[1]
         di = self.inducing_points.shape[1]
         if dx != di:
             raise ValueError(
