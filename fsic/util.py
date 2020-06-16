@@ -130,19 +130,15 @@ def subsample_rows(X, k, seed=29):
 
 def cca(X, Y, reg=1e-5):
     """
+    CCA formulation solving two eigenvalue problems.
+
     - X: n x dx data matrix
     - Y: n x dy data matrix
 
-    Return (vals, Vx, Vy) where vals is a numpy array of decreasing eigenvalues,
-        Vx is a square matrixk whose columns are eigenvectors for X corresponding to vals.
-        Vy is a square matrixk whose columns are eigenvectors for Y corresponding to vals.
-    """
-    return _cca_two_eig(X, Y, reg)
-
-
-def _cca_two_eig(X, Y, reg=1e-5):
-    """
-    CCA formulation solving two eigenvalue problems.
+    Return (vals, Vx, Vy) where
+        vals is a numpy array of decreasing eigenvalues,
+        Vx is a square matrix whose columns are eigenvectors for X corresponding to vals.
+        Vy is a square matrix whose columns are eigenvectors for Y corresponding to vals.
     """
     dx = X.shape[1]
     dy = Y.shape[1]
