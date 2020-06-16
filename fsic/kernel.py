@@ -62,7 +62,9 @@ class KGauss(Kernel):
         _, d2 = X2.shape
         if d1 != d2:
             raise ValueError(
-                "The X1 dimensions (_, {}) do not match the X2 dimensions (_, {})".format(d1, d2)
+                "The X1 dimensions (_, {}) do not match the X2 dimensions (_, {})".format(
+                    d1, d2
+                )
             )
 
         D2 = X1.dot(X2.T)
@@ -110,7 +112,7 @@ class KTriangle(Kernel):
         if d2 != 1:
             raise ValueError("The X2 dimension (_, {}) must be 1".format(d2))
 
-        diff = (X1 - X2.T)
+        diff = X1 - X2.T
         np.divide(diff, self.width, out=diff)
         return signal.bspline(diff, 1)
 

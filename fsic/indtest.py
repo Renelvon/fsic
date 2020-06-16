@@ -27,8 +27,7 @@ class IndTest(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def perform_test(self, pdata):
         """perform the two-sample test and return values computed in a dictionary:
-        {alpha: 0.01, pvalue: 0.0002, test_stat: 2.3, h0_rejected: True,
-        time_secs: ...}
+        {alpha: 0.01, pvalue: 0.0002, test_stat: 2.3, h0_rejected: True}
         pdata: an instance of PairedData
         """
         raise NotImplementedError
@@ -92,33 +91,31 @@ class NFSIC(IndTest):
         asymptotic null distribution with the sample size is small. However, it
         is slower.
         """
-        with util.ContextTimer() as t:
-            X, Y = pdata.xy()
-            alpha = self.alpha
-            nfsic_stat = self.compute_stat(pdata)
-            k = self.k
-            l = self.l
-            n_permute = self.n_permute
-            arr_nfsic = NFSIC.list_permute(
-                X,
-                Y,
-                k,
-                l,
-                self.V,
-                self.W,
-                n_permute=n_permute,
-                seed=self.seed,
-                reg=self.reg,
-            )
-            # approximate p-value with the permutations
-            pvalue = np.mean(arr_nfsic > nfsic_stat)
+        X, Y = pdata.xy()
+        alpha = self.alpha
+        nfsic_stat = self.compute_stat(pdata)
+        k = self.k
+        l = self.l
+        n_permute = self.n_permute
+        arr_nfsic = NFSIC.list_permute(
+            X,
+            Y,
+            k,
+            l,
+            self.V,
+            self.W,
+            n_permute=n_permute,
+            seed=self.seed,
+            reg=self.reg,
+        )
+        # approximate p-value with the permutations
+        pvalue = np.mean(arr_nfsic > nfsic_stat)
 
         results = {
             "alpha": self.alpha,
             "pvalue": pvalue,
             "test_stat": nfsic_stat,
             "h0_rejected": pvalue < alpha,
-            "time_secs": t.secs,
             "n_permute": n_permute,
         }
         return results
@@ -128,17 +125,15 @@ class NFSIC(IndTest):
         Perform the test with threshold computed from the chi-squared distribution
         (asymptotic null distribution).
         """
-        with util.ContextTimer() as t:
-            stat = self.compute_stat(pdata)
-            J = self.V.shape[0]
-            pvalue = stats.chi2.sf(stat, df=J)
-            alpha = self.alpha
+        stat = self.compute_stat(pdata)
+        J = self.V.shape[0]
+        pvalue = stats.chi2.sf(stat, df=J)
+        alpha = self.alpha
         results = {
             "alpha": self.alpha,
             "pvalue": pvalue,
             "test_stat": stat,
             "h0_rejected": pvalue < alpha,
-            "time_secs": t.secs,
         }
         return results
 
@@ -1031,26 +1026,22 @@ class QuadHSIC(IndTest):
         self.seed = seed
 
     def perform_test(self, pdata):
-        with util.ContextTimer() as t:
-            alpha = self.alpha
-            bhsic_stat = self.compute_stat(pdata)
+        alpha = self.alpha
+        bhsic_stat = self.compute_stat(pdata)
 
-            X, Y = pdata.xy()
-            k = self.k
-            l = self.l
-            n_permute = self.n_permute
-            arr_hsic = QuadHSIC.list_permute(
-                X, Y, k, l, n_permute, seed=self.seed
-            )
-            # approximate p-value with the permutations
-            pvalue = np.mean(arr_hsic > bhsic_stat)
+        X, Y = pdata.xy()
+        k = self.k
+        l = self.l
+        n_permute = self.n_permute
+        arr_hsic = QuadHSIC.list_permute(X, Y, k, l, n_permute, seed=self.seed)
+        # approximate p-value with the permutations
+        pvalue = np.mean(arr_hsic > bhsic_stat)
 
         results = {
             "alpha": self.alpha,
             "pvalue": pvalue,
             "test_stat": bhsic_stat,
             "h0_rejected": pvalue < alpha,
-            "time_secs": t.secs,
             "n_permute": n_permute,
         }
         return results
@@ -1217,27 +1208,25 @@ class FiniteFeatureHSIC(IndTest):
         self.seed = seed
 
     def perform_test(self, pdata):
-        with util.ContextTimer() as t:
-            alpha = self.alpha
-            ffhsic = self.compute_stat(pdata)
-            X, Y = pdata.xy()
-            Zx = self.fmx.gen_features(X)
-            Zy = self.fmy.gen_features(Y)
+        alpha = self.alpha
+        ffhsic = self.compute_stat(pdata)
+        X, Y = pdata.xy()
+        Zx = self.fmx.gen_features(X)
+        Zy = self.fmy.gen_features(Y)
 
-            n_simulate = self.n_simulate
-            arr_nhsic, _, _ = FiniteFeatureHSIC.list_permute_spectral(
-                Zx, Zy, n_simulate, seed=self.seed
-            )
-            # arr_nhsic = FiniteFeatureHSIC.list_permute(X, Y, self.fmx, self.fmy, n_permute=n_simulate, seed=self.seed)
-            # approximate p-value with the permutations
-            pvalue = np.mean(arr_nhsic > ffhsic)
+        n_simulate = self.n_simulate
+        arr_nhsic, _, _ = FiniteFeatureHSIC.list_permute_spectral(
+            Zx, Zy, n_simulate, seed=self.seed
+        )
+        # arr_nhsic = FiniteFeatureHSIC.list_permute(X, Y, self.fmx, self.fmy, n_permute=n_simulate, seed=self.seed)
+        # approximate p-value with the permutations
+        pvalue = np.mean(arr_nhsic > ffhsic)
 
         results = {
             "alpha": self.alpha,
             "pvalue": pvalue,
             "test_stat": ffhsic,
             "h0_rejected": pvalue < alpha,
-            "time_secs": t.secs,
             "n_simulate": n_simulate,
         }
         return results
@@ -1424,14 +1413,13 @@ class RDC(IndTest):
         self.fmy = fmy
 
     def perform_test(self, pdata):
-        with util.ContextTimer() as t:
-            alpha = self.alpha
+        alpha = self.alpha
 
-            rdf_stat, evals = self.compute_stat_with_eigvals(pdata)
-            # the stat asymptotically follows a Chi^2
-            Dx = self.fmx.num_features()
-            Dy = self.fmy.num_features()
-            pvalue = stats.chi2.sf(rdf_stat, df=Dx * Dy)
+        rdf_stat, evals = self.compute_stat_with_eigvals(pdata)
+        # the stat asymptotically follows a Chi^2
+        Dx = self.fmx.num_features()
+        Dy = self.fmy.num_features()
+        pvalue = stats.chi2.sf(rdf_stat, df=Dx * Dy)
 
         results = {
             "alpha": self.alpha,
@@ -1439,7 +1427,6 @@ class RDC(IndTest):
             "test_stat": rdf_stat,
             "h0_rejected": pvalue < alpha,
             "arr_eigvals": evals,
-            "time_secs": t.secs,
         }
         return results
 
@@ -1499,23 +1486,22 @@ class RDCPerm(IndTest):
         self.use_copula = use_copula
 
     def perform_test(self, pdata):
-        with util.ContextTimer() as t:
-            alpha = self.alpha
-            rdc_stat, evals = self.compute_stat_with_eigvals(pdata)
+        alpha = self.alpha
+        rdc_stat, evals = self.compute_stat_with_eigvals(pdata)
 
-            X, Y = pdata.xy()
-            n_permute = self.n_permute
-            arr_rdc = RDCPerm.list_permute(
-                X,
-                Y,
-                self.fmx,
-                self.fmy,
-                n_permute,
-                seed=self.seed,
-                use_copula=self.use_copula,
-            )
-            # approximate p-value with the permutations
-            pvalue = np.mean(arr_rdc > rdc_stat)
+        X, Y = pdata.xy()
+        n_permute = self.n_permute
+        arr_rdc = RDCPerm.list_permute(
+            X,
+            Y,
+            self.fmx,
+            self.fmy,
+            n_permute,
+            seed=self.seed,
+            use_copula=self.use_copula,
+        )
+        # approximate p-value with the permutations
+        pvalue = np.mean(arr_rdc > rdc_stat)
 
         results = {
             "alpha": self.alpha,
@@ -1523,7 +1509,6 @@ class RDCPerm(IndTest):
             "test_stat": rdc_stat,
             "h0_rejected": pvalue < alpha,
             "arr_eigvals": evals,
-            "time_secs": t.secs,
             "n_permute": n_permute,
         }
         return results

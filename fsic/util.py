@@ -1,39 +1,8 @@
-"""A module containing convenient methods for general machine learning"""
+"""Convenient methods for general machine learning"""
 
 import pprint
-import time
 
 import numpy as np
-
-
-class ContextTimer:
-    """
-    A class used to time an executation of a code snippet.
-    Use it with with .... as ...
-    For example,
-
-        with ContextTimer() as t:
-            # do something
-        time_spent = t.secs
-
-    From https://www.huyng.com/posts/python-performance-analysis
-    """
-
-    def __init__(self, verbose=False):
-        self.start = None
-        self.end = None
-        self.secs = None
-        self.verbose = verbose
-
-    def __enter__(self):
-        self.start = time.time()
-        return self
-
-    def __exit__(self, *args):
-        self.end = time.time()
-        self.secs = self.end - self.start
-        if self.verbose:
-            print("elapsed time: %f ms" % (self.secs * 1000))
 
 
 class NumpySeedContext:
