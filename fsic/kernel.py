@@ -64,13 +64,14 @@ class KGauss(Kernel):
             raise ValueError(
                 "The X1 dimensions (_, {}) do not match the X2 dimensions (_, {})".format(d1, d2)
             )
-        D2 = (
-            np.sum(X1 ** 2, 1)[:, np.newaxis]
-            - 2 * X1.dot(X2.T)
-            + np.sum(X2 ** 2, 1)
-        )
-        K = np.exp(-D2 / self.sigma2)
-        return K
+
+        D2 = X1.dot(X2.T)
+        np.multiply(D2, -2, out=D2)
+        np.add(D2, np.sum(X1 ** 2, 1, keepdims=True), out=D2)
+        np.add(D2, np.sum(X2 ** 2, 1), out=D2)
+        np.divide(D2, -self.sigma2, out=D2)
+
+        return np.exp(D2)
 
     def __repr__(self):
         return "KGauss(sigma2={})".format(self.sigma2)
@@ -108,9 +109,10 @@ class KTriangle(Kernel):
         _, d2 = X2.shape
         if d2 != 1:
             raise ValueError("The X2 dimension (_, {}) must be 1".format(d2))
-        diff = (X1 - X2.T) / self.width
-        K = signal.bspline(diff, 1)
-        return K
+
+        diff = (X1 - X2.T)
+        np.divide(diff, self.width, out=diff)
+        return signal.bspline(diff, 1)
 
     def __repr__(self):
         return "KTriangle(width={})".format(self.width)
