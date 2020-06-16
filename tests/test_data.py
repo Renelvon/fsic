@@ -2,8 +2,6 @@
 Module for testing data module.
 """
 
-__author__ = "wittawat"
-
 import unittest
 
 import numpy as np
