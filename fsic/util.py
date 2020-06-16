@@ -155,43 +155,53 @@ def cca(X, Y, reg=1e-5):
         Vx is a square matrix whose columns are eigenvectors for X corresponding to vals.
         Vy is a square matrix whose columns are eigenvectors for Y corresponding to vals.
     """
-    dx = X.shape[1]
-    dy = Y.shape[1]
-    assert X.shape[0] == Y.shape[0]
-    n = X.shape[0]
+    nx, dx = X.shape
+    ny, dy = Y.shape
+    if nx != ny:
+        raise ValueError("X has {} rows while Y has {} rows".format(nx, ny))
+
     mx = np.mean(X, 0)
     my = np.mean(Y, 0)
-    # dx x dy
-    Cxy = X.T.dot(Y) / n - np.outer(mx, my)
+
+    Cxy = X.T.dot(Y)  # dx x dy
+    np.divide(Cxy, nx, out=Cxy)
+    np.subtract(Cxy, np.outer(mx, my), out=Cxy)
+
+    # Cxx, Cyy have to be invertible
     Cxx = np.cov(X.T)
     Cyy = np.cov(Y.T)
-    # Cxx, Cyy have to be invertible
 
     if dx == 1:
         CxxICxy = Cxy / Cxx
     else:
-        CxxICxy = np.linalg.solve(Cxx + reg * np.eye(dx), Cxy)
+        regmat = np.identity(dx)
+        np.multiply(regmat, reg, out=regmat)
+        np.add(Cxx, regmat, out=Cxx)
+        CxxICxy = np.linalg.solve(Cxx, Cxy)
 
     if dy == 1:
         CyyICyx = Cxy.T / Cyy
     else:
-        CyyICyx = np.linalg.solve(Cyy + reg * np.eye(dy), Cxy.T)
+        regmat = np.identity(dy)
+        np.multiply(regmat, reg, out=regmat)
+        np.add(Cyy, regmat, out=Cyy)
+        CyyICyx = np.linalg.solve(Cyy, Cxy.T)
 
-    # problem for a
+    # Problems for a and b:
     avals, aV = np.linalg.eig(CxxICxy.dot(CyyICyx))
-    # problem for b
     bvals, bV = np.linalg.eig(CyyICyx.dot(CxxICxy))
 
     dim = min(dx, dy)
-    # sort descendingly
-    Ia = np.argsort(-avals)
-    avals = avals[Ia[:dim]]
-    aV = aV[:, Ia[:dim]]
 
-    Ib = np.argsort(-bvals)
-    bvals = bvals[Ib[:dim]]
-    bV = bV[:, Ib[:dim]]
-    np.testing.assert_array_almost_equal(avals, bvals)
+    # Sort in descending order and select first `dim` entries
+    Ia = np.argsort(-avals)[:dim]
+    avals = avals[Ia]
+    aV = aV[:, Ia]
+
+    Ib = np.argsort(-bvals)[:dim]
+    bvals = bvals[Ib]
+    bV = bV[:, Ib]
+
     return np.real(avals), np.real(aV), np.real(bV)
 
 
