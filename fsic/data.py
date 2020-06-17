@@ -256,39 +256,6 @@ class PSNullResample(FinitePairedSource):
         return PairedData(nX, nY, self.pdata.label + "_shuf")
 
 
-class PSStandardize(PairedSource):
-    """
-    A PairedSource that standardizes dimensions of X, Y independently so that
-    each has 0 mean and unit variance. Useful with PSNullResample when
-    working with real data whose variables do not have the same scaling.
-
-    Decorator pattern.
-    """
-
-    def __init__(self, ps):
-        """
-        ps: a PairedSource
-        """
-        self.ps = ps
-
-    def sample(self, n, seed=55):
-        ps = self.ps
-        pdata = ps.sample(n, seed=seed)
-        X, Y = pdata.xy
-
-        Zx = util.standardize(X, check=True)
-        Zy = util.standardize(Y, check=True)
-
-        new_label = None if pdata.label is None else pdata.label + "_std"
-        return PairedData(Zx, Zy, label=new_label)
-
-    def dx(self):
-        return self.ps.dx()
-
-    def dy(self):
-        return self.ps.dy()
-
-
 class PSGaussNoiseDims(PairedSource):
     """
     A PairedSource that adds noise dimensions to X, Y drawn from the specified

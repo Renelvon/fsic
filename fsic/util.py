@@ -282,14 +282,3 @@ def one_of_K_code(arr):
     Code based on https://stackoverflow.com/questions/29831489/convert-array-of-indices-to-1-hot-encoded-numpy-array#comment101948320_49790223
     """
     return np.identity(np.max(arr) + 1)[arr]
-
-
-def standardize(X, check=False):
-    """Standardize array X"""
-    mx = np.mean(X, 0)
-    stdx = np.std(X, 0)
-    Xs = X - mx
-    np.divide(Xs, stdx, out=Xs)  # Assume standard deviations are not 0
-    if check:
-        assert np.all(np.isfinite(Xs))
-    return Xs
