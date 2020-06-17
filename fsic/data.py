@@ -104,12 +104,16 @@ class PairedData:
         return tr_data, te_data
 
     def subsample(self, n, seed=87):
-        """Subsample without replacement. Return a new PairedData """
-        if n > self.X.shape[0] or n > self.Y.shape[0]:
-            raise ValueError("n should not be larger than sizes of X, Y.")
-        ind_x = util.subsample_ind(self.X.shape[0], n, seed)
-        ind_y = util.subsample_ind(self.Y.shape[0], n, seed)
-        return PairedData(self.X[ind_x, :], self.Y[ind_y, :], self.label)
+        """Sample this PairedData without replacement; return new PairedData."""
+        nx = self.sample_size
+        if n > nx:
+            raise ValueError(
+                "Sample cannot be larger than size of X and Y ({}); found {}".format(
+                    nx, n
+                )
+            )
+        ind = util.subsample_ind(nx, n, seed)
+        return PairedData(self.X[ind, :], self.Y[ind, :], self.label)
 
     def __add__(self, pdata):
         """Merge the current PairedData with another one."""
