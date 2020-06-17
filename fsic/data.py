@@ -89,21 +89,19 @@ class PairedData:
         return self.X, self.Y
 
     def split_tr_te(self, tr_proportion=0.5, seed=820):
-        """Split the dataset into training and test sets. Assume n is the same
-        for both X, Y.
+        """
+        Split the dataset into training and test sets.
 
-        Return (PairedData for tr, PairedData for te)"""
-        X = self.X
-        Y = self.Y
-        nx, _ = X.shape
-        ny, _ = Y.shape
-        if nx != ny:
-            raise ValueError("Require nx = ny")
-        Itr, Ite = util.tr_te_indices(nx, tr_proportion, seed)
-        label = "" if self.label is None else self.label
-        tr_data = PairedData(X[Itr, :], Y[Itr, :], "tr_" + label)
-        te_data = PairedData(X[Ite, :], Y[Ite, :], "te_" + label)
-        return (tr_data, te_data)
+        Return (PairedData for tr, PairedData for te).
+        """
+        X, Y = self.xy
+        Itr, Ite = util.tr_te_indices(X.shape[0], tr_proportion, seed)
+
+        label = self.label
+        tr_data = PairedData(X[Itr, :], Y[Itr, :], "tr_{}".format(label))
+        te_data = PairedData(X[Ite, :], Y[Ite, :], "te_{}".format(label))
+
+        return tr_data, te_data
 
     def subsample(self, n, seed=87):
         """Subsample without replacement. Return a new PairedData """
