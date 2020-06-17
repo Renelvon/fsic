@@ -42,18 +42,24 @@ class PairedData:
         if not np.all(np.isfinite(Y)):
             raise ValueError("Some element of matrix Y is infinite or NaN")
 
-    def __str__(self):
-        mean_x = np.mean(self.X, 0)
-        std_x = np.std(self.X, 0)
-        mean_y = np.mean(self.Y, 0)
-        std_y = np.std(self.Y, 0)
-        prec = 4
-        desc = ""
-        desc += "E[x] = %s \n" % (np.array_str(mean_x, precision=prec))
-        desc += "E[y] = %s \n" % (np.array_str(mean_y, precision=prec))
-        desc += "Std[x] = %s \n" % (np.array_str(std_x, precision=prec))
-        desc += "Std[y] = %s \n" % (np.array_str(std_y, precision=prec))
-        return desc
+    @staticmethod
+    def mean_and_std_of(Z):
+        return np.mean(Z, 0), np.std(Z, 0)
+
+    @staticmethod
+    def array_to_str(Z, precision=4):
+        return np.array_str(Z, precision=precision)
+
+    def summary(self, prec=4):
+        mx, stdx = self.mean_and_std_of(self.X)
+        my, stdy = self.mean_and_std_of(self.Y)
+
+        return "E[x] = {} \n Std[x] = {} \n E[y] = {} \n Std[y] = {} \n".format(
+            self.array_to_str(mx),
+            self.array_to_str(stdx),
+            self.array_to_str(my),
+            self.array_to_str(stdy),
+        )
 
     def dx(self):
         """Return the dimension of X."""
