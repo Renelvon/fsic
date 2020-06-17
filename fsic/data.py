@@ -20,12 +20,6 @@ class PairedData:
     """
 
     def __init__(self, X, Y, label=None):
-        self.X = X
-        self.Y = Y
-
-        # Short description to be used as a plot label
-        self.label = label
-
         nx = X.shape[0]
         ny = Y.shape[0]
 
@@ -36,11 +30,25 @@ class PairedData:
                 )
             )
 
+        self._X = X
+        self._Y = Y
+
+        # Short description to be used as a plot label
+        self.label = label
+
         if not np.all(np.isfinite(X)):
             raise ValueError("Some element of matrix X is infinite or NaN")
 
         if not np.all(np.isfinite(Y)):
             raise ValueError("Some element of matrix Y is infinite or NaN")
+
+    @property
+    def X(self):
+        return self._X
+
+    @property
+    def Y(self):
+        return self._Y
 
     @staticmethod
     def mean_and_std_of(Z):
