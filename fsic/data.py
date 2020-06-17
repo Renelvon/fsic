@@ -8,33 +8,39 @@ from fsic import util
 
 
 class PairedData:
-    """Class representing paired data for independence testing
+    """
+    Paired data for independence testing
 
-    properties:
-    X, Y: numpy array. X and Y are paired of the same sample size. The
-        dimensions are not necessarily the same.
+    Attributes:
+    -----------
+    X: numpy array
+    Y: numpy array
+
+    X and Y are pairs of equal sample sizes (rows) but may differ in dimensions (columns).
     """
 
     def __init__(self, X, Y, label=None):
-        """
-        :param X: n x d numpy array for dataset X
-        :param Y: n x d' numpy array for dataset Y
-        """
         self.X = X
         self.Y = Y
-        # short description to be used as a plot label
+
+        # Short description to be used as a plot label
         self.label = label
 
-        nx, _ = X.shape
-        ny, _ = Y.shape
+        nx = X.shape[0]
+        ny = Y.shape[0]
+
         if nx != ny:
-            raise ValueError("Data size of the paired sample must be the same.")
+            raise ValueError(
+                "The matrices must contain the same amount of samples; matrix X has {} rows while matrix Y has {}".format(
+                    nx, ny
+                )
+            )
 
         if not np.all(np.isfinite(X)):
-            raise ValueError("Some element of X is infinite or NaN")
+            raise ValueError("Some element of matrix X is infinite or NaN")
 
         if not np.all(np.isfinite(Y)):
-            raise ValueError("Some element of Y is infinite or NaN")
+            raise ValueError("Some element of matrix Y is infinite or NaN")
 
     def __str__(self):
         mean_x = np.mean(self.X, 0)
