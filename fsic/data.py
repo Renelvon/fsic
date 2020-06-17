@@ -155,23 +155,30 @@ class PairedSource(metaclass=abc.ABCMeta):
 
 class PSStraResample(PairedSource):
     """
-    A PairedSource which does a stratified subsampling. without replacement
-    from the specified PairedData.
+    A source which does stratified subsampling without replacement.
+
     The implementation is only approximately correctly.
     """
-
     def __init__(self, pdata, pivot):
         """
-        pivot: a one-dimensional numpy array of the same size as pdata.sample_size
-            indicating the class of each point.
+        pdata: a PairedData object
+        pivot: one-dimensional numpy array indicating the class of each point;
+            it must have as many entries as pdata.sample_size
         """
-        if len(pivot) != pdata.sample_size:
-            raise ValueError("pivot must have the same length as the data.")
+        lp = len(pivot)
+        nx = pdata.sample_size
+
+        if lp != nx:
+            raise ValueError(
+                    "The pivot has {} entries; it must have as many as samples in the PairedData: {}".format(
+                    lp, nx
+                )
+            )
+
         self.pdata = pdata
         self.pivot = pivot
-        uniq, counts = np.unique(pivot, return_counts=True)
-        self._uniques = uniq
-        self._counts = counts
+
+        self._uniques, self._counts = np.unique(pivot, return_counts=True)
 
     def sample(self, n, seed=900):
         pdata = self.pdata
