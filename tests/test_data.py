@@ -36,9 +36,9 @@ class TestPairedData(unittest.TestCase):
         self.assertTrue(pdata != pdata1)
         self.assertTrue(pdata != pdata2)
         # test size
-        self.assertEqual(pdata.sample_size(), n1 + n2)
-        self.assertEqual(pdata1.sample_size(), n1)
-        self.assertEqual(pdata2.sample_size(), n2)
+        self.assertEqual(pdata.sample_size, n1 + n2)
+        self.assertEqual(pdata1.sample_size, n1)
+        self.assertEqual(pdata2.sample_size, n2)
 
 
 class TestPSStraResample(unittest.TestCase):
@@ -57,9 +57,9 @@ class TestPSStraResample(unittest.TestCase):
 
             m = 79
             pdata = ps.sample(m, seed=s)
-            self.assertEqual(pdata.sample_size(), m)
+            self.assertEqual(pdata.sample_size, m)
 
-            _, y = pdata.xy()
+            _, y = pdata.xy
             yu, counts = np.unique(y, return_counts=True)
             for i, _ in enumerate(yu):
                 self.assertTrue(counts[i] - int(p_fracs[i] * m) <= 1)
@@ -79,8 +79,8 @@ class TestPSNullResample(unittest.TestCase):
             shuff1 = null_ps.sample(m, seed=s + 1)
             shuff2 = null_ps.sample(m, seed=s + 1)
 
-            X1, Y1 = shuff1.xy()
-            X2, Y2 = shuff2.xy()
+            X1, Y1 = shuff1.xy
+            X2, Y2 = shuff2.xy
             np.testing.assert_array_almost_equal(X1, X2)
             np.testing.assert_array_almost_equal(Y1, Y2)
 
@@ -94,7 +94,7 @@ class TestPSGaussNoiseDim(unittest.TestCase):
         for ndx, ndy in zip(ndxs, ndys):
             ps = data.PSGaussNoiseDims(ori_ps, ndx, ndy)
             pdata = ps.sample(n=n, seed=83)
-            X, Y = pdata.xy()
+            X, Y = pdata.xy
 
             self.assertEqual(X.shape[0], n)
             self.assertEqual(Y.shape[0], n)
@@ -110,7 +110,7 @@ class TestPS2DSinFreq(unittest.TestCase):
         ps = data.PS2DSinFreq(1)
         for n in [5, 613]:
             pdata = ps.sample(n=n)
-            X, Y = pdata.xy()
+            X, Y = pdata.xy
             XY = np.hstack((X, Y))
 
             self.assertEqual(X.shape[1], 1)
@@ -124,7 +124,7 @@ class TestPSPairwiseSign(unittest.TestCase):
         for d in [2, 4]:
             ps = data.PSPairwiseSign(dx=d)
             pdata = ps.sample(n=n, seed=d + 1)
-            X, Y = pdata.xy()
+            X, Y = pdata.xy
 
             self.assertEqual(X.shape[0], n)
             self.assertEqual(Y.shape[0], n)

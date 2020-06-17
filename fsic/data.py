@@ -61,22 +61,24 @@ class PairedData:
             self.array_to_str(stdy),
         )
 
+    @property
     def dx(self):
         """Return the dimension of X."""
-        dx = self.X.shape[1]
-        return dx
+        return self.X.shape[1]
 
+    @property
     def dy(self):
         """Return the dimension of Y."""
-        dy = self.Y.shape[1]
-        return dy
+        return self.Y.shape[1]
 
+    @property
     def sample_size(self):
         return self.X.shape[0]
 
+    @property
     def xy(self):
-        """Return (X, Y) as a tuple"""
-        return (self.X, self.Y)
+        """Return X and Y as a tuple"""
+        return self.X, self.Y
 
     def split_tr_te(self, tr_proportion=0.5, seed=820):
         """Split the dataset into training and test sets. Assume n is the same
@@ -182,10 +184,10 @@ class PSStraResample(PairedSource):
 
     def __init__(self, pdata, pivot):
         """
-        pivot: a one-dimensional numpy array of the same size as pdata.sample_size()
+        pivot: a one-dimensional numpy array of the same size as pdata.sample_size
             indicating the class of each point.
         """
-        if len(pivot) != pdata.sample_size():
+        if len(pivot) != pdata.sample_size:
             raise ValueError("pivot must have the same length as the data.")
         self.pdata = pdata
         self.pivot = pivot
@@ -195,13 +197,13 @@ class PSStraResample(PairedSource):
 
     def sample(self, n, seed=900):
         pdata = self.pdata
-        n_sam = pdata.sample_size()
+        n_sam = pdata.sample_size
         if n > n_sam:
             raise ValueError(
                 "Cannot subsample %d points from %d points." % (n, n_sam)
             )
 
-        X, Y = pdata.xy()
+        X, Y = pdata.xy
         # permute X, Y. Keep pairs
         I = util.subsample_ind(n_sam, n_sam, seed=seed + 3)
         X = X[I, :]
@@ -254,12 +256,12 @@ class PSNullShuffle(PairedSource):
     def sample(self, n, seed=7):
         if n == 1:
             pdata = self.ps.sample(2, seed=seed + 27)
-            X, Y = pdata.xy()
+            X, Y = pdata.xy
             nX = X[[0], :]
             nY = Y[[1], :]
         else:
             pdata = self.ps.sample(n, seed=seed + 27)
-            nX, Y = pdata.xy()
+            nX, Y = pdata.xy
             ind_shift1 = np.roll(tuple(range(n)), 1)
             nY = Y[ind_shift1, :]
 
@@ -290,17 +292,17 @@ class PSNullResample(PairedSource):
         self.pdata = pdata
 
     def sample(self, n, seed=981):
-        if n > self.pdata.sample_size():
+        if n > self.pdata.sample_size:
             raise ValueError(
                 "cannot sample more points than what the original dataset has"
             )
-        X, Y = self.pdata.xy()
+        X, Y = self.pdata.xy
         if n == 1:
-            ind = util.subsample_ind(self.pdata.sample_size(), 2, seed=seed)
+            ind = util.subsample_ind(self.pdata.sample_size, 2, seed=seed)
             nX = X[[ind[0]], :]
             nY = Y[[ind[1]], :]
         else:
-            ind = util.subsample_ind(self.pdata.sample_size(), n, seed=seed)
+            ind = util.subsample_ind(self.pdata.sample_size, n, seed=seed)
             nX = X[ind, :]
             ind_shift1 = np.roll(ind, 1)
             nY = Y[ind_shift1, :]
@@ -334,7 +336,7 @@ class PSStandardize(PairedSource):
     def sample(self, n, seed=55):
         ps = self.ps
         pdata = ps.sample(n, seed=seed)
-        X, Y = pdata.xy()
+        X, Y = pdata.xy
 
         Zx = util.standardize(X, check=True)
         Zy = util.standardize(Y, check=True)
@@ -374,7 +376,7 @@ class PSGaussNoiseDims(PairedSource):
             NY = np.random.randn(n, self.ndy)
 
             pdata = self.ps.sample(n, seed=seed)
-            X, Y = pdata.xy()
+            X, Y = pdata.xy
             Zx = np.hstack((X, NX))
             Zy = np.hstack((Y, NY))
             new_label = (
@@ -470,7 +472,7 @@ class PSUnifRotateNoise(PairedSource):
         )
 
         # concatenate the noise dims to the 2d problem
-        X2d, Y2d = sample2d.xy()
+        X2d, Y2d = sample2d.xy
         X = np.hstack((X2d, Xnoise))
         Y = np.hstack((Y2d, Ynoise))
 
@@ -503,7 +505,7 @@ class PS2DSinFreq(PairedSource):
     def sample(self, n, seed=81):
         ps = PSSinFreq(self.freq, d=1)
         pdata = ps.sample(n, seed=seed)
-        X, Y = pdata.xy()
+        X, Y = pdata.xy
 
         return PairedData(X, Y, label="sin_freq%.2f" % self.freq)
 
@@ -604,7 +606,7 @@ class PS2DUnifRotate(PairedSource):
             xlb=[self.xlb], xub=[self.xub], ylb=[self.ylb], yub=[self.yub]
         )
         pdata = ps_unif.sample(n, seed)
-        X, Y = pdata.xy()
+        X, Y = pdata.xy
         XY = np.hstack((X, Y))
         rot_XY = XY.dot(rot.T)
 

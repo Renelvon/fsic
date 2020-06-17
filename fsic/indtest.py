@@ -91,7 +91,7 @@ class NFSIC(IndTest):
         asymptotic null distribution with the sample size is small. However, it
         is slower.
         """
-        X, Y = pdata.xy()
+        X, Y = pdata.xy
         alpha = self.alpha
         nfsic_stat = self.compute_stat(pdata)
         k = self.k
@@ -138,7 +138,7 @@ class NFSIC(IndTest):
         return results
 
     def compute_stat(self, pdata):
-        X, Y = pdata.xy()
+        X, Y = pdata.xy
         V = self.V
         W = self.W
         k = self.k
@@ -348,7 +348,7 @@ class GaussNFSIC(NFSIC):
         """
         J = n_test_locs
         # Use grid search to initialize the gwidths for both X, Y
-        X, Y = pdata.xy()
+        X, Y = pdata.xy
         n_gwidth_cand = 5
         gwidth_factors = 2.0 ** np.linspace(-3, 3, n_gwidth_cand)
         medx2 = util.sampled_median_distance(X, 1000) ** 2
@@ -457,10 +457,10 @@ class GaussNFSIC(NFSIC):
         Choose n_test_locs points randomly from each of the two marginal samples.
         Thus, pairs are not maintained.
         """
-        n = pdata.sample_size()
+        n = pdata.sample_size
         Ix = util.subsample_ind(n, n_test_locs, seed=seed)
         Iy = util.subsample_ind(n, n_test_locs, seed=seed + 28)
-        X, Y = pdata.xy()
+        X, Y = pdata.xy
         V = X[Ix, :]
         W = Y[Iy, :]
         return V, W
@@ -479,8 +479,8 @@ class GaussNFSIC(NFSIC):
         Return V, W
         """
 
-        X, Y = pdata.xy()
-        n = pdata.sample_size()
+        X, Y = pdata.xy
+        n = pdata.sample_size
 
         # from the joint
         objs_joint = np.zeros(n_cand)
@@ -550,9 +550,9 @@ class GaussNFSIC(NFSIC):
         - Guarantee that V, W will not leave the boundary of the sample.
             This can make NFSIC covariance singular.
         """
-        n = pdata.sample_size()
+        n = pdata.sample_size
         I = util.subsample_ind(n, n_test_locs, seed=seed)
-        X, Y = pdata.xy()
+        X, Y = pdata.xy
         V = X[I, :]
         W = Y[I, :]
         return V, W
@@ -564,8 +564,8 @@ class GaussNFSIC(NFSIC):
         return (V, W) each containing n_test_locs vectors.
         """
 
-        X, Y = pdata.xy()
-        n = pdata.sample_size()
+        X, Y = pdata.xy
+        n = pdata.sample_size
         sub = min(n, subsample)
         if sub < n:
             X = util.subsample_rows(X, sub, seed=seed + 1)
@@ -592,8 +592,8 @@ class GaussNFSIC(NFSIC):
         respective Gaussian fit.
         """
 
-        X, Y = pdata.xy()
-        n = pdata.sample_size()
+        X, Y = pdata.xy
+        n = pdata.sample_size
         sub = min(n, subsample)
         if sub < n:
             X = util.subsample_rows(X, sub, seed=seed + 1)
@@ -668,7 +668,7 @@ def generic_optimize_locs_widths(
     if V0.shape[0] != W0.shape[0]:
         raise ValueError("V0 and W0 must have the same number of rows J.")
 
-    X, Y = pdata.xy()
+    X, Y = pdata.xy
     # initialize Theano variables
     Vth = theano.shared(V0, name="V")
     Wth = theano.shared(W0, name="W")
@@ -867,7 +867,7 @@ def nfsic_grid_search_kernel(pdata, V, W, list_kernelx, list_kernely):
     if V.shape[0] != W.shape[0]:
         raise ValueError("V and W must have the same number of rows.")
 
-    X, Y = pdata.xy()
+    X, Y = pdata.xy
     n = X.shape[0]
     n_cand_x = len(list_kernelx)
     n_cand_y = len(list_kernely)
@@ -1029,7 +1029,7 @@ class QuadHSIC(IndTest):
         alpha = self.alpha
         bhsic_stat = self.compute_stat(pdata)
 
-        X, Y = pdata.xy()
+        X, Y = pdata.xy
         k = self.k
         l = self.l
         n_permute = self.n_permute
@@ -1047,7 +1047,7 @@ class QuadHSIC(IndTest):
         return results
 
     def compute_stat(self, pdata):
-        X, Y = pdata.xy()
+        X, Y = pdata.xy
         k = self.k
         l = self.l
         bhsic = QuadHSIC.biased_hsic(X, Y, k, l)
@@ -1210,7 +1210,7 @@ class FiniteFeatureHSIC(IndTest):
     def perform_test(self, pdata):
         alpha = self.alpha
         ffhsic = self.compute_stat(pdata)
-        X, Y = pdata.xy()
+        X, Y = pdata.xy
         Zx = self.fmx.gen_features(X)
         Zy = self.fmy.gen_features(Y)
 
@@ -1234,8 +1234,8 @@ class FiniteFeatureHSIC(IndTest):
     def compute_stat(self, pdata):
         # complexity = O(Dx*Dy*n)
         # Dx = number of features of X
-        X, Y = pdata.xy()
-        n = pdata.sample_size()
+        X, Y = pdata.xy
+        n = pdata.sample_size
         Zx = self.fmx.gen_features(X)
         Zy = self.fmy.gen_features(Y)
         HZy = Zy - np.mean(Zy, 0)
@@ -1346,7 +1346,7 @@ class FiniteFeatureHSIC(IndTest):
         """
         pdata = data.PairedData(X, Y)
         fhsic = FiniteFeatureHSIC(fmx, fmy)
-        n = pdata.sample_size()
+        n = pdata.sample_size
         null_ps = data.PSNullResample(pdata)
         arr_hsic = np.zeros(n_permute)
 
@@ -1431,8 +1431,8 @@ class RDC(IndTest):
         return results
 
     def compute_stat_with_eigvals(self, pdata):
-        X, Y = pdata.xy()
-        n = pdata.sample_size()
+        X, Y = pdata.xy
+        n = pdata.sample_size
         # copula transform to both X and Y
         cop_map = feature.MarginalCDFMap()
         Xcdf = cop_map.gen_features(X)
@@ -1489,7 +1489,7 @@ class RDCPerm(IndTest):
         alpha = self.alpha
         rdc_stat, evals = self.compute_stat_with_eigvals(pdata)
 
-        X, Y = pdata.xy()
+        X, Y = pdata.xy
         n_permute = self.n_permute
         arr_rdc = RDCPerm.list_permute(
             X,
@@ -1514,7 +1514,7 @@ class RDCPerm(IndTest):
         return results
 
     def compute_stat_with_eigvals(self, pdata):
-        X, Y = pdata.xy()
+        X, Y = pdata.xy
         if self.use_copula:
             # copula transform to both X and Y
             cop_map = feature.MarginalCDFMap()
@@ -1622,7 +1622,7 @@ class RDCPerm(IndTest):
         """
         pdata = data.PairedData(X, Y)
         rdc_perm = RDCPerm(fmx, fmy, n_permute=n_permute, use_copula=use_copula)
-        n = pdata.sample_size()
+        n = pdata.sample_size
         null_ps = data.PSNullResample(pdata)
         arr_rdc = np.zeros(n_permute)
 
@@ -1681,7 +1681,7 @@ def permute_null_dist(pdata, indtest, n_permute=400, seed=27):
 
     Return an array of computed statistics.
     """
-    n = pdata.sample_size()
+    n = pdata.sample_size
     null_ps = data.PSNullResample(pdata)
     arr_stats = np.zeros(n_permute)
 
@@ -1697,7 +1697,7 @@ def kl_kgauss_median(pdata):
     """
     Get two Gaussian kernels constructed with the median heuristic.
     """
-    xtr, ytr = pdata.xy()
+    xtr, ytr = pdata.xy
     medx2 = util.sampled_median_distance(xtr, 1000) ** 2
     medy2 = util.sampled_median_distance(ytr, 1000) ** 2
     # for classification problem, Y can be 0, 1. Subsampling in the computation

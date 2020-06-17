@@ -20,7 +20,7 @@ def kl_median(pdata):
     Get two Gaussian kernels constructed with the median heuristic.
     Randomize V, W from the standard Gaussian distribution.
     """
-    xtr, ytr = pdata.xy()
+    xtr, ytr = pdata.xy
     medx2 = util.median_distance(xtr) ** 2
     medy2 = util.median_distance(ytr) ** 2
     k = kernel.KGauss(medx2)
@@ -33,7 +33,7 @@ class TestNFSIC(unittest.TestCase):
         n = 300
         dx = 2
         pdata_mean = get_pdata_mean(n, dx)
-        X, Y = pdata_mean.xy()
+        X, Y = pdata_mean.xy
         gwx2 = util.median_distance(X) ** 2
         gwy2 = util.median_distance(Y) ** 2
         k = kernel.KGauss(gwx2)
@@ -63,9 +63,9 @@ class TestNFSIC(unittest.TestCase):
         for s in [284, 77]:
             with util.NumpySeedContext(seed=s):
                 pdata = ps.sample(n=200, seed=s + 1)
-                dx = pdata.dx()
-                dy = pdata.dy()
-                X, Y = pdata.xy()
+                dx = pdata.dx
+                dy = pdata.dy
+                X, Y = pdata.xy
 
                 k = kernel.KGauss(2)
                 l = kernel.KGauss(3)
@@ -97,7 +97,7 @@ class TestGaussNFSIC(unittest.TestCase):
         n = 300
         dx = 2
         pdata_mean = get_pdata_mean(n, dx)
-        X, Y = pdata_mean.xy()
+        X, Y = pdata_mean.xy
         gwx2 = util.median_distance(X) ** 2
         gwy2 = util.median_distance(Y) ** 2
         J = 2
@@ -131,7 +131,7 @@ class TestQuadHSIC(unittest.TestCase):
         # test that the permutations are done correctly.
         # Test against a naive implementation.
         pd = self.pdata_mean
-        X, Y = pd.xy()
+        X, Y = pd.xy
         k = self.qhsic.k
         l = self.qhsic.l
         n_permute = self.qhsic.n_permute
@@ -155,7 +155,7 @@ class TestFiniteFeatureHSIC(unittest.TestCase):
         for s in [283, 2]:
             with util.NumpySeedContext(seed=s):
                 pdata = ps.sample(n=200, seed=s + 1)
-                X, Y = pdata.xy()
+                X, Y = pdata.xy
 
                 sigmax2 = 1
                 sigmay2 = 0.8
