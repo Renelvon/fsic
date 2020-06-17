@@ -105,27 +105,12 @@ class PairedData:
         ind_y = util.subsample_ind(self.Y.shape[0], n, seed)
         return PairedData(self.X[ind_x, :], self.Y[ind_y, :], self.label)
 
-    def clone(self):
-        """
-        Return a new PairedData object with a separate copy of each internal
-        variable, and with the same content.
-        """
-        nX = np.copy(self.X)
-        nY = np.copy(self.Y)
-        nlabel = self.label
+    def __add__(self, pdata):
+        """Merge the current PairedData with another one."""
+        nX = np.vstack((self.X, pdata.X))
+        nY = np.vstack((self.Y, pdata.Y))
+        nlabel = "{}_{}".format(self.label, pdata.label)
         return PairedData(nX, nY, nlabel)
-
-    def __add__(self, pdata2):
-        """
-        Merge the current PairedData with another one.
-        Create a new PairedData and create a new copy for all internal variables.
-        label is set to None.
-        """
-        copy = self.clone()
-        copy2 = pdata2.clone()
-        nX = np.vstack((copy.X, copy2.X))
-        nY = np.vstack((copy.Y, copy2.Y))
-        return PairedData(nX, nY)
 
 
 class PairedSource(metaclass=abc.ABCMeta):
