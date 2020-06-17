@@ -240,40 +240,6 @@ class PSStraResample(PairedSource):
         return self.pdata.dy()
 
 
-class PSNullShuffle(PairedSource):
-    """
-    Randomly permute the order of one sample so that the pairs are guaranteed
-    to be broken. This is very similar to PSNullResample except it does not
-    sample. The sampling part is delegated to another PairedSource.
-    Essentially, PSNullResample = PSNullShuffle + PSResample.
-    Decorator pattern.
-    """
-
-    def __init__(self, ps):
-        self.ps = ps
-
-    def sample(self, n, seed=7):
-        if n == 1:
-            pdata = self.ps.sample(2, seed=seed + 27)
-            X, Y = pdata.xy
-            nX = X[[0], :]
-            nY = Y[[1], :]
-        else:
-            pdata = self.ps.sample(n, seed=seed + 27)
-            nX, Y = pdata.xy
-            ind_shift1 = np.roll(tuple(range(n)), 1)
-            nY = Y[ind_shift1, :]
-
-        new_label = "null_shuffle"
-        return PairedData(nX, nY, label=new_label)
-
-    def dx(self):
-        return self.ps.dx()
-
-    def dy(self):
-        return self.ps.dy()
-
-
 class PSNullResample(PairedSource):
     """
     Randomly permute the order of one sample so that the pairs are guaranteed
