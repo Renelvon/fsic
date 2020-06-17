@@ -155,16 +155,17 @@ class PairedSource(metaclass=abc.ABCMeta):
 
 class PSResample(PairedSource):
     """
-    A PairedSource which subsamples without replacement from the specified
-    PairedData.
+    A source which subsamples without replacement from specified data.
     """
 
     def __init__(self, pdata):
+        """
+        pdata: A PairedData instance
+        """
         self.pdata = pdata
 
     def sample(self, n, seed=900):
-        pdata_sub = self.pdata.subsample(n, seed)
-        return pdata_sub
+        return self.pdata.subsample(n, seed)
 
     def dx(self):
         return self.pdata.dx()
