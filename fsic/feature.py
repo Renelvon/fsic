@@ -82,7 +82,7 @@ class RFFKGauss(FeatureMap):
         np.random.set_state(rstate)
 
         XWT = X.dot(W)
-        XWT *= np.sqrt(1.0 / self.sigma2)
+        np.multiply(XWT, np.sqrt(1.0 / self.sigma2), out=XWT)
 
         xwt_r, xwt_c = XWT.shape
 
@@ -90,9 +90,7 @@ class RFFKGauss(FeatureMap):
         np.cos(XWT, out=Z[:, :xwt_c])
         np.sin(XWT, out=Z[:, xwt_c:])
 
-        Z *= np.sqrt(1.0 / self.n_features)
-
-        return Z
+        return np.multiply(Z, np.sqrt(1.0 / self.n_features), out=Z)
 
     def num_features(self, X=None):
         return 2 * self.n_features
