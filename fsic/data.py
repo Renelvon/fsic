@@ -228,14 +228,11 @@ class PSStraResample(PairedSource):
 
 class PSNullResample(PairedSource):
     """
-    Randomly permute the order of one sample so that the pairs are guaranteed
-    to be broken. This is meant to simulate the case where [H0: X, Y are
-    independent] is true.
+    A source which subsamples without replacement, and then randomly permutes
+    the order of one sample, to break pairs.
 
-    A PairedSource which subsamples without replacement from the permuted two
-    samples.
+    This is meant to simulate the case where [H0: X, Y are independent] holds.
     """
-
     def __init__(self, pdata):
         """
         pdata: A PairedData object
@@ -243,24 +240,10 @@ class PSNullResample(PairedSource):
         self.pdata = pdata
 
     def sample(self, n, seed=981):
-        if n > self.pdata.sample_size:
-            raise ValueError(
-                "cannot sample more points than what the original dataset has"
-            )
-        X, Y = self.pdata.xy
-        if n == 1:
-            ind = util.subsample_ind(self.pdata.sample_size, 2, seed=seed)
-            nX = X[[ind[0]], :]
-            nY = Y[[ind[1]], :]
-        else:
-            ind = util.subsample_ind(self.pdata.sample_size, n, seed=seed)
-            nX = X[ind, :]
-            ind_shift1 = np.roll(ind, 1)
-            nY = Y[ind_shift1, :]
-        new_label = (
-            None if self.pdata.label is None else self.pdata.label + "_shuf"
-        )
-        return PairedData(nX, nY, label=new_label)
+        pdata = self.pdata.subsample(n, seed=seed)
+        nX, Y = pdata.xy
+        nY = np.roll(Y, 1, 0)
+        return PairedData(nX, nY, self.pdata.label + "_shuf")
 
     def dx(self):
         return self.pdata.dx()
