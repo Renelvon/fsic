@@ -153,27 +153,6 @@ class PairedSource(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
 
-class PSResample(PairedSource):
-    """
-    A source which subsamples without replacement from specified data.
-    """
-
-    def __init__(self, pdata):
-        """
-        pdata: A PairedData instance
-        """
-        self.pdata = pdata
-
-    def sample(self, n, seed=900):
-        return self.pdata.subsample(n, seed)
-
-    def dx(self):
-        return self.pdata.dx()
-
-    def dy(self):
-        return self.pdata.dy()
-
-
 class PSStraResample(PairedSource):
     """
     A PairedSource which does a stratified subsampling. without replacement
@@ -286,8 +265,8 @@ class PSNullResample(PairedSource):
 class PSStandardize(PairedSource):
     """
     A PairedSource that standardizes dimensions of X, Y independently so that
-    each has 0 mean and unit variance. Useful with PSResample or PSNullResample
-    when working with real data whose variables do not have the same scaling.
+    each has 0 mean and unit variance. Useful with PSNullResample when
+    working with real data whose variables do not have the same scaling.
 
     Decorator pattern.
     """
