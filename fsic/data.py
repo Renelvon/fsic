@@ -153,29 +153,51 @@ class PairedSource(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
 
-class PSStraResample(PairedSource):
+class FinitePairedSource(PairedSource, metaclass=abc.ABCMeta):
+    """
+    A PairedSource which generates output through sampling a known initial set.
+    """
+
+    def __init__(self, pdata):
+        """
+        pdata: a PairedData object
+        """
+        self.pdata = pdata
+
+    def dx(self):
+        """Return the dimension of X"""
+        return self.pdata.dx
+
+    def dy(self):
+        """Return the dimension of Y"""
+        return self.pdata.dy
+
+
+class PSStraResample(FinitePairedSource):
     """
     A source which does stratified subsampling without replacement.
 
     The implementation is only approximately correctly.
     """
+
     def __init__(self, pdata, pivot):
         """
         pdata: a PairedData object
         pivot: one-dimensional numpy array indicating the class of each point;
             it must have as many entries as pdata.sample_size
         """
+        super().__init__(pdata)
+
         lp = len(pivot)
         nx = pdata.sample_size
 
         if lp != nx:
             raise ValueError(
-                    "The pivot has {} entries; it must have as many as samples in the PairedData: {}".format(
+                "The pivot has {} entries; it must have as many as samples in the PairedData: {}".format(
                     lp, nx
                 )
             )
 
-        self.pdata = pdata
         self.pivot = pivot
 
         self._uniques, self._counts = np.unique(pivot, return_counts=True)
@@ -216,40 +238,22 @@ class PSStraResample(PairedSource):
 
         Xsam = X[final_chosenI, :]
         Ysam = Y[final_chosenI, :]
-        new_label = None if pdata.label is None else pdata.label + "_stra"
-        return PairedData(Xsam, Ysam, label=new_label)
-
-    def dx(self):
-        return self.pdata.dx()
-
-    def dy(self):
-        return self.pdata.dy()
+        return PairedData(Xsam, Ysam, self.pdata.label + "_stra")
 
 
-class PSNullResample(PairedSource):
+class PSNullResample(FinitePairedSource):
     """
     A source which subsamples without replacement, and then randomly permutes
     the order of one sample, to break pairs.
 
     This is meant to simulate the case where [H0: X, Y are independent] holds.
     """
-    def __init__(self, pdata):
-        """
-        pdata: A PairedData object
-        """
-        self.pdata = pdata
 
     def sample(self, n, seed=981):
         pdata = self.pdata.subsample(n, seed=seed)
         nX, Y = pdata.xy
         nY = np.roll(Y, 1, 0)
         return PairedData(nX, nY, self.pdata.label + "_shuf")
-
-    def dx(self):
-        return self.pdata.dx()
-
-    def dy(self):
-        return self.pdata.dy()
 
 
 class PSStandardize(PairedSource):
