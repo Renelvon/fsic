@@ -19,7 +19,7 @@ class PairedData:
     X and Y are pairs of equal sample sizes (rows) but may differ in dimensions (columns).
     """
 
-    def __init__(self, X, Y, label=None):
+    def __init__(self, X, Y, label=""):
         nx = X.shape[0]
         ny = Y.shape[0]
 
