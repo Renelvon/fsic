@@ -124,19 +124,22 @@ class PairedData:
 
 
 class PairedSource(metaclass=abc.ABCMeta):
-    """A data source where it is possible to resample. Subclasses may prefix
-    class names with PS.
+    """
+    A data source that can be resampled.
 
-    - If possible, prefix with PSInd to indicate that the
-    PairedSource contains two independent samples.
-    - Prefix with PSDep otherwise.
-    - Use PS if the PairedSource can be either one depending on the provided
-    paramters."""
+    Subclasses may prefix class names with PS. If possible, prefix with PSInd
+    to indicate that the PairedSource contains two independent samples; prefix
+    with PSDep otherwise. Use PS if the PairedSource can be either one
+    depending on the provided parametres.
+    """
 
     @abc.abstractmethod
     def sample(self, n, seed):
-        """Return a PairedData. Returned result should be deterministic given
-        the input (n, seed)."""
+        """
+        Return a PairedData.
+
+        The result should be deterministic given the input (n, seed).
+        """
         raise NotImplementedError
 
     @abc.abstractmethod
