@@ -305,27 +305,21 @@ class PSFunc(PairedSource):
 
     def __init__(self, f, px):
         """
-        f: function such that Y = f(X). (n x dx)  |-> n x dy
-        px: prior on X. Used to generate X. n |-> n x dx
+        f: a function accepting an (n x dx) array X and returning an (n x dy) array Y
+        px: prior used to generate X; accepts integer n and returns (n x dx) array X
         """
         self.f = f
         self.px = px
-        x = px(2)
-        y = f(x)
 
-        self._dx = x.shape[1]
-        self._dy = y.shape[1]
+        # Discover output dimensions by invoking px and f; discard result.
+        X = px(2)
+        self._dx = X.shape[1]
+        self._dy = f(X).shape[1]
 
     def sample(self, n, seed):
-        rstate = np.random.get_state()
-        np.random.seed(seed)
-
-        px = self.px
-        X = px(n)
-        f = self.f
-        Y = f(X)
-
-        np.random.set_state(rstate)
+        with util.NumpySeedContext(seed=seed):
+            X = self.px(n)
+            Y = self.f(X)
         return PairedData(X, Y, label="psfunc")
 
     def dx(self):
