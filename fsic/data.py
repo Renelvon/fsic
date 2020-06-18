@@ -645,33 +645,3 @@ class PSPairwiseSign(PairedSource):
 
     def dy(self):
         return 1
-
-
-class PSGaussSign(PairedSource):
-    """
-    A toy problem where X follows the standard multivariate Gaussian,
-    and Y = sign(product(X))*|Z| where Z ~ N(0, 1).
-    """
-
-    def __init__(self, dx):
-        """
-        dx: the dimension of X
-        """
-        if dx <= 0:
-            raise ValueError("dx must be > 0")
-        self.dimx = dx
-
-    def sample(self, n, seed):
-        d = self.dimx
-        with util.NumpySeedContext(seed=seed):
-            Z = np.random.randn(n, 1)
-            X = np.random.randn(n, d)
-            Xs = np.sign(X)
-            Y = np.prod(Xs, 1)[:, np.newaxis] * np.abs(Z)
-        return PairedData(X, Y, label="gauss_sign_dx%d" % d)
-
-    def dx(self):
-        return self.dimx
-
-    def dy(self):
-        return 1
