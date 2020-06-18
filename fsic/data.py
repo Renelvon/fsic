@@ -58,15 +58,15 @@ class PairedData:
     def array_to_str(Z, precision=4):
         return np.array_str(Z, precision=precision)
 
-    def summary(self, prec=4):
+    def summary(self, precision=4):
         mx, stdx = self.mean_and_std_of(self._X)
         my, stdy = self.mean_and_std_of(self._Y)
 
         return "E[x] = {} \n Std[x] = {} \n E[y] = {} \n Std[y] = {} \n".format(
-            self.array_to_str(mx),
-            self.array_to_str(stdx),
-            self.array_to_str(my),
-            self.array_to_str(stdy),
+            self.array_to_str(mx, precision),
+            self.array_to_str(stdx, precision),
+            self.array_to_str(my, precision),
+            self.array_to_str(stdy, precision),
         )
 
     @property

@@ -11,17 +11,18 @@ from fsic import util
 
 class TestNumpySeedContext(unittest.TestCase):
     def test_context_deterministic(self):
-        for s in [2, 98, 10]:
-            with util.NumpySeedContext(seed=s):
-                A1 = np.random.randn(5, 1)
-                B1 = np.random.rand(6)
+        for s in (2, 98, 10):
+            with self.subTest(s=s):
+                with util.NumpySeedContext(seed=s):
+                    A1 = np.random.randn(5, 1)
+                    B1 = np.random.rand(6)
 
-            with util.NumpySeedContext(seed=s):
-                A2 = np.random.randn(5, 1)
-                B2 = np.random.rand(6)
+                with util.NumpySeedContext(seed=s):
+                    A2 = np.random.randn(5, 1)
+                    B2 = np.random.rand(6)
 
-            np.testing.assert_array_almost_equal(A1, A2)
-            np.testing.assert_array_almost_equal(B1, B2)
+                np.testing.assert_array_almost_equal(A1, A2)
+                np.testing.assert_array_almost_equal(B1, B2)
 
 
 class TestCCA(unittest.TestCase):
@@ -42,7 +43,7 @@ class TestFunctions(unittest.TestCase):
     def test_bound_by_data(self):
         n, d = 50, 7
         m = n + 3
-        for s in [82, 22]:
+        for s in (82, 22):
             with util.NumpySeedContext(seed=s):
                 Data = np.random.rand(n, d)
                 Z = np.random.randn(m, d) * 20
@@ -57,7 +58,8 @@ class TestFunctions(unittest.TestCase):
                 self.assertEqual(P.shape[0], Z.shape[0])
                 self.assertEqual(P.shape[1], Z.shape[1])
 
-    def test_one_of_K_code(self):
+    @staticmethod
+    def test_one_of_K_code():
         arr = np.array([0, 1, 0, 2])
         Z = util.one_of_K_code(arr)
         exp = np.array([[1, 0, 0], [0, 1, 0], [1, 0, 0], [0, 0, 1]])

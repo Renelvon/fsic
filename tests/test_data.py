@@ -67,22 +67,22 @@ class TestPSStraResample(unittest.TestCase):
 
 class TestPSNullResample(unittest.TestCase):
     def test_sample_deterministic(self):
-        seeds = [2, 98, 72]
-        for s in seeds:
-            n = 21
-            pdata = data.PSUnifRotateNoise(angle=np.pi / 3, noise_dim=1).sample(
-                n, seed=s
-            )
-            null_ps = data.PSNullResample(pdata)
+        for s in (2, 98, 72):
+            with self.subTest(s=s):
+                n = 21
+                pdata = data.PSUnifRotateNoise(
+                    angle=np.pi / 3, noise_dim=1
+                ).sample(n, seed=s)
+                null_ps = data.PSNullResample(pdata)
 
-            m = n // 2
-            shuff1 = null_ps.sample(m, seed=s + 1)
-            shuff2 = null_ps.sample(m, seed=s + 1)
+                m = n // 2
+                shuff1 = null_ps.sample(m, seed=s + 1)
+                shuff2 = null_ps.sample(m, seed=s + 1)
 
-            X1, Y1 = shuff1.xy
-            X2, Y2 = shuff2.xy
-            np.testing.assert_array_almost_equal(X1, X2)
-            np.testing.assert_array_almost_equal(Y1, Y2)
+                X1, Y1 = shuff1.xy
+                X2, Y2 = shuff2.xy
+                np.testing.assert_array_almost_equal(X1, X2)
+                np.testing.assert_array_almost_equal(Y1, Y2)
 
 
 class TestPSGaussNoiseDim(unittest.TestCase):
