@@ -203,42 +203,32 @@ class PSStraResample(FinitePairedSource):
         self._uniques, self._counts = np.unique(pivot, return_counts=True)
 
     def sample(self, n, seed=900):
-        pdata = self.pdata
-        n_sam = pdata.sample_size
-        if n > n_sam:
-            raise ValueError(
-                "Cannot subsample %d points from %d points." % (n, n_sam)
-            )
+        X, Y = self.pdata.xy
+        nx = X.shape[0]
 
-        X, Y = pdata.xy
-        # permute X, Y. Keep pairs
-        I = util.subsample_ind(n_sam, n_sam, seed=seed + 3)
+        # Permute X, Y, pivot.
+        I = util.subsample_ind(nx, nx, seed=seed + 3)
         X = X[I, :]
         Y = Y[I, :]
-        perm_pivot = self.pivot[I]
-        list_chosenI = []
-        for ui, v in enumerate(self._uniques):
-            Iv = np.nonzero(np.abs(perm_pivot - v) <= 1e-8)
-            Iv = Iv[0]
-            niv = self._counts[ui]
-            # ceil guarantees that at least 1 instance will be chosen
-            # from each class.
-            n_class = int(math.ceil(niv / n_sam * n))
-            chosenI = Iv[:n_class]
-            list_chosenI.append(chosenI)
-        final_chosenI = np.hstack(list_chosenI)
-        reduceI = util.subsample_ind(
-            len(final_chosenI), min(n, len(final_chosenI)), seed + 5
-        )
-        final_chosenI = final_chosenI[reduceI]
-        assert len(final_chosenI) == n, (
-            "final_chosenI has length %d which is not n=%d"
-            % (len(final_chosenI), n)
+        pivot = self.pivot[I]
+
+        # Choose at least 1 instance from each class.
+        class_counts = tuple(
+            int(math.ceil(count / nx * n)) for count in self._counts
         )
 
-        Xsam = X[final_chosenI, :]
-        Ysam = Y[final_chosenI, :]
-        return PairedData(Xsam, Ysam, self.pdata.label + "_stra")
+        idxs = np.concatenate(
+            tuple(
+                np.nonzero(pivot == value)[0][:count]
+                for value, count in zip(self._uniques, class_counts)
+            )
+        )
+
+        ix = idxs.shape[0]
+        if ix > n:
+            idxs = idxs[util.subsample_ind(ix, n, seed + 5)]
+
+        return PairedData(X[idxs, :], Y[idxs, :], self.pdata.label + "_stra")
 
 
 class PSNullResample(FinitePairedSource):
