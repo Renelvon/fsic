@@ -605,7 +605,7 @@ class PSPairwiseSign(PairedSource):
     A toy problem given in section 5.3 of
 
     Large-Scale Kernel Methods for Independence Testing
-    Qinyi Zhang, Sarah Filippi,  Arthur Gretton, Dino Sejdinovic
+    Qinyi Zhang, Sarah Filippi, Arthur Gretton, Dino Sejdinovic
 
     X ~ N(0, I_d)
     Y = \sqrt(2/d) \sum_{j=1}^{d/2} sign(X_{2j-1 * X_{2j}})|Z_j| + Z_{d/2+1}
@@ -618,24 +618,30 @@ class PSPairwiseSign(PairedSource):
         dx: the dimension of X
         """
         if dx <= 0 or dx % 2 != 0:
-            raise ValueError("dx has to be even")
-        self.dimx = dx
+            raise ValueError(
+                "dx must be a positive even integer; found {}".format(dx)
+            )
+        self._dx = dx
 
-    def sample(self, n, seed):
-        d = self.dimx
+    def sample(self, n, seed=44):
+        d = self._dx
+        d_half = d // 2
         with util.NumpySeedContext(seed=seed):
-            Z = np.random.randn(n, d // 2 + 1)
+            Z = np.random.randn(n, d_half + 1)
             X = np.random.randn(n, d)
-            Y = np.zeros((n, 1))
-            for j in range(d // 2):
-                Y = Y + np.sign(X[:, [2 * j]] * X[:, [2 * j + 1]]) * np.abs(
-                    Z[:, [j]]
-                )
-            Y = np.sqrt(2.0 / d) * Y + Z[:, [d // 2]]
-        return PairedData(X, Y, label="pairwise_sign_dx%d" % self.dimx)
+
+        Y = np.sum(
+            np.sign(X[:, 0::2] * X[:, 1::2]) * np.abs(Z[:, :d_half]), axis=1
+        )
+
+        Y *= np.sqrt(2.0 / d)
+        Y += Z[:, d_half]
+
+        label = "pairwise_sign_dx{}".format(d)
+        return PairedData(X, Y[:, np.newaxis], label)
 
     def dx(self):
-        return self.dimx
+        return self._dx
 
     def dy(self):
         return 1
