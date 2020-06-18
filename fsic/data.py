@@ -443,7 +443,7 @@ class PS2DUnifRotate(PSIndUnif):
         return 1
 
 
-class PSUnifRotateNoise(PairedSource):
+class PSUnifRotateNoise(PS2DUnifRotate):
     """
     X, Y are dependent in the same way as in PS2DUnifRotate. However, this
     problem adds more extra noise dimensions.
@@ -462,35 +462,36 @@ class PSUnifRotateNoise(PairedSource):
         noise_dim: number of noise dimensions to add to each of X and Y. All
             the extra dimensions follow U(-1, 1)
         """
-        ps_2d_unif = PS2DUnifRotate(angle, xlb=xlb, xub=xub, ylb=ylb, yub=yub)
-        self.ps_2d_unif = ps_2d_unif
+        super().__init__(angle, xlb, xub, ylb, yub)
+        if noise_dim < 0:
+            raise ValueError(
+                "Noise dimensions must be a non-negative integer; found {}".format(
+                    noise_dim
+                )
+            )
+
         self.noise_dim = noise_dim
 
     def sample(self, n, seed=883):
-        sample2d = self.ps_2d_unif.sample(n, seed)
+        super_pdata = super().sample(n, seed)
+
         noise_dim = self.noise_dim
-        if noise_dim <= 0:
-            return sample2d
+        new_label = "rot_unif_noisedim{}".format(noise_dim)
+        super_pdata.label = new_label
 
-        rstate = np.random.get_state()
-        np.random.seed(seed + 1)
+        if self.noise_dim == 0:
+            return super_pdata
 
-        # draw n*noise_dim points from U(-1, 1)
-        Xnoise = stats.uniform.rvs(loc=-1, scale=2, size=noise_dim * n).reshape(
-            n, noise_dim
-        )
-        Ynoise = stats.uniform.rvs(loc=-1, scale=2, size=noise_dim * n).reshape(
-            n, noise_dim
-        )
+        with util.NumpySeedContext(seed=seed + 1):
+            # Draw points from U(-1, 1)
+            Xnoise = stats.uniform.rvs(loc=-1, scale=2, size=(n, noise_dim))
+            Ynoise = stats.uniform.rvs(loc=-1, scale=2, size=(n, noise_dim))
 
-        # concatenate the noise dims to the 2d problem
-        X2d, Y2d = sample2d.xy
+        # Concatenate the noise dims to the 2d problem
+        X2d, Y2d = super_pdata.xy
         X = np.hstack((X2d, Xnoise))
         Y = np.hstack((Y2d, Ynoise))
-
-        np.random.set_state(rstate)
-
-        return PairedData(X, Y, label="rot_unif_noisedim%d" % (noise_dim))
+        return PairedData(X, Y, label=new_label)
 
     def dx(self):
         return 1 + self.noise_dim
