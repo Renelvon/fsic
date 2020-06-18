@@ -31,14 +31,10 @@ class PairedData:
             raise ValueError("Data size of the paired sample must be the same.")
 
         if not np.all(np.isfinite(X)):
-            print("X:")
-            print(util.fullprint(X))
-            raise ValueError("Not all elements in X are finite.")
+            raise ValueError("Some element of X is infinite or NaN")
 
         if not np.all(np.isfinite(Y)):
-            print("Y:")
-            print(util.fullprint(Y))
-            raise ValueError("Not all elements in Y are finite.")
+            raise ValueError("Some element of Y is infinite or NaN")
 
     def __str__(self):
         mean_x = np.mean(self.X, 0)
@@ -328,10 +324,9 @@ class PSStandardize(PairedSource):
         pdata = ps.sample(n, seed=seed)
         X, Y = pdata.xy()
 
-        Zx = util.standardize(X)
-        Zy = util.standardize(Y)
-        assert np.all(np.isfinite(Zx))
-        assert np.all(np.isfinite(Zy))
+        Zx = util.standardize(X, check=True)
+        Zy = util.standardize(Y, check=True)
+
         new_label = None if pdata.label is None else pdata.label + "_std"
         return PairedData(Zx, Zy, label=new_label)
 

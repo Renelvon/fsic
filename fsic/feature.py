@@ -3,7 +3,9 @@
 import abc
 
 import numpy as np
-import scipy.stats as stats
+from scipy import stats
+
+from fsic import util
 
 
 class FeatureMap(metaclass=abc.ABCMeta):
@@ -34,12 +36,13 @@ class MarginalCDFMap(FeatureMap):
 
     def gen_features(self, X):
         """
-        Cost O(dn*log(n)) where X in n x d.
+        Cost O(d * n * log(n)) where X is n x d.
         """
         n, d = X.shape
-        Z = np.zeros((n, d))
+        Z = np.empty_like(X)
         for j in range(d):
-            Z[:, j] = stats.rankdata(X[:, j]) / n
+            Z[:, j] = stats.rankdata(X[:, j])
+        Z /= n
         return Z
 
     def num_features(self, X=None):
@@ -58,27 +61,36 @@ class RFFKGauss(FeatureMap):
         n_features: number of random Fourier features. The total number of
             dimensions will be n_features*2.
         """
-        assert sigma2 > 0, "sigma2 not positive. Was %s" % str(sigma2)
-        assert n_features > 0
+        if sigma2 <= 0:
+            raise ValueError("sigma2 must be positive; found {}".format(sigma2))
+
+        if n_features <= 0:
+            raise ValueError(
+                "n_features must be positive; found {}".format(n_features)
+            )
+
         self.sigma2 = sigma2
         self.n_features = n_features
         self.seed = seed
 
     def gen_features(self, X):
         rstate = np.random.get_state()
-        np.random.seed(self.seed)
-        _, d = X.shape
 
-        D = self.n_features
-        W = np.random.randn(D, d)
-        # n x D
-        XWT = X.dot(W.T) / np.sqrt(self.sigma2)
-        Z1 = np.cos(XWT)
-        Z2 = np.sin(XWT)
-        Z = np.hstack((Z1, Z2)) * np.sqrt(1.0 / self.n_features)
+        np.random.seed(self.seed)
+        W = np.random.randn(X.shape[1], self.n_features)
 
         np.random.set_state(rstate)
-        return Z
+
+        XWT = X.dot(W)
+        np.multiply(XWT, np.sqrt(1.0 / self.sigma2), out=XWT)
+
+        xwt_r, xwt_c = XWT.shape
+
+        Z = np.empty((xwt_r, 2 * xwt_c), float)
+        np.cos(XWT, out=Z[:, :xwt_c])
+        np.sin(XWT, out=Z[:, xwt_c:])
+
+        return np.multiply(Z, np.sqrt(1.0 / self.n_features), out=Z)
 
     def num_features(self, X=None):
         return 2 * self.n_features
@@ -106,23 +118,24 @@ class NystromFeatureMap(FeatureMap):
         """
         self.k = k
         self.inducing_points = inducing_points
-        # a cache to make it faster
+
+        # Evaluate kernel
         M = k.eval(inducing_points, inducing_points)
-        # eigen decompose. Want to raise to the power of -0.5
-        evals, V = np.linalg.eig(M)
-        # Assume M is full rank
-        pow_evals = 1.0 / np.sqrt(evals + 1e-6)
-        self._invert_half = V.dot(np.diag(pow_evals)).dot(V.T)
+
+        # Raise (symmetric) result to (-1/2)
+        self._invert_half = util.sym_to_power(M, -0.5, fix=1e-6)
 
     def gen_features(self, X):
-        _, d = X.shape
-        if d != self.inducing_points.shape[1]:
+        dx = X.shape[1]
+        di = self.inducing_points.shape[1]
+        if dx != di:
             raise ValueError(
-                "dimension of the input does not match that of the inducing points"
+                "The input dimensions (_, {}) do not match the dimensions of the inducing points (_, {})".format(
+                    dx, di
+                )
             )
         K = self.k.eval(X, self.inducing_points)
-        Z = K.dot(self._invert_half)
-        return Z
+        return K.dot(self._invert_half)
 
     def num_features(self, X=None):
         return self.inducing_points.shape[1]

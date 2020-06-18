@@ -1,9 +1,11 @@
-"""Module containing kernel related classes"""
+"""Various kernels"""
 
 import abc
 
 import numpy as np
-import scipy.signal as sig
+from scipy import signal
+
+from fsic import util
 
 
 class Kernel(metaclass=abc.ABCMeta):
@@ -15,32 +17,34 @@ class Kernel(metaclass=abc.ABCMeta):
 
 
 class KHoPoly(Kernel):
-    """Homogeneous polynomial kernel of the form
-    (x.dot(y))**d
-    """
+    """Homogeneous polynomial kernel of the form (x.dot(y))**d"""
 
     def __init__(self, degree):
-        assert degree > 0
+        if degree <= 0:
+            raise ValueError("degree must be positive; found {}".format(degree))
+
         self.degree = degree
 
     def eval(self, X1, X2):
         return X1.dot(X2.T) ** self.degree
 
-    def __str__(self):
-        return "KHoPoly(d=%d)" % self.degree
+    def __repr__(self):
+        return "KHoPoly(degree={})".format(self.degree)
 
 
 class KLinear(Kernel):
     def eval(self, X1, X2):
         return X1.dot(X2.T)
 
-    def __str__(self):
+    def __repr__(self):
         return "KLinear()"
 
 
 class KGauss(Kernel):
     def __init__(self, sigma2):
-        assert sigma2 > 0, "sigma2 must be > 0. Was %s" % str(sigma2)
+        if sigma2 <= 0:
+            raise ValueError("sigma2 must be positive; found {}".format(sigma2))
+
         self.sigma2 = sigma2
 
     def eval(self, X1, X2):
@@ -56,19 +60,21 @@ class KGauss(Kernel):
         ------
         K : a n1 x n2 Gram matrix.
         """
-        _, d1 = X1.shape
-        _, d2 = X2.shape
-        assert d1 == d2, "Dimensions of the two inputs must be the same"
-        D2 = (
-            np.sum(X1 ** 2, 1)[:, np.newaxis]
-            - 2 * X1.dot(X2.T)
-            + np.sum(X2 ** 2, 1)
-        )
-        K = np.exp(-D2 / self.sigma2)
-        return K
+        d1 = X1.shape[1]
+        d2 = X2.shape[1]
+        if d1 != d2:
+            raise ValueError(
+                "The X1 dimensions (_, {}) do not match the X2 dimensions (_, {})".format(
+                    d1, d2
+                )
+            )
 
-    def __str__(self):
-        return "KGauss(%.3f)" % self.sigma2
+        D2 = util.dist_matrix2(X1, X2)
+        np.divide(D2, -self.sigma2, out=D2)
+        return np.exp(D2)
+
+    def __repr__(self):
+        return "KGauss(sigma2={})".format(self.sigma2)
 
 
 class KTriangle(Kernel):
@@ -78,7 +84,9 @@ class KTriangle(Kernel):
     """
 
     def __init__(self, width):
-        assert width > 0, "width must be > 0"
+        if width <= 0:
+            raise ValueError("width must be positive; found {}".format(width))
+
         self.width = width
 
     def eval(self, X1, X2):
@@ -94,13 +102,17 @@ class KTriangle(Kernel):
         ------
         K : a n1 x n2 Gram matrix.
         """
-        _, d1 = X1.shape
-        _, d2 = X2.shape
-        assert d1 == 1, "d1 must be 1"
-        assert d2 == 1, "d2 must be 1"
-        diff = (X1 - X2.T) / self.width
-        K = sig.bspline(diff, 1)
-        return K
+        d1 = X1.shape[1]
+        if d1 != 1:
+            raise ValueError("The X1 dimension (_, {}) must be 1".format(d1))
 
-    def __str__(self):
-        return "KTriangle(w=%.3f)" % self.width
+        d2 = X2.shape[1]
+        if d2 != 1:
+            raise ValueError("The X2 dimension (_, {}) must be 1".format(d2))
+
+        diff = X1 - X2.T
+        np.divide(diff, self.width, out=diff)
+        return signal.bspline(diff, 1)
+
+    def __repr__(self):
+        return "KTriangle(width={})".format(self.width)

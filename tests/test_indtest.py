@@ -21,8 +21,8 @@ def kl_median(pdata):
     Randomize V, W from the standard Gaussian distribution.
     """
     xtr, ytr = pdata.xy()
-    medx2 = util.meddistance(xtr) ** 2
-    medy2 = util.meddistance(ytr) ** 2
+    medx2 = util.median_distance(xtr) ** 2
+    medy2 = util.median_distance(ytr) ** 2
     k = kernel.KGauss(medx2)
     l = kernel.KGauss(medy2)
     return k, l
@@ -34,8 +34,8 @@ class TestNFSIC(unittest.TestCase):
         dx = 2
         pdata_mean = get_pdata_mean(n, dx)
         X, Y = pdata_mean.xy()
-        gwx2 = util.meddistance(X) ** 2
-        gwy2 = util.meddistance(Y) ** 2
+        gwx2 = util.median_distance(X) ** 2
+        gwy2 = util.median_distance(Y) ** 2
         k = kernel.KGauss(gwx2)
         l = kernel.KGauss(gwy2)
         J = 2
@@ -98,8 +98,8 @@ class TestGaussNFSIC(unittest.TestCase):
         dx = 2
         pdata_mean = get_pdata_mean(n, dx)
         X, Y = pdata_mean.xy()
-        gwx2 = util.meddistance(X) ** 2
-        gwy2 = util.meddistance(Y) ** 2
+        gwx2 = util.median_distance(X) ** 2
+        gwy2 = util.median_distance(Y) ** 2
         J = 2
         V = np.random.randn(J, dx)
         W = np.random.randn(J, 1)
@@ -218,8 +218,8 @@ class TestFuncs(unittest.TestCase):
         dy = 1
         X = np.random.randn(n, dx)
         Y = np.random.randn(n, dy) + 1
-        medx2 = util.meddistance(X) ** 2
-        medy2 = util.meddistance(Y) ** 2
+        medx2 = util.median_distance(X) ** 2
+        medy2 = util.median_distance(Y) ** 2
         k = kernel.KGauss(medx2)
         l = kernel.KGauss(medy2)
         J = 3

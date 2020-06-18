@@ -64,6 +64,7 @@ disable=
     bad-continuation,
     broad-except,
     duplicate-code,
+    fixme,
     invalid-name,
     line-too-long,
     missing-docstring,
