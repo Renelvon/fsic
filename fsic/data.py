@@ -576,30 +576,28 @@ class PS2DSinFreq(PSSinFreq):
 
 
 class PSIndSameGauss(PairedSource):
-    """Two same standard Gaussians for P, Q.  """
+    """A source returning samples from two standard Gaussians."""
 
     def __init__(self, dx, dy):
         """
         dx: dimension of X
         dy: dimension of Y
         """
-        self.dimx = dx
-        self.dimy = dy
+        self._dx = dx
+        self._dy = dy
 
-    def sample(self, n, seed):
-        rstate = np.random.get_state()
-        np.random.seed(seed)
-
-        X = np.random.randn(n, self.dx())
-        Y = np.random.randn(n, self.dy())
-        np.random.set_state(rstate)
-        return PairedData(X, Y, label="sg_dx%d_dy%d" % (self.dx(), self.dy()))
+    def sample(self, n, seed=1329):
+        with util.NumpySeedContext(seed=seed):
+            X = np.random.randn(n, self._dx)
+            Y = np.random.randn(n, self._dy)
+        label = "sg_dxi{}_dy{}".format(self._dx, self._dy)
+        return PairedData(X, Y, label)
 
     def dx(self):
-        return self.dimx
+        return self._dx
 
     def dy(self):
-        return self.dimy
+        return self._dy
 
 
 class PSPairwiseSign(PairedSource):
