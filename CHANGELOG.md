@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [0.4.0] - 2020-06-18
+### Changed
+- Fix string representations of kernels.
+- Make input checking print detaield messages.
+- Optimize feature maps; improve speed and reduce memory usage.
+- Improve sampling framework.
+- Factor exponentiation of symmetric matrix.
+- Simplify some utility functions using NumPy methods.
+
+### Removed
+- Drop `fullprint` and `ContextTimer`.
+
+
 ## [0.3.2] - 2020-06-16
 ### Added
 - Support for Python 3.9.
