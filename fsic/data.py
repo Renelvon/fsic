@@ -59,8 +59,8 @@ class PairedData:
         return np.array_str(Z, precision=precision)
 
     def summary(self, prec=4):
-        mx, stdx = self.mean_and_std_of(self.X)
-        my, stdy = self.mean_and_std_of(self.Y)
+        mx, stdx = self.mean_and_std_of(self._X)
+        my, stdy = self.mean_and_std_of(self._Y)
 
         return "E[x] = {} \n Std[x] = {} \n E[y] = {} \n Std[y] = {} \n".format(
             self.array_to_str(mx),
@@ -72,21 +72,21 @@ class PairedData:
     @property
     def dx(self):
         """Return the dimension of X."""
-        return self.X.shape[1]
+        return self._X.shape[1]
 
     @property
     def dy(self):
         """Return the dimension of Y."""
-        return self.Y.shape[1]
+        return self._Y.shape[1]
 
     @property
     def sample_size(self):
-        return self.X.shape[0]
+        return self._X.shape[0]
 
     @property
     def xy(self):
         """Return X and Y as a tuple"""
-        return self.X, self.Y
+        return self._X, self._Y
 
     def split_tr_te(self, tr_proportion=0.5, seed=820):
         """
@@ -113,12 +113,12 @@ class PairedData:
                 )
             )
         ind = util.subsample_ind(nx, n, seed)
-        return PairedData(self.X[ind, :], self.Y[ind, :], self.label)
+        return PairedData(self._X[ind, :], self._Y[ind, :], self.label)
 
     def __add__(self, pdata):
         """Merge the current PairedData with another one."""
-        nX = np.vstack((self.X, pdata.X))
-        nY = np.vstack((self.Y, pdata.Y))
+        nX = np.vstack((self._X, pdata._X))
+        nY = np.vstack((self._Y, pdata._Y))
         nlabel = "{}_{}".format(self.label, pdata.label)
         return PairedData(nX, nY, nlabel)
 
