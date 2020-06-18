@@ -500,11 +500,70 @@ class PSUnifRotateNoise(PS2DUnifRotate):
         return 1 + self.noise_dim
 
 
-class PS2DSinFreq(PairedSource):
-    """
-    X, Y follow the density proportional to 1+sin(w*x)sin(w*y) where
+class PSSinFreq(PairedSource):
+    r"""
+    X, Y follow the density proportional to
+        1+\prod_{i=1}^{d} [ sin(w*x_i)sin(w*y_i) ]
     w is the frequency. The higher w, the close the density is to a uniform
     distribution on [-pi, pi] x [-pi, pi].
+    """
+
+    def __init__(self, freq, d):
+        """
+        freq: a non-negative floating-point number
+        """
+        if freq < 0:
+            raise ValueError(
+                "Frequency must be a non-negative number; found {}".format(freq)
+            )
+
+        self.freq = freq
+        self.d = d
+
+    @staticmethod
+    def sample_d_variates(w, n, D, seed=81, block_size=500):
+        """Return an n x D sample matrix using rejection sampling."""
+        sam = np.zeros((n, D))
+        from_ind = 0
+        with util.NumpySeedContext(seed=seed):
+            while from_ind < n:
+                # Draw x, y from Uniform(-pi, pi).
+                # Sample block_size * D at a time.
+                X = stats.uniform.rvs(
+                    loc=-math.pi, scale=2 * math.pi, size=(block_size, D)
+                )
+
+                un_den = 1.0 + np.prod(np.sin(w * X), axis=1)
+                unif_draw = stats.uniform.rvs(size=block_size)
+
+                # Reject some samples and select no more than
+                # (n - from_ind) samples from the accepted.
+                idxs = np.nonzero(unif_draw < un_den / 2.0)[0][: n - from_ind]
+
+                # Aggregate selected to sample
+                end_ind = from_ind + len(idxs)
+                sam[from_ind:end_ind, :] = X[idxs, :]
+                from_ind = end_ind
+        return sam
+
+    def sample(self, n, seed=81):
+        d = self.d
+        sample = self.sample_d_variates(self.freq, n, 2 * d, seed)
+        X = sample[:, :d]
+        Y = sample[:, d:]
+        label = "sin_freq{}_d{}".format(self.freq, d)
+        return PairedData(X, Y, label)
+
+    def dx(self):
+        return self.d
+
+    def dy(self):
+        return self.d
+
+
+class PS2DSinFreq(PSSinFreq):
+    """
+    A specialization of PSSinFreq for d == 1.
 
     This dataset was used in Arthur Gretton's lecture notes.
     """
@@ -513,81 +572,7 @@ class PS2DSinFreq(PairedSource):
         """
         freq: a nonnegative floating-point number
         """
-        self.freq = freq
-
-    def sample(self, n, seed=81):
-        ps = PSSinFreq(self.freq, d=1)
-        pdata = ps.sample(n, seed=seed)
-        X, Y = pdata.xy
-
-        return PairedData(X, Y, label="sin_freq%.2f" % self.freq)
-
-    def dx(self):
-        return 1
-
-    def dy(self):
-        return 1
-
-
-class PSSinFreq(PairedSource):
-    r"""
-    X, Y follow the density proportional to
-        1+\prod_{i=1}^{d} [ sin(w*x_i)sin(w*y_i) ]
-    w is the frequency. The higher w, the close the density is to a uniform
-    distribution on [-pi, pi] x [-pi, pi].
-    - This is a generalization of PS2DSinFreq.
-    """
-
-    def __init__(self, freq, d):
-        """
-        freq: a nonnegative floating-point number
-        """
-        self.freq = freq
-        self.d = d
-
-    def sample(self, n, seed=81):
-        d = self.d
-        Sam = PSSinFreq.sample_d_variates(self.freq, n, 2 * self.d, seed)
-        X = Sam[:, :d]
-        Y = Sam[:, d:]
-        return PairedData(X, Y, label="sin_freq%.2f_d%d" % (self.freq, d))
-
-    def dx(self):
-        return self.d
-
-    def dy(self):
-        return self.d
-
-    @staticmethod
-    def sample_d_variates(w, n, D, seed=81):
-        """
-        Return an n x D sample matrix.
-        """
-        with util.NumpySeedContext(seed=seed):
-            # rejection sampling
-            sam = np.zeros((n, D))
-            # sample block_size*D at a time.
-            block_size = 500
-            from_ind = 0
-            while from_ind < n:
-                # uniformly randomly draw x, y from U(-pi, pi)
-                X = stats.uniform.rvs(
-                    loc=-math.pi, scale=2 * math.pi, size=D * block_size
-                )
-                X = np.reshape(X, (block_size, D))
-                un_den = 1.0 + np.prod(np.sin(w * X), 1)
-                I = stats.uniform.rvs(size=block_size) < un_den / 2.0
-
-                # accept
-                accepted_count = np.sum(I)
-                to_take = min(n - from_ind, accepted_count)
-                end_ind = from_ind + to_take
-
-                AX = X[I, :]
-                X_take = AX[:to_take, :]
-                sam[from_ind:end_ind, :] = X_take
-                from_ind = end_ind
-        return sam
+        super().__init__(freq, 1)
 
 
 class PSIndSameGauss(PairedSource):
