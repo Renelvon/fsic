@@ -256,11 +256,24 @@ class PSGaussNoiseDims(PairedSource):
 
     def __init__(self, ps, ndx, ndy):
         """
+        ps: a PairedSource
         ndx: number of noise dimensions for X
         ndy: number of noise dimensions for Y
         """
-        assert ndx >= 0
-        assert ndy >= 0
+        if ndx < 0:
+            raise ValueError(
+                "The noise dimensions for X must be non-negative; found {}".format(
+                    ndx
+                )
+            )
+
+        if ndy < 0:
+            raise ValueError(
+                "The noise dimensions for Y must be non-negative; found {}".format(
+                    ndy
+                )
+            )
+
         self.ps = ps
         self.ndx = ndx
         self.ndy = ndy
@@ -270,16 +283,12 @@ class PSGaussNoiseDims(PairedSource):
             NX = np.random.randn(n, self.ndx)
             NY = np.random.randn(n, self.ndy)
 
-            pdata = self.ps.sample(n, seed=seed)
-            X, Y = pdata.xy
-            Zx = np.hstack((X, NX))
-            Zy = np.hstack((Y, NY))
-            new_label = (
-                None
-                if pdata.label is None
-                else pdata.label + "_ndx%d" % self.ndx + "_ndy%d" % self.ndy
-            )
-            return PairedData(Zx, Zy, label=new_label)
+        pdata = self.ps.sample(n, seed=seed)
+        X, Y = pdata.xy
+        Zx = np.hstack((X, NX))
+        Zy = np.hstack((Y, NY))
+        new_label = "{}_ndx{}_ndy{}".format(pdata.label, self.ndx, self.ndy)
+        return PairedData(Zx, Zy, label=new_label)
 
     def dx(self):
         return self.ps.dx() + self.ndx
