@@ -402,6 +402,47 @@ class PSIndUnif(PairedSource):
         return self.ylb.shape[0]
 
 
+class PS2DUnifRotate(PSIndUnif):
+    """
+    A source where X, Y follow rotated uniform distributions.
+
+    The default uniform distribution is U(-1, 1), rotated by a rotation matrix
+    of the specified angle. This simulates the setting of an ICA problem.
+    """
+
+    def __init__(self, angle, xlb=-1, xub=1, ylb=-1, yub=1):
+        """
+        angle: angle in radian
+        xlb: lower bound for x (a real number)
+        xub: upper bound for x (a real number)
+        ylb: lower bound for y (a real number)
+        yub: upper bound for y (a real number)
+        """
+        super().__init__([xlb], [xub], [ylb], [yub])
+
+        self.angle = angle
+
+    def sample(self, n, seed=389):
+        t = self.angle
+        c, s = np.cos(t), np.sin(t)
+        rot = np.array([[c, s], [-s, c]])
+
+        super_pdata = super().sample(n, seed)
+        X, Y = super_pdata.xy
+
+        XY = np.hstack((X, Y))
+        np.dot(XY, rot, out=XY)
+
+        label = "rot_unif_a{}".format(t)
+        return PairedData(XY[:, [0]], XY[:, [1]], label)
+
+    def dx(self):
+        return 1
+
+    def dy(self):
+        return 1
+
+
 class PSUnifRotateNoise(PairedSource):
     """
     X, Y are dependent in the same way as in PS2DUnifRotate. However, this
@@ -546,52 +587,6 @@ class PSSinFreq(PairedSource):
                 sam[from_ind:end_ind, :] = X_take
                 from_ind = end_ind
         return sam
-
-
-class PS2DUnifRotate(PairedSource):
-    """
-    X, Y follow uniform distributions (default to U(-1, 1)). Rotate them by a
-    rotation matrix of the specified angle. This can be used to simulate the
-    setting of an ICA problem.
-    """
-
-    def __init__(self, angle, xlb=-1, xub=1, ylb=-1, yub=1):
-        """
-        angle: angle in radian
-        xlb: lower bound for x (a real number)
-        xub: upper bound for x (a real number)
-        ylb: lower bound for y (a real number)
-        yub: upper bound for y (a real number)
-        """
-        self.angle = angle
-        self.xlb = xlb
-        self.xub = xub
-        self.ylb = ylb
-        self.yub = yub
-
-    def sample(self, n, seed=389):
-        t = self.angle
-        rot = np.array([[np.cos(t), -np.sin(t)], [np.sin(t), np.cos(t)]])
-
-        ps_unif = PSIndUnif(
-            xlb=[self.xlb], xub=[self.xub], ylb=[self.ylb], yub=[self.yub]
-        )
-        pdata = ps_unif.sample(n, seed)
-        X, Y = pdata.xy
-        XY = np.hstack((X, Y))
-        rot_XY = XY.dot(rot.T)
-
-        return PairedData(
-            rot_XY[:, [0]], rot_XY[:, [1]], label="rot_unif_a%.2f" % (t)
-        )
-
-    def dx(self):
-        return 1
-
-    def dy(self):
-        return 1
-
-
 
 
 class PSIndSameGauss(PairedSource):
