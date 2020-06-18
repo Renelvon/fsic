@@ -329,6 +329,79 @@ class PSFunc(PairedSource):
         return self._dy
 
 
+class PSIndUnif(PairedSource):
+    """
+    Multivariate (or univariate) uniform distributions for both X, Y
+    on the specified boundaries
+    """
+
+    def __init__(self, xlb, xub, ylb, yub):
+        """
+        xlb: a numpy array of lower bounds of x
+        xub: a numpy array of upper bounds of x
+        ylb: a numpy array of lower bounds of y
+        yub: a numpy array of upper bounds of y
+        """
+
+        def convertif(a):
+            return np.array(a) if isinstance(a, list) else a
+
+        xlb, xub, ylb, yub = map(convertif, [xlb, xub, ylb, yub])
+
+        if xlb.shape[0] != xub.shape[0]:
+            raise ValueError(
+                "Lower bounds for X are {} but upper bounds are {}; they must match".format(
+                    xlb.shape, xub.shape
+                )
+            )
+
+        if not np.all(xlb < xub):
+            raise ValueError(
+                "Lower bounds for some dimensions of X are not smaller than upper bounds"
+            )
+
+        self.xlb = xlb
+        self.xub = xub
+        self._pscale = xub - xlb
+
+        if ylb.shape[0] != yub.shape[0]:
+            raise ValueError(
+                "Lower bounds for Y are {} but upper bounds are {}; they must match".format(
+                    ylb.shape, yub.shape
+                )
+            )
+
+        if not np.all(ylb < yub):
+            raise ValueError(
+                "Lower bounds for some dimensions of Y are not smaller than upper bounds"
+            )
+
+        self.ylb = ylb
+        self.yub = yub
+        self._qscale = yub - ylb
+
+    def sample(self, n, seed):
+        dx = self.xlb.shape[0]
+        dy = self.ylb.shape[0]
+
+        with util.NumpySeedContext(seed=seed):
+            X = stats.uniform.rvs(
+                loc=self.xlb, scale=self._pscale, size=np.array([n, dx])
+            )
+            Y = stats.uniform.rvs(
+                loc=self.ylb, scale=self._qscale, size=np.array([n, dy])
+            )
+
+        label = "ind_unif_dx{}_dy{}".format(dx, dy)
+        return PairedData(X, Y, label)
+
+    def dx(self):
+        return self.xlb.shape[0]
+
+    def dy(self):
+        return self.ylb.shape[0]
+
+
 class PSUnifRotateNoise(PairedSource):
     """
     X, Y are dependent in the same way as in PS2DUnifRotate. However, this
@@ -519,77 +592,6 @@ class PS2DUnifRotate(PairedSource):
         return 1
 
 
-class PSIndUnif(PairedSource):
-    """
-    Multivariate (or univariate) uniform distributions for both X, Y
-    on the specified boundaries
-    """
-
-    def __init__(self, xlb, xub, ylb, yub):
-        """
-        xlb: a numpy array of lower bounds of x
-        xub: a numpy array of upper bounds of x
-        ylb: a numpy array of lower bounds of y
-        yub: a numpy array of upper bounds of y
-        """
-
-        def convertif(a):
-            return np.array(a) if isinstance(a, list) else a
-
-        xlb, xub, ylb, yub = map(convertif, [xlb, xub, ylb, yub])
-        if xlb.shape[0] != xub.shape[0]:
-            raise ValueError(
-                "lower and upper bounds of X must be of the same length."
-            )
-
-        if ylb.shape[0] != yub.shape[0]:
-            raise ValueError(
-                "lower and upper bounds of X must be of the same length."
-            )
-
-        if not np.all(xub - xlb > 0):
-            raise ValueError(
-                "Require upper - lower to be positive. False for x"
-            )
-
-        if not np.all(yub - ylb > 0):
-            raise ValueError(
-                "Require upper - lower to be positive. False for y"
-            )
-
-        self.xlb = xlb
-        self.xub = xub
-        self.ylb = ylb
-        self.yub = yub
-
-    def sample(self, n, seed):
-        rstate = np.random.get_state()
-        np.random.seed(seed)
-
-        dx = self.xlb.shape[0]
-        dy = self.ylb.shape[0]
-        X = np.zeros((n, dx))
-        Y = np.zeros((n, dy))
-
-        pscale = self.xub - self.xlb
-        qscale = self.yub - self.ylb
-        for i in range(dx):
-            X[:, i] = stats.uniform.rvs(
-                loc=self.xlb[i], scale=pscale[i], size=n
-            )
-        for i in range(dy):
-            Y[:, i] = stats.uniform.rvs(
-                loc=self.ylb[i], scale=qscale[i], size=n
-            )
-
-        np.random.set_state(rstate)
-        return PairedData(X, Y, label="ind_unif_dx%d_dy%d" % (dx, dy))
-
-    def dx(self):
-        return self.xlb.shape[0]
-
-    def dy(self):
-        return self.ylb.shape[0]
 
 
 class PSIndSameGauss(PairedSource):
